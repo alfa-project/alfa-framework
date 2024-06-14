@@ -1,17 +1,20 @@
 # ALFA-Unit
 
 <p align="center">
-<img src="docs/figures/overview.png" alt="overview" width="700" />
+<img src="../docs/figures/overview.png" alt="overview" width="700" />
 </p>
 
 ALFA unit is the hardware counterpart of ALFA-Node in the Core. It is responsible to create the base interface between hardware extensions and the remaining components of ALFA framework. This component is composed by four units, all integrated into one hardware IP core:
 
-- The **Memory Management Unit (MemMU)** - responsible for managing ALFA's hardware memory. ALFA take advantage of different memory chips (on-chip RAM and FPGA-based memories, like BRAM) to implement ALFA's memory architecture. This architecture divides the memory into three sections: 1) core memory, which is used mainly for storing point clouds representations and Core registers;  2) operating system memory, to allow a smooth system operation, and 3) extensions memory to provide plenty of space for the deployed algorithms. Regarding point clouds representations, developers can configure MemMU to store data in two representations:  sorted *Spherical-grid* coordinates and unsorted point-by-point *Cartesian coordinates*.
+- The **Memory Management Unit (MemMU)** - responsible for managing ALFA's hardware memory. ALFA take advantage of different memory chips (on-chip RAM and FPGA-based memories, like BRAM) to implement ALFA's memory architecture. This architecture divides the memory into three sections: 
+  - 1) core memory, which is used mainly for storing point clouds representations and Core registers;  
+  - 2) operating system memory, to allow a smooth system operation, and 
+  - 3) extensions memory to provide plenty of space for the deployed algorithms. Regarding point clouds representations, developers can configure MemMU to store data in two representations:  sorted *Spherical-grid* coordinates and unsorted point-by-point *Cartesian coordinates*.
 - The **Extension Management Unit (ExMU)** - the primary connection between hardware algorithms implementation and the Core. It offers a dedicated cache and point cloud interface, allowing developers to change how the point cloud data flows into their algorithms. 
 - The **Monitor Unit (MonU)** - responsible for marking and collecting all the information from the hardware core units and extensions, transferring it to the software layer to be later shared with the GUI tool.
 - The **Sensor Interface Unit (SIU)** - the hardware-accelerated ALFA-Unit that decodes and reconstructs LiDAR data from sensors with Ethernet interfaces. It allows interfacing the most advanced LiDAR sensors in the market with FPGA-enable embedded platforms, reducing latency between the input data and the algorithms that rely on it. Due to SIU's parallelism, it can interface multiple sensors simultaneously while maintaining the maximum sensor throughput. 
 
-# Interfaces and Mapped Registers
+## Interfaces and Mapped Registers
 
 The ALFA-Unit IP has 8 interfaces:
 
@@ -55,16 +58,6 @@ The ALFA-Unit IP has 8 interfaces:
 - *readCustomField* - The original *custom field* of the point read.
 - *status* - The extension status.
 - *enable* - The extension enable.
-
-## Interface signals exemplification
-
-### Read Point
-
-### Write Point
-
-### Start processing
-
-### Done processing
 
 ## Mapped Registers (32bit registers)
 
@@ -119,7 +112,7 @@ The ALFA-Unit IP has 8 interfaces:
 |  0xB8   |       User Define 8        |
 |  0xBC   |       User Define 9        |
 
-# Configuration
+## Configuration
 
 There are three main configuration sections:
 
