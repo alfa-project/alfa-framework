@@ -1,0 +1,9 @@
+.vscode/*
+*.jou
+*.log
+*.backup.log
+.Xil
+.VSCodeCounter/*
+*.str
+platforms/xilinx/src/*
+platforms/xilinx/vivado_projects/*
