@@ -228,7 +228,7 @@ cd alfa_zcu104
 ```
 
 ```sh
-petalinux-config --get-hw-description=/alfa-framework/alfa-platforms/xilinx/hardware/zcu104.xsa
+petalinux-config --get-hw-description=/alfa-framework/platforms/xilinx/hardware/zcu104.xsa
 ```
 
 Change the Machine name from 'template' to 'zcu104-revc' under the DTG Settings menu and save and exit the config file. 
@@ -410,35 +410,30 @@ Replace with the following lines into the device tree user file located in alfa_
 ```sh
 /include/ "system-conf.dtsi"
 / {
- reserved-memory {
-  #address-cells = <2>;
-  #size-cells = <2>;
-  ranges;
-  
-  reserved_cachable_alfa: reserved_cachable_alfa@5000000 {
-   compatible = "shared-dma-pool";
-   reg = <0x0 0x50000000 0x0 0x1000000>;
-   cache-policy = "writeback";
-   access = "read-write";
-   no-map;
-  };
-  
-  reserved_non_cachable_alfa: reserved_non_cachable_alfa@40000000 {
-   compatible = "shared-dma-pool";
-   reg = <0x0 0x40000000 0x0 0x1000000>;
-   no-map;
-  };
-  };
-    
-  alfadd: alfadd{
-   status = "okay";
-   compatible = "alfadd";
-   reg = <0x0 0x40000000 0x0 0x1000000>, <0x0 0x50000000 0x0 0x1000000>;
- };
-  axi_cdma_0 {
-  status = "disabled";
- };
- };
+    reserved-memory {
+        #address-cells = <2>;
+        #size-cells = <2>;
+        ranges;
+
+    };
+
+    alfa_mem: alfa_mem {
+        status = "okay";
+        compatible = "alfa_mem";
+    };
+
+    alfa_ext: alfa_ext@0 {
+        compatible = "alfa_ext";
+        reg = <0x0 0x80000000 0x0 0x1000>; // 4KB region for FPGA device
+        status = "okay";
+        no-map;
+    };
+
+    alfa_ext_mem: alfa_ext_mem {
+        status = "okay";
+        compatible = "alfa_ext_mem";
+    };
+};
 ```
 
 </details>
@@ -446,7 +441,9 @@ Replace with the following lines into the device tree user file located in alfa_
 Update ros-petalinux.bb receipe inside the folder "alfa_zcu104/project-spec/meta-user/recipes-image/images" with the desired alfa components under 'IMAGE_INSTALL:append':
 
 ```sh
- alfa-dd \
+ alfa-dd-mem \
+ alfa-dd-ext \
+ alfa-dd-ext-mem \
  alfa-msg \
  alfa-node \
  ext-dummy \
@@ -456,9 +453,11 @@ Update ros-petalinux.bb receipe inside the folder "alfa_zcu104/project-spec/meta
 Add the following line at the end of the file to load the ALFA device driver during boot:
 
 ```sh
-KERNEL_MODULE_AUTOLOAD = "alfadd"
+KERNEL_MODULE_AUTOLOAD += "alfa-dd-mem"
+KERNEL_MODULE_AUTOLOAD += "alfa-dd-ext"
+KERNEL_MODULE_AUTOLOAD += "alfa-dd-ext-mem"
 ```
-
+<!----
 Since ALFA extensions require root access to physical memory (it will be fixed soon), the final image must be configurated to enable it. Run the following command inside the project folder and select the *Petalinux RootFS Settings* menu to add a new user (alfa), and add this user to the sudo user.
 
 ```sh
@@ -469,6 +468,7 @@ Add extra user alfa (no default password)
 (root:root;alfa::passwd-expire;) Add Extra Users 
 (alfa) Add Users to Sudo users
 ```
+---->
 
 ### 6. Build the image
 Finally start petalinux-build to build our custom Linux image:
