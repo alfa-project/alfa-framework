@@ -7,3 +7,5 @@
 *.str
 platforms/xilinx/src/*
 platforms/xilinx/vivado_projects/*
+bags/*
+!bags/alfa_example.zip
