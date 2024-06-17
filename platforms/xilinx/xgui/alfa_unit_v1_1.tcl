@@ -11,26 +11,56 @@ proc init_gui { IPINST } {
   set Memory [ipgui::add_group $IPINST -name "Memory" -parent ${Page_0}]
   ipgui::add_param $IPINST -name "INTERFACE_TYPE" -parent ${Memory} -widget comboBox
   ipgui::add_param $IPINST -name "BRAM_DDR" -parent ${Memory} -widget comboBox
-  ipgui::add_param $IPINST -name "OFFSET" -parent ${Memory}
-  ipgui::add_param $IPINST -name "POINTCLOUD_ID" -parent ${Memory} -widget comboBox
   ipgui::add_param $IPINST -name "REPRESENTATION_TYPE" -parent ${Memory} -widget comboBox
-
   #Adding Group
-  set Sensor_Interface [ipgui::add_group $IPINST -name "Sensor Interface" -parent ${Page_0}]
-  ipgui::add_param $IPINST -name "SIU_SUPPORT" -parent ${Sensor_Interface} -widget comboBox
-  ipgui::add_param $IPINST -name "REPRESENTATION_PARAM_1" -parent ${Sensor_Interface}
-  ipgui::add_param $IPINST -name "REPRESENTATION_PARAM_3" -parent ${Sensor_Interface}
-  ipgui::add_param $IPINST -name "REPRESENTATION_PARAM_4" -parent ${Sensor_Interface}
-  ipgui::add_param $IPINST -name "REPRESENTATION_PARAM_2" -parent ${Sensor_Interface}
+  set BRAM_Configuration [ipgui::add_group $IPINST -name "BRAM Configuration" -parent ${Memory} -layout horizontal]
+  ipgui::add_param $IPINST -name "POINTCLOUD_ID" -parent ${BRAM_Configuration} -widget comboBox
+  ipgui::add_param $IPINST -name "OFFSET" -parent ${BRAM_Configuration}
+
 
   #Adding Group
   set Extension [ipgui::add_group $IPINST -name "Extension" -parent ${Page_0}]
-  ipgui::add_param $IPINST -name "EXMU_SUPPORT" -parent ${Extension} -widget comboBox
   ipgui::add_param $IPINST -name "NUMBER_OF_DEBUG_POINTS" -parent ${Extension}
   ipgui::add_param $IPINST -name "NUMBER_OF_USER_DEFINES" -parent ${Extension}
 
 
 
+}
+
+proc update_PARAM_VALUE.OFFSET { PARAM_VALUE.OFFSET PARAM_VALUE.BRAM_DDR } {
+	# Procedure called to update OFFSET when any of the dependent parameters in the arguments change
+	
+	set OFFSET ${PARAM_VALUE.OFFSET}
+	set BRAM_DDR ${PARAM_VALUE.BRAM_DDR}
+	set values(BRAM_DDR) [get_property value $BRAM_DDR]
+	if { [gen_USERPARAMETER_OFFSET_ENABLEMENT $values(BRAM_DDR)] } {
+		set_property enabled true $OFFSET
+	} else {
+		set_property enabled false $OFFSET
+	}
+}
+
+proc validate_PARAM_VALUE.OFFSET { PARAM_VALUE.OFFSET } {
+	# Procedure called to validate OFFSET
+	return true
+}
+
+proc update_PARAM_VALUE.POINTCLOUD_ID { PARAM_VALUE.POINTCLOUD_ID PARAM_VALUE.BRAM_DDR } {
+	# Procedure called to update POINTCLOUD_ID when any of the dependent parameters in the arguments change
+	
+	set POINTCLOUD_ID ${PARAM_VALUE.POINTCLOUD_ID}
+	set BRAM_DDR ${PARAM_VALUE.BRAM_DDR}
+	set values(BRAM_DDR) [get_property value $BRAM_DDR]
+	if { [gen_USERPARAMETER_POINTCLOUD_ID_ENABLEMENT $values(BRAM_DDR)] } {
+		set_property enabled true $POINTCLOUD_ID
+	} else {
+		set_property enabled false $POINTCLOUD_ID
+	}
+}
+
+proc validate_PARAM_VALUE.POINTCLOUD_ID { PARAM_VALUE.POINTCLOUD_ID } {
+	# Procedure called to validate POINTCLOUD_ID
+	return true
 }
 
 proc update_PARAM_VALUE.REPRESENTATION_PARAM_1 { PARAM_VALUE.REPRESENTATION_PARAM_1 PARAM_VALUE.SIU_SUPPORT } {
@@ -147,24 +177,6 @@ proc update_PARAM_VALUE.NUMBER_OF_USER_DEFINES { PARAM_VALUE.NUMBER_OF_USER_DEFI
 
 proc validate_PARAM_VALUE.NUMBER_OF_USER_DEFINES { PARAM_VALUE.NUMBER_OF_USER_DEFINES } {
 	# Procedure called to validate NUMBER_OF_USER_DEFINES
-	return true
-}
-
-proc update_PARAM_VALUE.OFFSET { PARAM_VALUE.OFFSET } {
-	# Procedure called to update OFFSET when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.OFFSET { PARAM_VALUE.OFFSET } {
-	# Procedure called to validate OFFSET
-	return true
-}
-
-proc update_PARAM_VALUE.POINTCLOUD_ID { PARAM_VALUE.POINTCLOUD_ID } {
-	# Procedure called to update POINTCLOUD_ID when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.POINTCLOUD_ID { PARAM_VALUE.POINTCLOUD_ID } {
-	# Procedure called to validate POINTCLOUD_ID
 	return true
 }
 

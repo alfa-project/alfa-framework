@@ -1013,7 +1013,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>5510a51d</spirit:value>
+            <spirit:value>d105a23b</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1029,7 +1029,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>5510a51d</spirit:value>
+            <spirit:value>d105a23b</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1043,7 +1043,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>d1f47f04</spirit:value>
+            <spirit:value>2bd06132</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1057,7 +1057,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>9670fb41</spirit:value>
+            <spirit:value>08ab2630</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -3419,7 +3419,7 @@
       <spirit:file>
         <spirit:name>src/unit.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_e608938c</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_b3042eec</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -3496,7 +3496,7 @@
       <spirit:file>
         <spirit:name>xgui/alfa_unit_v1_1.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_d1f47f04</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_2bd06132</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -3536,6 +3536,13 @@
       <spirit:name>OFFSET</spirit:name>
       <spirit:displayName>Memory Base Address</spirit:displayName>
       <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.OFFSET" spirit:bitStringLength="32">0x00000000</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:resolve="generated" xilinx:id="PARAM_ENABLEMENT.OFFSET">true</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>BRAM_DDR</spirit:name>
@@ -3599,6 +3606,13 @@
       <spirit:name>POINTCLOUD_ID</spirit:name>
       <spirit:displayName>Pointcloud Id</spirit:displayName>
       <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.POINTCLOUD_ID" spirit:choiceRef="choice_list_6e3ded9c">0</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:resolve="generated" xilinx:id="PARAM_ENABLEMENT.POINTCLOUD_ID">true</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>NUMBER_OF_DEBUG_POINTS</spirit:name>
@@ -3634,23 +3648,23 @@
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:vendorDisplayName>ALFA</xilinx:vendorDisplayName>
       <xilinx:vendorURL>http://www.alfa-project.org</xilinx:vendorURL>
-      <xilinx:coreRevision>15</xilinx:coreRevision>
+      <xilinx:coreRevision>16</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:ALFAUnit:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>ALFA:ALFA:ALFAUnit:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>ALFA:ALFA:ALFAUnit:1.1</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2023-10-04T13:12:14Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2024-06-17T13:23:52Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2022.2</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="63e19a0f"/>
       <xilinx:checksum xilinx:scope="addressSpaces" xilinx:value="a1bbca3c"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="b0334704"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="800ec9c1"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="81991bd4"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="6169e93f"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="e8ddd3ca"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="e33ef36e"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="8dc76817"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
 </spirit:component>
