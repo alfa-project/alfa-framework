@@ -9,9 +9,9 @@ Currently supported installations: </p>
 
 ## Desktop Ubuntu 22.04.1 LTS with ROS 2 Humble Hawksbill
 
-ALFA is built on top of the [Robot Operating System (ROS)](https://www.ros.org/) architecture to read sensor's data, communicate with other modules, and to perform point cloud processing. Such processing often resorts to [Point Cloud Library (PCL)](https://pointclouds.org/) software modules. 
+ALFA is built on top of the [Robot Operating System (ROS)](https://www.ros.org/) architecture to read sensor's data, communicate with other modules, and to perform point cloud processing. Such processing often resorts to [Point Cloud Library (PCL)](https://pointclouds.org/) software modules.
 
-### 1. ROS2 Installation [Humble Hawksbill](https://docs.ros.org/en/humble/Installation.html) 
+### 1. ROS2 Installation [Humble Hawksbill](https://docs.ros.org/en/humble/Installation.html)
 
 Make sure you have a locale which supports UTF-8:
 
@@ -103,6 +103,7 @@ git clone -b main https://github.com/alfa-project/alfa-framework.git
 ```
 
 ### 4. Create a ROS Workspace
+
 To use the Desktop version of ALFA, only a few more steps are required. First, create a workspace for working with ALFA packages without interfering with the existing default ROS2 workspace. To know more about creating a workspace check [ROS2 documentation](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html). This will include all ROS2-related software provided by ALFA.
 
 Create a Ros2 workspace inside the ALFA directory:
@@ -176,20 +177,22 @@ source ./install/setup.bash
 
 ## Xilinx Zynq UltraScale+ MPSoC ZCU104
 
-The following steps show how to run ALFA on the [Xilinx Zynq UltraScale+ MPSoC ZCU104](https://www.xilinx.com/products/boards-and-kits/zcu104.html). It is required that the [Desktop version](https://github.com/alfa-project/alfa-platforms/Desktop/README.md) of ALFA is already installed and running with all repositories and source at their correct location. 
+The following steps show how to run ALFA on the [Xilinx Zynq UltraScale+ MPSoC ZCU104](https://www.xilinx.com/products/boards-and-kits/zcu104.html). It is required that the [Desktop version](https://github.com/alfa-project/alfa-platforms/Desktop/README.md) of ALFA is already installed and running with all repositories and source at their correct location.
 
-This guide was based on: 
-- https://news.accelerationrobotics.com/ros2-humble-yocto-petalinux
-- https://docs.xilinx.com/r/en-US/ug1144-petalinux-tools-reference-guide
+This guide was based on:
+
+- <https://news.accelerationrobotics.com/ros2-humble-yocto-petalinux>
+- <https://docs.xilinx.com/r/en-US/ug1144-petalinux-tools-reference-guide>
 
 ### 1. Tools Installation and setup
 
-**Note**: Downloading, installing, and building software packages with Xilinx's PetaLinux requires a lot of free space on your local hard drive. Reserve at least 100GB. 
+**Note**: Downloading, installing, and building software packages with Xilinx's PetaLinux requires a lot of free space on your local hard drive. Reserve at least 100GB.
 
 Tested with the following tools:
+
 - Ubuntu 22.04.4 LTS
 - Xilinx Petalinux 2022.2 (that comes with Yocto Honister)
-- ROS2 Foxy Fitzroy (https://github.com/ros/meta-ros.git and compatible with Honister)
+- ROS2 Foxy Fitzroy (<https://github.com/ros/meta-ros.git> and compatible with Honister)
 
 Create a folder 'alfa-embedded' inside the ALFA folder previously created:
 
@@ -202,7 +205,9 @@ Download the Petalinux installer from Xilinx website ([link](https://www.xilinx.
 ```sh
 chmod 755 ./petalinux-v2022.2-10141622-installer.run
 ```
+
 Run it (a different installation directory can be set with the -d option):
+
 ```sh
 ./petalinux-v2022.2-10141622-installer.run -d petalinux
 ```
@@ -231,17 +236,19 @@ cd alfa_zcu104
 petalinux-config --get-hw-description=/alfa-framework/platforms/xilinx/hardware/zcu104.xsa
 ```
 
-Change the Machine name from 'template' to 'zcu104-revc' under the DTG Settings menu and save and exit the config file. 
+Change the Machine name from 'template' to 'zcu104-revc' under the DTG Settings menu and save and exit the config file.
+
 ```sh
 (zcu104-revc) MACHINE_NAME
 ```
 
 Select the Root filesystem type under the Image Packaging Configuration menu
+
 ```sh
 Root filesystem type (EXT4 (SD/eMMC/SATA/USB))
 ```
 
-### 3. Add meta-layers for ROS2 Humble and configure them in PetaLinux 
+### 3. Add meta-layers for ROS2 Humble and configure them in PetaLinux
 
 Create a new folder named "layers" inside your project folder alfa_zcu104. Inside the layers folder, clone the meta-ros layers from github:
 
@@ -264,7 +271,7 @@ ROS_DISTRO = "foxy"
 ```
 <!---------------------->
 
-### 4. Extend the minimal image to include ROS2 
+### 4. Extend the minimal image to include ROS2
 
 Update petalinux image to include the new ROS2 content. Inside the project folder create a new dir:
 
@@ -394,9 +401,9 @@ EXTRA_IMAGE_FEATURES += "ros-implicit-workspace"
 
 Save and close the file.
 
-### 5. Add ALFA components or other custom applications 
+### 5. Add ALFA components or other custom applications
 
-Open the file alfa_zcu104/build/conf/bblayers.conf and add the following line to the BBLAYERS definition to add the ALFA layer meta-alfa (which is located under your alfa-framework installation): 
+Open the file alfa_zcu104/build/conf/bblayers.conf and add the following line to the BBLAYERS definition to add the ALFA layer meta-alfa (which is located under your alfa-framework installation):
 
 ```sh
 ${SDKBASEMETAPATH}/../../../../../alfa-framework/meta-alfa \
@@ -463,7 +470,9 @@ Run the following command inside the project folder and select the *Petalinux Ro
 ```sh
 petalinux-config -c rootfs
 ```
+
 Add extra user alfa (no default password)
+
 ```sh
 (root:root;alfa::passwd-expire;) Add Extra Users 
 ```
@@ -482,24 +491,24 @@ Add extra user alfa (no default password)
 ---->
 
 ### 6. Build the image
-Finally start petalinux-build to build our custom Linux image:
+
+Finally, start petalinux-build to build our custom Linux image:
 
 ```sh
 petalinux-build -c ros-petalinux
 ```
 
-This should create a Linux image for zcu104 and display no errors. If some errors appear, the possibilities are: different package releases, corrupted downloaded files, low RAM memory, low disk space, low swap memory, or network-related issues. In case of memory issues, usually changing the number of parallel jobs to a lower number, and/or increasing the size of the swap memory solves the problem. 
+This should create a Linux image for zcu104 and display no errors. If some errors appear, the possibilities are: different package releases, corrupted downloaded files, low RAM memory, low disk space, low swap memory, or network-related issues. In case of memory issues, usually changing the number of parallel jobs to a lower number, and/or increasing the size of the swap memory solves the problem.
 
-### 7. Generate boot components and SDcard image:
+### 7. Generate boot components and SDcard image
 
 The build images are located under the project folder alfa_zcu104/images/linux directory. A copy is also placed in the /tftpboot directory if the option is enabled in the system-level configuration for the PetaLinux project.
 
 **Important:** By default, besides the kernel, RootFS, and U-Boot, the PetaLinux project is configured to generate and build the other boot components for Zynq FSBL, Zynq UltraScale+ MPSoC FSBL and PMU firmware, and for Versal PLM and PSM firmware. For more details on the auto generated boot components, see [UG1144 - Generating Boot Components](https://docs.xilinx.com/r/en-US/ug1144-petalinux-tools-reference-guide/Generating-Boot-Components).
 
-
 A boot image usually contains a first stage boot loader image (Zynqmp_fsbl.elf), FPGA bitstream (project1.bit), PMU firmware (pmufw.elf), TF-A (bl31.elf), device tree description (system.dtb), and U-Boot (u-boot.elf).
 
-Generate the boot image in .BIN format to include these components. This also includes the default bitstrem file. 
+Generate the boot image in .BIN format to include these components. This also includes the default bitstrem file.
 
 ```sh
 petalinux-package --boot --fpga --u-boot
@@ -545,9 +554,9 @@ Finally, insert the sd card into the board and boot. Login with the root user an
 
 ### 8. Install more embedded software extensions
 
-To include custom extensions in the embedded image after testing the framework, it is necessary a recipe file for each new extension. Existing recipes (.bb files) in the meta-alfa/recipes-alfa/alfa-extensions folder can be used as a starting point. 
+To include custom extensions in the embedded image after testing the framework, it is necessary a recipe file for each new extension. Existing recipes (.bb files) in the meta-alfa/recipes-alfa/alfa-extensions folder can be used as a starting point.
 
-#### Update the ros-petalinux.bb receipt 
+#### Update the ros-petalinux.bb receipt
 
 Iinside folder "alfa_zcu104/project-spec/meta-user/recipes-image/images" add the new recipe under 'IMAGE_INSTALL:append':
 
@@ -561,18 +570,20 @@ Iinside folder "alfa_zcu104/project-spec/meta-user/recipes-image/images" add the
 petalinux-build -c ros-petalinux
 ```
 
-#### Updated the card image with the wic command and copy it to the SD card:
+#### Updated the card image with the wic command and copy it to the SD card
 
 ```sh
 petalinux-package --wic
 ```
+
 ```sh
 sudo dd if=images/linux/petalinux-sdimage.wic of=/dev/sda conv=fsync bs=8M
 ```
 
-### 9. Check the created embedded [ALFA extensions](https://github.com/alfa-project/alfa-extensions/) with the Xilinx Zynq UltraScale+ MPSoC ZCU104 platform. 
+### 9. Check the created embedded [ALFA extensions](https://github.com/alfa-project/alfa-extensions/) with the Xilinx Zynq UltraScale+ MPSoC ZCU104 platform
 
-The default username is "alfa". Pick a password at your choice.  
+The default username is "alfa". Pick a password at your choice.
+
 ```sh
 [  OK  ] Finished Permit User Sessions.
 [  OK  ] Started Getty on tty1.
@@ -594,19 +605,24 @@ Password:
 ---->
 
 Set an IP address in the same network as the host system (that will play the ros2 bags and the monitor tool) and set the default gateway.
+
 ```sh
 sudo -i ifconfig eth0 192.168.1.2 255.255.255.0
 sudo -i route add default gw 192.168.1.1
 ```
+
 Ping the host system to check any connectivity issues and list the available topics.
+
 ```sh
 ping 192.168.1.1
 ```
+
 ```sh
 ros2 topic list
 ```
 
 ### 10.  Install embedded hardware extensions
+
 Available Soon!
 
 <!----
@@ -673,8 +689,6 @@ And finally, copy the image to the SD Card (check the SD Card device name before
 ```sh
 sudo dd if=images/linux/petalinux-sdimage.wic of=/dev/sda conv=fsync bs=8M
 ```
-
-
 
 #### 4. Package and create new ALFA hardware extensions
 
