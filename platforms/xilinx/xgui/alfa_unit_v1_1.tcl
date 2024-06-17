@@ -12,19 +12,34 @@ proc init_gui { IPINST } {
   ipgui::add_param $IPINST -name "INTERFACE_TYPE" -parent ${Memory} -widget comboBox
   ipgui::add_param $IPINST -name "BRAM_DDR" -parent ${Memory} -widget comboBox
   ipgui::add_param $IPINST -name "REPRESENTATION_TYPE" -parent ${Memory} -widget comboBox
-  #Adding Group
-  set BRAM_Configuration [ipgui::add_group $IPINST -name "BRAM Configuration" -parent ${Memory} -layout horizontal]
-  ipgui::add_param $IPINST -name "POINTCLOUD_ID" -parent ${BRAM_Configuration} -widget comboBox
-  ipgui::add_param $IPINST -name "OFFSET" -parent ${BRAM_Configuration}
-
 
   #Adding Group
   set Extension [ipgui::add_group $IPINST -name "Extension" -parent ${Page_0}]
+  ipgui::add_param $IPINST -name "EXMU_SUPPORT" -parent ${Extension} -widget comboBox
   ipgui::add_param $IPINST -name "NUMBER_OF_DEBUG_POINTS" -parent ${Extension}
   ipgui::add_param $IPINST -name "NUMBER_OF_USER_DEFINES" -parent ${Extension}
+  ipgui::add_param $IPINST -name "EXTENSION_MEMORY" -parent ${Extension}
 
 
 
+}
+
+proc update_PARAM_VALUE.EXMU_SUPPORT { PARAM_VALUE.EXMU_SUPPORT PARAM_VALUE.SIU_SUPPORT } {
+	# Procedure called to update EXMU_SUPPORT when any of the dependent parameters in the arguments change
+	
+	set EXMU_SUPPORT ${PARAM_VALUE.EXMU_SUPPORT}
+	set SIU_SUPPORT ${PARAM_VALUE.SIU_SUPPORT}
+	set values(SIU_SUPPORT) [get_property value $SIU_SUPPORT]
+	if { [gen_USERPARAMETER_EXMU_SUPPORT_ENABLEMENT $values(SIU_SUPPORT)] } {
+		set_property enabled true $EXMU_SUPPORT
+	} else {
+		set_property enabled false $EXMU_SUPPORT
+	}
+}
+
+proc validate_PARAM_VALUE.EXMU_SUPPORT { PARAM_VALUE.EXMU_SUPPORT } {
+	# Procedure called to validate EXMU_SUPPORT
+	return true
 }
 
 proc update_PARAM_VALUE.OFFSET { PARAM_VALUE.OFFSET PARAM_VALUE.BRAM_DDR } {
@@ -144,12 +159,12 @@ proc validate_PARAM_VALUE.BRAM_DDR { PARAM_VALUE.BRAM_DDR } {
 	return true
 }
 
-proc update_PARAM_VALUE.EXMU_SUPPORT { PARAM_VALUE.EXMU_SUPPORT } {
-	# Procedure called to update EXMU_SUPPORT when any of the dependent parameters in the arguments change
+proc update_PARAM_VALUE.EXTENSION_MEMORY { PARAM_VALUE.EXTENSION_MEMORY } {
+	# Procedure called to update EXTENSION_MEMORY when any of the dependent parameters in the arguments change
 }
 
-proc validate_PARAM_VALUE.EXMU_SUPPORT { PARAM_VALUE.EXMU_SUPPORT } {
-	# Procedure called to validate EXMU_SUPPORT
+proc validate_PARAM_VALUE.EXTENSION_MEMORY { PARAM_VALUE.EXTENSION_MEMORY } {
+	# Procedure called to validate EXTENSION_MEMORY
 	return true
 }
 

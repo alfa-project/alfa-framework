@@ -621,7 +621,7 @@
       <spirit:vendorExtensions>
         <xilinx:busInterfaceInfo>
           <xilinx:enablement>
-            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="BUSIF_ENABLEMENT.ALFA_Extension_Interface" xilinx:dependency="$EXMU_SUPPORT = 1">false</xilinx:isEnabled>
+            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="BUSIF_ENABLEMENT.ALFA_Extension_Interface" xilinx:dependency="$EXMU_SUPPORT = 1">true</xilinx:isEnabled>
           </xilinx:enablement>
         </xilinx:busInterfaceInfo>
       </spirit:vendorExtensions>
@@ -1013,7 +1013,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>d105a23b</spirit:value>
+            <spirit:value>a5c7c3cd</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1029,7 +1029,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>d105a23b</spirit:value>
+            <spirit:value>a5c7c3cd</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1043,7 +1043,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>2bd06132</spirit:value>
+            <spirit:value>afeffafd</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1057,7 +1057,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>08ab2630</spirit:value>
+            <spirit:value>c7220428</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -3223,6 +3223,33 @@
           </spirit:driver>
         </spirit:wire>
       </spirit:port>
+      <spirit:port>
+        <spirit:name>o_alib_extmem_base_addr</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+          <spirit:driver>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
+          </spirit:driver>
+        </spirit:wire>
+        <spirit:vendorExtensions>
+          <xilinx:portInfo>
+            <xilinx:enablement>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.o_alib_extmem_base_addr" xilinx:dependency="$EXTENSION_MEMORY = 1">false</xilinx:isEnabled>
+            </xilinx:enablement>
+          </xilinx:portInfo>
+        </spirit:vendorExtensions>
+      </spirit:port>
     </spirit:ports>
     <spirit:modelParameters>
       <spirit:modelParameter xsi:type="spirit:nameValueTypeType" spirit:dataType="integer">
@@ -3238,7 +3265,14 @@
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>EXMU_SUPPORT</spirit:name>
         <spirit:displayName>Exmu Support</spirit:displayName>
-        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.EXMU_SUPPORT" spirit:bitStringLength="1">&quot;0&quot;</spirit:value>
+        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.EXMU_SUPPORT" spirit:bitStringLength="1">&quot;1&quot;</spirit:value>
+        <spirit:vendorExtensions>
+          <xilinx:parameterInfo>
+            <xilinx:enablement>
+              <xilinx:isEnabled xilinx:id="MODELPARAM_ENABLEMENT.EXMU_SUPPORT">false</xilinx:isEnabled>
+            </xilinx:enablement>
+          </xilinx:parameterInfo>
+        </spirit:vendorExtensions>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>OFFSET</spirit:name>
@@ -3329,6 +3363,11 @@
       <spirit:enumeration>3</spirit:enumeration>
     </spirit:choice>
     <spirit:choice>
+      <spirit:name>choice_pairs_317cc46d</spirit:name>
+      <spirit:enumeration spirit:text="DDR">1</spirit:enumeration>
+      <spirit:enumeration spirit:text="BRAM">0</spirit:enumeration>
+    </spirit:choice>
+    <spirit:choice>
       <spirit:name>choice_pairs_37189c7b</spirit:name>
       <spirit:enumeration spirit:text="No">0</spirit:enumeration>
       <spirit:enumeration spirit:text="Yes">1</spirit:enumeration>
@@ -3337,11 +3376,6 @@
       <spirit:name>choice_pairs_6e9436bb</spirit:name>
       <spirit:enumeration spirit:text="Yes">1</spirit:enumeration>
       <spirit:enumeration spirit:text="No">0</spirit:enumeration>
-    </spirit:choice>
-    <spirit:choice>
-      <spirit:name>choice_pairs_b7b039ff</spirit:name>
-      <spirit:enumeration spirit:text="BRAM">0</spirit:enumeration>
-      <spirit:enumeration spirit:text="DDR">1</spirit:enumeration>
     </spirit:choice>
     <spirit:choice>
       <spirit:name>choice_pairs_d133f933</spirit:name>
@@ -3419,7 +3453,7 @@
       <spirit:file>
         <spirit:name>src/unit.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_b3042eec</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_eba1b092</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -3496,7 +3530,7 @@
       <spirit:file>
         <spirit:name>xgui/alfa_unit_v1_1.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_2bd06132</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_afeffafd</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -3514,6 +3548,13 @@
       <spirit:name>INTERFACE_TYPE</spirit:name>
       <spirit:displayName>Interface Type</spirit:displayName>
       <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.INTERFACE_TYPE" spirit:choiceRef="choice_pairs_d133f933" spirit:bitStringLength="1">&quot;0&quot;</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.INTERFACE_TYPE">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>SIU_SUPPORT</spirit:name>
@@ -3529,8 +3570,15 @@
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>EXMU_SUPPORT</spirit:name>
-      <spirit:displayName>ExMU Support</spirit:displayName>
-      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.EXMU_SUPPORT" spirit:choiceRef="choice_pairs_6e9436bb" spirit:bitStringLength="1">&quot;0&quot;</spirit:value>
+      <spirit:displayName>Hardware Extension</spirit:displayName>
+      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.EXMU_SUPPORT" spirit:choiceRef="choice_pairs_6e9436bb" spirit:bitStringLength="1">&quot;1&quot;</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:resolve="generated" xilinx:id="PARAM_ENABLEMENT.EXMU_SUPPORT">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>OFFSET</spirit:name>
@@ -3547,7 +3595,14 @@
     <spirit:parameter>
       <spirit:name>BRAM_DDR</spirit:name>
       <spirit:displayName>Memory Type</spirit:displayName>
-      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.BRAM_DDR" spirit:choiceRef="choice_pairs_b7b039ff" spirit:bitStringLength="1">&quot;0&quot;</spirit:value>
+      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.BRAM_DDR" spirit:choiceRef="choice_pairs_317cc46d" spirit:bitStringLength="1">&quot;0&quot;</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.BRAM_DDR">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>REPRESENTATION_TYPE</spirit:name>
@@ -3628,6 +3683,11 @@
       <spirit:name>Component_Name</spirit:name>
       <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">ALFAUnit_v1_0</spirit:value>
     </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>EXTENSION_MEMORY</spirit:name>
+      <spirit:displayName>Extension Memory</spirit:displayName>
+      <spirit:value spirit:format="bool" spirit:resolve="user" spirit:id="PARAM_VALUE.EXTENSION_MEMORY">false</spirit:value>
+    </spirit:parameter>
   </spirit:parameters>
   <spirit:vendorExtensions>
     <xilinx:coreExtensions>
@@ -3648,23 +3708,23 @@
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:vendorDisplayName>ALFA</xilinx:vendorDisplayName>
       <xilinx:vendorURL>http://www.alfa-project.org</xilinx:vendorURL>
-      <xilinx:coreRevision>16</xilinx:coreRevision>
+      <xilinx:coreRevision>19</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:ALFAUnit:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>ALFA:ALFA:ALFAUnit:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>ALFA:ALFA:ALFAUnit:1.1</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2024-06-17T13:23:52Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2024-06-17T14:42:02Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2022.2</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="63e19a0f"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="b7dad881"/>
       <xilinx:checksum xilinx:scope="addressSpaces" xilinx:value="a1bbca3c"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="b0334704"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="81991bd4"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="6169e93f"/>
-      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="e8ddd3ca"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="8dc76817"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="53f7b782"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="3faf644b"/>
+      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="f6c15f3d"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="d3a3f437"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
 </spirit:component>
