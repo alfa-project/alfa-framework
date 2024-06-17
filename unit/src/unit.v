@@ -30,7 +30,7 @@ module ALFAUnit #(
     */
     parameter [ 0:0] INTERFACE_TYPE         = 1'h0,
     parameter [ 0:0] SIU_SUPPORT            = 1'h0,
-    parameter [ 0:0] EXMU_SUPPORT           = 1'h0,
+    parameter [ 0:0] EXMU_SUPPORT           = 1,
     parameter [31:0] OFFSET                 = 32'h0,
     parameter [ 0:0] BRAM_DDR               = 1'h0,
     parameter [ 7:0] REPRESENTATION_TYPE    = 1'h0,
@@ -157,7 +157,10 @@ module ALFAUnit #(
     output wire [31:0] S_AXI_RDATA,
     output wire [ 1:0] S_AXI_RRESP,
     output wire [ 0:0] S_AXI_RVALID,
-    input  wire [ 0:0] S_AXI_RREADY
+    input  wire [ 0:0] S_AXI_RREADY,
+    
+    // EXT memory
+    output wire [31:0] o_alib_extmem_base_addr
 );
 
   //SIU interface
@@ -221,6 +224,8 @@ module ALFAUnit #(
   wire [  31:0] MonU_status;
   wire [  31:0] MonU_SIU_status;
   wire [  31:0] MonU_PointCloudSize;
+  
+  assign o_alib_extmem_base_addr = MonU_ExMU_parameter;
 
   MemMU #(
       .OFFSET               (OFFSET),
