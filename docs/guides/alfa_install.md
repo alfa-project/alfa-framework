@@ -457,6 +457,17 @@ KERNEL_MODULE_AUTOLOAD += "alfa-dd-mem"
 KERNEL_MODULE_AUTOLOAD += "alfa-dd-ext"
 KERNEL_MODULE_AUTOLOAD += "alfa-dd-ext-mem"
 ```
+
+Run the following command inside the project folder and select the *Petalinux RootFS Settings* menu to add a new user (alfa).
+
+```sh
+petalinux-config -c rootfs
+```
+Add extra user alfa (no default password)
+```sh
+(root:root;alfa::passwd-expire;) Add Extra Users 
+```
+
 <!----
 Since ALFA extensions require root access to physical memory (it will be fixed soon), the final image must be configurated to enable it. Run the following command inside the project folder and select the *Petalinux RootFS Settings* menu to add a new user (alfa), and add this user to the sudo user.
 
@@ -578,7 +589,9 @@ alfazcu104 login: alfa
 Password: 
 ```
 
+<!----
 <b>NOTE:</b> From petalinux 2022.1 onwards, the root login is disabled by default. However, at this point of development, to communicate with the hardware the <b>alfadd</b> requires root access to the dev/mem device driver. The current work around is to enable super user acess with "sudo -i" after login.
+---->
 
 Set an IP address in the same network as the host system (that will play the ros2 bags and the monitor tool) and set the default gateway.
 ```sh
