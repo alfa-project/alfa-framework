@@ -22,3 +22,6 @@ ALFA was tested with the following datasets:
 For quick testing the ALFA framework with the Sequence 0 from the SemanticKITTI dataset you can use a small ros2bag available inside the [ALFA-Monitor](https://github.com/alfa-project/alfa-monitor) repository, or you can download the full bag from here:
 https://drive.google.com/file/d/1OZQD10dJnyoZhAmgj--DWqrwAuQeNiHU/view?usp=sharing
 
+## Usage and development
+
+More information about how to run and develop your own ALFA extensions can be found in the [ALFA Extensions User Guide](../docs/guides/extensions_user_guide.md).
