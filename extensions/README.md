@@ -1,6 +1,6 @@
 # ALFA Extensions
 
- This repository provides ready-to-use ALFA extensions. They can be used as a starting point for developing or for testing the different ALFA setups.
+ This directory provides ready-to-use ALFA extensions. They can be used as a starting point for developing or for testing the different ALFA setups.
 
 ## Available extensions
 
