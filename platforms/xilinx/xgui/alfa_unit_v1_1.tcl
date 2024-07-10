@@ -18,7 +18,10 @@ proc init_gui { IPINST } {
   ipgui::add_param $IPINST -name "EXMU_SUPPORT" -parent ${Extension} -widget comboBox
   ipgui::add_param $IPINST -name "NUMBER_OF_DEBUG_POINTS" -parent ${Extension}
   ipgui::add_param $IPINST -name "NUMBER_OF_USER_DEFINES" -parent ${Extension}
-  ipgui::add_param $IPINST -name "EXTENSION_MEMORY" -parent ${Extension}
+  #Adding Group
+  set Extension_Memory [ipgui::add_group $IPINST -name "Extension Memory" -parent ${Extension} -layout horizontal]
+  ipgui::add_param $IPINST -name "EXTENSION_MEMORY" -parent ${Extension_Memory}
+
 
 
 
