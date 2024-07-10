@@ -566,3 +566,231 @@ module AXI #(
 	end                                   
 	                                                                                                                                                                                                                                                                                                                                                  
 endmodule
+
+module AXI_single_word_burst #(
+    parameter  C_M_TARGET_SLAVE_BASE_ADDR = 32'h00000000,
+    // Thread ID Width
+    parameter integer C_M_AXI_ID_WIDTH = 6,
+    // Width of Address Bus
+    parameter integer C_M_AXI_ADDR_WIDTH = 32,
+    // Width of Data Bus
+    parameter integer C_M_AXI_DATA_WIDTH = 64
+)(
+    input wire [31:0] i_writeAddress,
+    input wire [63:0] i_writePayload,
+    input wire [31:0] i_readAddress,
+    output wire [63:0] o_readPayload,
+
+    // Initiate AXI transactions
+    input wire  i_initWriteTxn,
+    input wire  i_initReadTxn,
+    // Asserts when transaction is complete
+    output wire  o_writeTxnDone,
+    output wire  o_readTxnDone,
+    // Asserts when ERROR is detected
+    output o_error,
+    // Global Clock Signal.
+    input wire  M_AXI_ACLK,
+    // Global Reset Singal. This Signal is Active Low
+    input wire  M_AXI_ARESETN,
+    // Master Interface Write Address ID
+    output wire [C_M_AXI_ID_WIDTH-1 : 0] M_AXI_AWID,
+    // Master Interface Write Address
+    output wire [C_M_AXI_ADDR_WIDTH-1 : 0] M_AXI_AWADDR,
+    // Burst length. The burst length gives the exact number of transfers in a burst
+    output wire [7 : 0] M_AXI_AWLEN,
+    // Burst size. This signal indicates the size of each transfer in the burst
+    output wire [2 : 0] M_AXI_AWSIZE,
+    // Burst type. The burst type and the size information, 
+	// determine how the address for each transfer within the burst is calculated.
+    output wire [1 : 0] M_AXI_AWBURST,
+    // Lock type. Provides additional information about the
+	// atomic characteristics of the transfer.
+    output wire  M_AXI_AWLOCK,
+    // Memory type. This signal indicates how transactions
+	// are required to progress through a system.
+    output wire [3 : 0] M_AXI_AWCACHE,
+    // Protection type. This signal indicates the privilege
+	// and security level of the transaction, and whether
+	// the transaction is a data access or an instruction access.
+    output wire [2 : 0] M_AXI_AWPROT,
+    // Quality of Service, QoS identifier sent for each write transaction.
+    output wire [3 : 0] M_AXI_AWQOS,
+    // Write address valid. This signal indicates that
+	// the channel is signaling valid write address and control information.
+    output wire  M_AXI_AWVALID,
+    // Write address ready. This signal indicates that
+	// the slave is ready to accept an address and associated control signals
+    input wire  M_AXI_AWREADY,
+    // Master Interface Write Data.
+    output wire [C_M_AXI_DATA_WIDTH-1 : 0] M_AXI_WDATA,
+    // Write strobes. This signal indicates which byte
+	// lanes hold valid data. There is one write strobe
+	// bit for each eight bits of the write data bus.
+    output wire [C_M_AXI_DATA_WIDTH/8-1 : 0] M_AXI_WSTRB,
+    // Write last. This signal indicates the last transfer in a write burst.
+    output wire  M_AXI_WLAST,
+    // Write valid. This signal indicates that valid write
+	// data and strobes are available
+    output wire  M_AXI_WVALID,
+    // Write ready. This signal indicates that the slave
+	// can accept the write data.
+    input wire  M_AXI_WREADY,
+    // Master Interface Write Response.
+    input wire [C_M_AXI_ID_WIDTH-1 : 0] M_AXI_BID,
+    // Write response. This signal indicates the status of the write transaction.
+    input wire [1 : 0] M_AXI_BRESP,
+    // Write response valid. This signal indicates that the
+	// channel is signaling a valid write response.
+    input wire  M_AXI_BVALID,
+    // Response ready. This signal indicates that the master
+	// can accept a write response.
+    output wire  M_AXI_BREADY,
+    // Master Interface Read Address.
+    output wire [C_M_AXI_ID_WIDTH-1 : 0] M_AXI_ARID,
+    // Read address. This signal indicates the initial
+	// address of a read burst transaction.
+    output wire [C_M_AXI_ADDR_WIDTH-1 : 0] M_AXI_ARADDR,
+    // Burst length. The burst length gives the exact number of transfers in a burst
+    output wire [7 : 0] M_AXI_ARLEN,
+    // Burst size. This signal indicates the size of each transfer in the burst
+    output wire [2 : 0] M_AXI_ARSIZE,
+    // Burst type. The burst type and the size information, 
+	// determine how the address for each transfer within the burst is calculated.
+    output wire [1 : 0] M_AXI_ARBURST,
+    // Lock type. Provides additional information about the
+	// atomic characteristics of the transfer.
+    output wire  M_AXI_ARLOCK,
+    // Memory type. This signal indicates how transactions
+	// are required to progress through a system.
+    output wire [3 : 0] M_AXI_ARCACHE,
+    // Protection type. This signal indicates the privilege
+	// and security level of the transaction, and whether
+	// the transaction is a data access or an instruction access.
+    output wire [2 : 0] M_AXI_ARPROT,
+    // Quality of Service, QoS identifier sent for each read transaction
+    output wire [3 : 0] M_AXI_ARQOS,
+    // Write address valid. This signal indicates that
+	// the channel is signaling valid read address and control information
+    output wire  M_AXI_ARVALID,
+    // Read address ready. This signal indicates that
+	// the slave is ready to accept an address and associated control signals
+    input wire  M_AXI_ARREADY,
+    // Read ID tag. This signal is the identification tag
+	// for the read data group of signals generated by the slave.
+    input wire [C_M_AXI_ID_WIDTH-1 : 0] M_AXI_RID,
+    // Master Read Data
+    input wire [C_M_AXI_DATA_WIDTH-1 : 0] M_AXI_RDATA,
+    // Read response. This signal indicates the status of the read transfer
+    input wire [1 : 0] M_AXI_RRESP,
+    // Read last. This signal indicates the last transfer in a read burst
+    input wire  M_AXI_RLAST,
+    // Read valid. This signal indicates that the channel
+	// is signaling the required read data.
+    input wire  M_AXI_RVALID,
+    // Read ready. This signal indicates that the master can
+	// accept the read data and response information.
+    output wire  M_AXI_RREADY
+);
+
+    reg axi_awvalid;
+    reg axi_wvalid;
+    reg axi_bready;
+    reg axi_arvalid;
+    reg axi_rready;
+    reg [C_M_AXI_ADDR_WIDTH-1 : 0] axi_awaddr;
+    reg [C_M_AXI_DATA_WIDTH-1 : 0] axi_wdata;
+    reg [C_M_AXI_ADDR_WIDTH-1 : 0] axi_araddr;
+    reg [C_M_AXI_DATA_WIDTH-1 : 0] read_data;
+    reg write_done;
+    reg read_done;
+    reg error_reg;
+
+    assign M_AXI_AWID = 'b0;
+    assign M_AXI_AWADDR = axi_awaddr;
+    assign M_AXI_AWLEN = 8'b00000000; // Single word
+    assign M_AXI_AWSIZE = 3'b011; // log2(8 bytes) = 3
+    assign M_AXI_AWBURST = 2'b01; // INCR burst type
+    assign M_AXI_AWLOCK = 1'b0;
+    assign M_AXI_AWCACHE = 4'b0000;
+    assign M_AXI_AWPROT = 3'b000;
+    assign M_AXI_AWQOS = 4'b0000;
+    assign M_AXI_AWVALID = axi_awvalid;
+
+    assign M_AXI_WDATA = axi_wdata;
+    assign M_AXI_WSTRB = {(C_M_AXI_DATA_WIDTH/8){1'b1}};
+    assign M_AXI_WLAST = 1'b1; // Single word burst
+    assign M_AXI_WVALID = axi_wvalid;
+
+    assign M_AXI_BREADY = axi_bready;
+
+    assign M_AXI_ARID = 'b0;
+    assign M_AXI_ARADDR = axi_araddr;
+    assign M_AXI_ARLEN = 8'b00000000; // Single word
+    assign M_AXI_ARSIZE = 3'b011; // log2(8 bytes) = 3
+    assign M_AXI_ARBURST = 2'b01; // INCR burst type
+    assign M_AXI_ARLOCK = 1'b0;
+    assign M_AXI_ARCACHE = 4'b0000;
+    assign M_AXI_ARPROT = 3'b000;
+    assign M_AXI_ARQOS = 4'b0000;
+    assign M_AXI_ARVALID = axi_arvalid;
+
+    assign M_AXI_RREADY = axi_rready;
+
+    assign o_writeTxnDone = write_done;
+    assign o_readTxnDone = read_done;
+    assign o_readPayload = read_data;
+    assign o_error = error_reg;
+
+    always @(posedge M_AXI_ACLK) begin
+        if (M_AXI_ARESETN == 0) begin
+            axi_awvalid <= 1'b0;
+            axi_wvalid <= 1'b0;
+            axi_bready <= 1'b0;
+            axi_arvalid <= 1'b0;
+            axi_rready <= 1'b0;
+            write_done <= 1'b0;
+            read_done <= 1'b0;
+            error_reg <= 1'b0;
+        end else begin
+            // Write transaction
+            if (i_initWriteTxn && !write_done) begin
+                axi_awaddr <= i_writeAddress;
+                axi_awvalid <= 1'b1;
+                axi_wdata <= i_writePayload;
+                axi_wvalid <= 1'b1;
+                if (M_AXI_AWREADY && axi_awvalid) axi_awvalid <= 1'b0;
+                if (M_AXI_WREADY && axi_wvalid) axi_wvalid <= 1'b0;
+                if (M_AXI_BVALID && !axi_bready) axi_bready <= 1'b1;
+                if (axi_bready) begin
+                    axi_bready <= 1'b0;
+                    write_done <= 1'b1;
+                end
+            end else begin
+                write_done <= 1'b0;
+            end
+
+            // Read transaction
+            if (i_initReadTxn && !read_done) begin
+                axi_araddr <= i_readAddress;
+                axi_arvalid <= 1'b1;
+                if (M_AXI_ARREADY && axi_arvalid) axi_arvalid <= 1'b0;
+                if (M_AXI_RVALID && !axi_rready) begin
+                    axi_rready <= 1'b1;
+                    read_data <= M_AXI_RDATA;
+                end
+                if (axi_rready && M_AXI_RVALID) begin
+                    axi_rready <= 1'b0;
+                    read_done <= 1'b1;
+                end
+            end else begin
+                read_done <= 1'b0;
+            end
+
+            // Error detection
+            if (M_AXI_BVALID && M_AXI_BRESP[1]) error_reg <= 1'b1;
+            if (M_AXI_RVALID && M_AXI_RRESP[1]) error_reg <= 1'b1;
+        end
+    end
+
+endmodule

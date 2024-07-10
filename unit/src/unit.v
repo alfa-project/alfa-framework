@@ -99,7 +99,7 @@ module ALFAUnit #(
     output wire [31:0] EXT_user_define_9,
     input  wire [31:0] EXT_status,
 
-    // Master Interface
+    // Master Interface PC
     output wire [ 5:0] M_AXI_AWID,
     output wire [31:0] M_AXI_AWADDR,
     output wire [ 7:0] M_AXI_AWLEN,
@@ -138,6 +138,45 @@ module ALFAUnit #(
     input  wire [ 0:0] M_AXI_RVALID,
     output wire [ 0:0] M_AXI_RREADY,
 
+    // Master Interface EXT_MEM
+    output wire [ 5:0] M1_AXI_AWID,
+    output wire [31:0] M1_AXI_AWADDR,
+    output wire [ 7:0] M1_AXI_AWLEN,
+    output wire [ 2:0] M1_AXI_AWSIZE,
+    output wire [ 1:0] M1_AXI_AWBURST,
+    output wire [ 0:0] M1_AXI_AWLOCK,
+    output wire [ 3:0] M1_AXI_AWCACHE,
+    output wire [ 2:0] M1_AXI_AWPROT,
+    output wire [ 3:0] M1_AXI_AWQOS,
+    output wire [ 0:0] M1_AXI_AWVALID,
+    input  wire [ 0:0] M1_AXI_AWREADY,
+    output wire [63:0] M1_AXI_WDATA,
+    output wire [ 7:0] M1_AXI_WSTRB,
+    output wire [ 0:0] M1_AXI_WLAST,
+    output wire [ 0:0] M1_AXI_WVALID,
+    input  wire [ 0:0] M1_AXI_WREADY,
+    input  wire [ 0:0] M1_AXI_BID,
+    input  wire [ 1:0] M1_AXI_BRESP,
+    input  wire [ 0:0] M1_AXI_BVALID,
+    output wire [ 0:0] M1_AXI_BREADY,
+    output wire [ 5:0] M1_AXI_ARID,
+    output wire [31:0] M1_AXI_ARADDR,
+    output wire [ 7:0] M1_AXI_ARLEN,
+    output wire [ 2:0] M1_AXI_ARSIZE,
+    output wire [ 1:0] M1_AXI_ARBURST,
+    output wire [ 0:0] M1_AXI_ARLOCK,
+    output wire [ 3:0] M1_AXI_ARCACHE,
+    output wire [ 2:0] M1_AXI_ARPROT,
+    output wire [ 3:0] M1_AXI_ARQOS,
+    output wire [ 0:0] M1_AXI_ARVALID,
+    input  wire [ 0:0] M1_AXI_ARREADY,
+    input  wire [ 0:0] M1_AXI_RID,
+    input  wire [63:0] M1_AXI_RDATA,
+    input  wire [ 1:0] M1_AXI_RRESP,
+    input  wire [ 0:0] M1_AXI_RLAST,
+    input  wire [ 0:0] M1_AXI_RVALID,
+    output wire [ 0:0] M1_AXI_RREADY,
+
     // Slave Interface  
     input  wire [31:0] S_AXI_AWADDR,
     input  wire [ 2:0] S_AXI_AWPROT,
@@ -160,7 +199,15 @@ module ALFAUnit #(
     input  wire [ 0:0] S_AXI_RREADY,
 
     // EXT memory
-    output wire [31:0] o_alib_extmem_base_addr
+    input wire [31:0] i_EXT_MEM_writeAddress,
+    input wire [63:0] i_EXT_MEM_writePayload,
+    input wire [31:0] i_EXT_MEM_readAddress,
+    output wire [63:0] o_EXT_MEM_readPayload,
+    input wire  i_EXT_MEM_initWriteTxn,
+    input wire  i_EXT_MEM_initReadTxn,
+    output wire  o_EXT_MEM_writeTxnDone,
+    output wire  o_EXT_MEM_readTxnDone,
+    output o_EXT_MEM_error
 );
 
   //SIU interface
@@ -224,8 +271,6 @@ module ALFAUnit #(
   wire [  31:0] MonU_status;
   wire [  31:0] MonU_SIU_status;
   wire [  31:0] MonU_PointCloudSize;
-
-  assign o_alib_extmem_base_addr = MonU_ExMU_parameter;
 
   MemMU #(
       .OFFSET               (OFFSET),
@@ -361,7 +406,7 @@ module ALFAUnit #(
           .C_M_AXI_ID_WIDTH(6),
           .C_M_AXI_ADDR_WIDTH(32),
           .C_M_AXI_DATA_WIDTH(64)
-      ) AXI_inst (
+      ) AXI_PC_inst (
           .M_AXI_ACLK    (i_SYSTEM_clk),
           .M_AXI_ARESETN (i_SYSTEM_rst),
           .M_AXI_AWID    (M_AXI_AWID),
@@ -410,6 +455,62 @@ module ALFAUnit #(
           .o_readTxnDone (INT_readTxnDone),
           .o_readPayload (INT_readPayload),
           .o_error       (INT_error)
+      );
+
+       AXI_single_word_burst #(
+          .C_M_TARGET_SLAVE_BASE_ADDR(0),
+          .C_M_AXI_ID_WIDTH(6),
+          .C_M_AXI_ADDR_WIDTH(32),
+          .C_M_AXI_DATA_WIDTH(64)
+      ) AXI_EXT_MEM_inst (
+          .M_AXI_ACLK    (i_SYSTEM_clk),
+          .M_AXI_ARESETN (i_SYSTEM_rst),
+          .M_AXI_AWID    (M1_AXI_AWID),
+          .M_AXI_AWADDR  (M1_AXI_AWADDR),
+          .M_AXI_AWLEN   (M1_AXI_AWLEN),
+          .M_AXI_AWSIZE  (M1_AXI_AWSIZE),
+          .M_AXI_AWBURST (M1_AXI_AWBURST),
+          .M_AXI_AWLOCK  (M1_AXI_AWLOCK),
+          .M_AXI_AWCACHE (M1_AXI_AWCACHE),
+          .M_AXI_AWPROT  (M1_AXI_AWPROT),
+          .M_AXI_AWQOS   (M1_AXI_AWQOS),
+          .M_AXI_AWVALID (M1_AXI_AWVALID),
+          .M_AXI_AWREADY (M1_AXI_AWREADY),
+          .M_AXI_WDATA   (M1_AXI_WDATA),
+          .M_AXI_WSTRB   (M1_AXI_WSTRB),
+          .M_AXI_WLAST   (M1_AXI_WLAST),
+          .M_AXI_WVALID  (M1_AXI_WVALID),
+          .M_AXI_WREADY  (M1_AXI_WREADY),
+          .M_AXI_BID     (M1_AXI_BID),
+          .M_AXI_BRESP   (M1_AXI_BRESP),
+          .M_AXI_BVALID  (M1_AXI_BVALID),
+          .M_AXI_BREADY  (M1_AXI_BREADY),
+          .M_AXI_ARID    (M1_AXI_ARID),
+          .M_AXI_ARADDR  (M1_AXI_ARADDR),
+          .M_AXI_ARLEN   (M1_AXI_ARLEN),
+          .M_AXI_ARSIZE  (M1_AXI_ARSIZE),
+          .M_AXI_ARBURST (M1_AXI_ARBURST),
+          .M_AXI_ARLOCK  (M1_AXI_ARLOCK),
+          .M_AXI_ARCACHE (M1_AXI_ARCACHE),
+          .M_AXI_ARPROT  (M1_AXI_ARPROT),
+          .M_AXI_ARQOS   (M1_AXI_ARQOS),
+          .M_AXI_ARVALID (M1_AXI_ARVALID),
+          .M_AXI_ARREADY (M1_AXI_ARREADY),
+          .M_AXI_RID     (M1_AXI_RID),
+          .M_AXI_RDATA   (M1_AXI_RDATA),
+          .M_AXI_RRESP   (M1_AXI_RRESP),
+          .M_AXI_RLAST   (M1_AXI_RLAST),
+          .M_AXI_RVALID  (M1_AXI_RVALID),
+          .M_AXI_RREADY  (M1_AXI_RREADY),
+          .i_writeAddress(i_EXT_MEM_writeAddress + MonU_ExMU_parameter),
+          .i_writePayload(i_EXT_MEM_writePayload),
+          .i_readAddress (i_EXT_MEM_readAddress + MonU_ExMU_parameter),
+          .i_initWriteTxn(i_EXT_MEM_initWriteTxn),
+          .i_initReadTxn (i_EXT_MEM_initReadTxn),
+          .o_writeTxnDone(o_EXT_MEM_writeTxnDone),
+          .o_readTxnDone (o_EXT_MEM_readTxnDone),
+          .o_readPayload (o_EXT_MEM_readPayload),
+          .o_error       (o_EXT_MEM_error)
       );
 
       MonU #(
