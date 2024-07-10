@@ -3,12 +3,10 @@
 echo -e "\n############ ALFA Vivado Project Setup ############ \n"
 
 if [ -d "src" ]; then
-		rm -r src/*
+		echo -e "-> src folder already setup"
 	else
-		mkdir src
+		ln -s ../../unit/src/ src
 fi
-
-cp -r ../../alfa-unit/src/* src/
 
 if [ -z "$1" ]; then
 	    echo -e "-> Project Name: Undefined"
