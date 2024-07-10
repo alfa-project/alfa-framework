@@ -31,6 +31,9 @@
 #define ALFA_EXT_IOC_WAIT_FOR_VALUE \
   _IOW(ALFA_EXT_IOC_MAGIC, 3, struct alfa_ext_ioctl_data)
 
+#define ALFA_EXT_MEM_SIZE 0xA00000  // 10MB buffer size
+#define ALFA_EXT_MEM_GET_PHYS_ADDR _IOR('a', 1, unsigned long)
+
 #define ALIVE_TIMER_SLEEP 1000  // Time between alive messages
 #define MAX_NUMBER_EXTENSIONS 4
 #define MAX_NUMBER_POINTCLOUD 4

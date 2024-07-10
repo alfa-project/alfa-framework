@@ -111,6 +111,9 @@ class AlfaNode : public rclcpp::Node {
   void load_pointcloud(int type,
                        pcl::PointCloud<AlfaPoint>::Ptr pointcloud = nullptr);
 
+  // Extension memory
+  void read_ext_memory(uint32_t offset, size_t size, void *buffer);
+
   // Multithreading
   void set_multi_thread(int n_threads, void (*func)(AlfaNode *), AlfaNode *);
 
@@ -135,10 +138,16 @@ class AlfaNode : public rclcpp::Node {
       pointcloud_publisher;
 
   // Files
-  int ext_fd, mem_fd;
+  int ext_fd, mem_fd, ext_mem_fd;
 
   // Memory mapping
   off_t pointcloud_ptr_address;
+
+  // Pointcloud Memory
+  AlfaPointcloud pointcloud;
+
+  // Extension external memory
+  std::uint64_t *ext_mem;
 
   // Threads
   std::thread *ticker_thread, *pointcloud_publisher_thread, *alfa_main_thread;
@@ -153,7 +162,6 @@ class AlfaNode : public rclcpp::Node {
   AlfaMetric handler_metric, full_processing_metric, publishing_metric,
       number_of_processed_points;
   alfa_msg::msg::MetricMessage debug_points_message[20];
-  AlfaPointcloud pointcloud;
   std::deque<sensor_msgs::msg::PointCloud2> pcl2_frame;
   std::deque<sensor_msgs::msg::PointCloud2> ros_pointcloud;
 
