@@ -169,6 +169,7 @@ AlfaNode::~AlfaNode() {
       configuration.hardware_support.hardware_driver) {
     close(ext_fd);
     close(mem_fd);
+    close(ext_mem_fd);
   }
 }
 
@@ -204,7 +205,8 @@ bool AlfaNode::hardware_setup() {
   bool return_value = 0;
 
   if (((ext_fd = open("/dev/alfa_ext", O_RDWR | O_SYNC)) != -1) &&
-      ((mem_fd = open("/dev/alfa_mem", O_RDWR | O_SYNC)) != -1)) {
+      ((mem_fd = open("/dev/alfa_mem", O_RDWR | O_SYNC)) != -1) &&
+      ((ext_mem_fd = open("/dev/alfa_ext_mem", O_RDWR | O_SYNC)) != -1)) {
     pointcloud_ptr_address = configuration.pointcloud_id;
 
     this->pointcloud.ptr = (std::uint64_t *)mmap(
@@ -229,6 +231,25 @@ bool AlfaNode::hardware_setup() {
         return_value = 1;
       }
       unit_write_register(UNIT_PARAMETERS_MEMMU, buffer_id);
+
+      // Get the physical address of the external memory buffer
+      if (ioctl(ext_mem_fd, ALFA_EXT_MEM_GET_PHYS_ADDR, &buffer_id) == -1) {
+        perror("Failed to get physical address");
+        close(ext_mem_fd);
+        return_value = 1;
+      }
+
+      // Map external memory buffer
+      ext_mem = (std::uint64_t *)mmap(
+          0x0, ALFA_EXT_MEM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, ext_mem_fd, 0);
+
+      if (ext_mem == MAP_FAILED) {
+        return_value = 1;
+        cout << "Failed to map external memory" << endl;
+      } else {
+        // Set the external memory pointer
+        unit_write_register(UNIT_PARAMETERS_EXMU, buffer_id);
+        }
     }
   } else
     return_value = 1;
@@ -467,6 +488,24 @@ std::vector<AlfaPoint> AlfaNode::get_output_pointcloud_as_vector() {
     r_output_pointcloud.push_back(point);
 
   return r_output_pointcloud;
+}
+
+void AlfaNode::read_ext_memory(uint32_t offset, size_t size, void *buffer) {
+  if (configuration.hardware_support.hardware_extension) {
+    if (size > ALFA_EXT_MEM_SIZE) {
+      verbose_fail("read_ext_memory", "Size is bigger than the external memory");
+      return;
+    }
+
+    if (offset + size > ALFA_EXT_MEM_SIZE) {
+      verbose_fail("read_ext_memory", "Offset is bigger than the external memory");
+      return;
+    }
+
+    std::memcpy(buffer, ext_mem + offset, size);
+  } else {
+    verbose_not_defined("read_ext_memory");
+  }
 }
 
 float AlfaNode::get_debug_point(std::uint16_t number) {
