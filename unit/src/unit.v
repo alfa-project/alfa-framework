@@ -199,15 +199,15 @@ module ALFAUnit #(
     input  wire [ 0:0] S_AXI_RREADY,
 
     // EXT memory
-    input wire [31:0] i_EXT_MEM_writeAddress,
-    input wire [63:0] i_EXT_MEM_writePayload,
-    input wire [31:0] i_EXT_MEM_readAddress,
-    output wire [63:0] o_EXT_MEM_readPayload,
-    input wire  i_EXT_MEM_initWriteTxn,
-    input wire  i_EXT_MEM_initReadTxn,
-    output wire  o_EXT_MEM_writeTxnDone,
-    output wire  o_EXT_MEM_readTxnDone,
-    output o_EXT_MEM_error
+    input wire [31:0] EXT_MEM_writeAddress,
+    input wire [63:0] EXT_MEM_writePayload,
+    input wire [31:0] EXT_MEM_readAddress,
+    output wire [63:0] EXT_MEM_readPayload,
+    input wire  EXT_MEM_initWriteTxn,
+    input wire  EXT_MEM_initReadTxn,
+    output wire  EXT_MEM_writeTxnDone,
+    output wire  EXT_MEM_readTxnDone,
+    output wire EXT_MEM_error
 );
 
   //SIU interface
@@ -502,15 +502,15 @@ module ALFAUnit #(
           .M_AXI_RLAST   (M1_AXI_RLAST),
           .M_AXI_RVALID  (M1_AXI_RVALID),
           .M_AXI_RREADY  (M1_AXI_RREADY),
-          .i_writeAddress(i_EXT_MEM_writeAddress + MonU_ExMU_parameter),
-          .i_writePayload(i_EXT_MEM_writePayload),
-          .i_readAddress (i_EXT_MEM_readAddress + MonU_ExMU_parameter),
-          .i_initWriteTxn(i_EXT_MEM_initWriteTxn),
-          .i_initReadTxn (i_EXT_MEM_initReadTxn),
-          .o_writeTxnDone(o_EXT_MEM_writeTxnDone),
-          .o_readTxnDone (o_EXT_MEM_readTxnDone),
-          .o_readPayload (o_EXT_MEM_readPayload),
-          .o_error       (o_EXT_MEM_error)
+          .i_writeAddress(EXT_MEM_writeAddress + MonU_ExMU_parameter),
+          .i_writePayload(EXT_MEM_writePayload),
+          .i_readAddress (EXT_MEM_readAddress + MonU_ExMU_parameter),
+          .i_initWriteTxn(EXT_MEM_initWriteTxn),
+          .i_initReadTxn (EXT_MEM_initReadTxn),
+          .o_writeTxnDone(EXT_MEM_writeTxnDone),
+          .o_readTxnDone (EXT_MEM_readTxnDone),
+          .o_readPayload (EXT_MEM_readPayload),
+          .o_error       (EXT_MEM_error)
       );
 
       MonU #(
