@@ -1,19 +1,3 @@
-/*
- * Copyright 2023 ALFA Project. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 #include <linux/dma-mapping.h>
 #include <linux/fs.h>
 #include <linux/io.h>
@@ -31,6 +15,7 @@
 
 #define ALFA_MEM_IOC_MAGIC 'k'
 #define ALFA_MEM_IOC_GET_PHYS_ADDR _IOWR(ALFA_MEM_IOC_MAGIC, 1, unsigned int)
+#define ALFA_MEM_IOC_FLUSH_CACHE _IO(ALFA_MEM_IOC_MAGIC, 2)
 
 static struct class *alfa_mem_class;
 static struct device *alfa_mem_device;
@@ -85,6 +70,31 @@ static long alfa_mem_ioctl(struct file *file, unsigned int cmd,
       if (copy_to_user((unsigned int *)arg, &phys_addr, sizeof(uint32_t))) {
         pr_err("alfa_mem: Failed to copy phys_addr to user space\n");
         return -EFAULT;
+      }
+      break;
+
+    case ALFA_MEM_IOC_FLUSH_CACHE:
+      pr_info("alfa_mem: ALFA_MEM_IOC_FLUSH_CACHE command received\n");
+      if (copy_from_user(&buffer_id, (unsigned int *)arg,
+                         sizeof(unsigned int))) {
+        pr_err("alfa_mem: Failed to copy buffer_id from user space\n");
+        return -EFAULT;
+      }
+
+      pr_info("alfa_mem: Received buffer_id: %u\n", buffer_id);
+
+      if (buffer_id >= NUM_BUFFERS) {
+        pr_err("alfa_mem: Invalid buffer_id: %u\n", buffer_id);
+        return -EINVAL;
+      }
+
+      if (buffer_virt[buffer_id]) {
+        pr_info("alfa_mem: Flushing cache for buffer %u\n", buffer_id);
+        mb();
+        dma_sync_single_for_cpu(alfa_mem_device, buffer_phys[buffer_id],
+                                BUFFER_SIZE, DMA_TO_DEVICE);
+        dma_sync_single_for_device(alfa_mem_device, buffer_phys[buffer_id],
+                                   BUFFER_SIZE, DMA_FROM_DEVICE);
       }
       break;
 

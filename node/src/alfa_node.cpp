@@ -325,6 +325,7 @@ void AlfaNode::alfa_main_thread_handler() {
 #endif
       full_processing_metric.stop = high_resolution_clock::now();
     } else {
+      __sync_synchronize();
       unit_write_register(UNIT_SIGNALS_SOFTWARE_FRAME_DONE, 0);
       unit_write_register(UNIT_SIGNALS_SOFTWARE_POINTCLOUD_READY, 1);
 #ifdef ALFA_VERBOSE
@@ -1014,7 +1015,13 @@ void AlfaNode::store_pointcloud_cartesian(
     unit_write_register(UNIT_SIGNALS_SOFTWARE_POINTCLOUD_SIZE, num_points);
 
     // Synchronize memory with hardware
-    msync(mem, sizeof(std::int16_t) * 4 * num_points, MS_SYNC);
+    __sync_synchronize();
+
+    unsigned int buffer_id = configuration.pointcloud_id;
+    if (ioctl(mem_fd, ALFA_MEM_IOC_FLUSH_CACHE, &buffer_id) == -1) {
+      perror("Failed to sync memory with hardware");
+      exit(EXIT_FAILURE);
+    }
 
 #ifdef ALFA_VERBOSE
     verbose_info("store_pointcloud_cartesian",
