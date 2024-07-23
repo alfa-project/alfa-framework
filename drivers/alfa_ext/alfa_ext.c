@@ -69,8 +69,8 @@ static long alfa_ext_ioctl(struct file *file, unsigned int cmd,
                            unsigned long arg) {
   struct alfa_ext_ioctl_data data;
   void __iomem *addr;
-  unsigned int max_retries = 500;  // Maximum of 500 entries
-  unsigned int delay_us = 100;     // Delay of 0.1 ms (100 microseconds)
+  unsigned int max_retries = 750;  // Maximum of 750 entries
+  unsigned int delay_us = 100;     // Delay of 0.1 ms (100 microseconds) 
   unsigned int value;
 
   // Ensure all previous writes are visible before starting ioctl operations
