@@ -111,10 +111,10 @@ int main(int argc, char **argv) {
   conf.metrics_publishing_type = ALL_METRICS;
   conf.custom_field_conversion_type = CUSTOM_FIELD_FILTER;
 
-  parameters[0].parameter_value = 5;
-  parameters[0].parameter_name = "min_distance";
-  parameters[1].parameter_value = 20;
-  parameters[1].parameter_name = "max_distance";
+  parameters[1].parameter_value = 5;
+  parameters[1].parameter_name = "min_distance";
+  parameters[0].parameter_value = 20;
+  parameters[0].parameter_name = "max_distance";
 
   // Create an instance of AlfaNode and spin it
   rclcpp::spin(
