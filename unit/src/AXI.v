@@ -585,8 +585,8 @@ module AXI_single_word_burst #(
     input wire  i_initWriteTxn,
     input wire  i_initReadTxn,
     // Asserts when transaction is complete
-    output wire  o_writeTxnDone,
-    output wire  o_readTxnDone,
+    output reg  o_writeTxnDone,
+    output reg  o_readTxnDone,
     // Asserts when ERROR is detected
     output o_error,
     // Global Clock Signal.
@@ -702,8 +702,7 @@ module AXI_single_word_burst #(
     reg [C_M_AXI_DATA_WIDTH-1 : 0] axi_wdata;
     reg [C_M_AXI_ADDR_WIDTH-1 : 0] axi_araddr;
     reg [C_M_AXI_DATA_WIDTH-1 : 0] read_data;
-    reg write_done;
-    reg read_done;
+    reg last_initWriteTxn;
     reg error_reg;
 
     assign M_AXI_AWID = 'b0;
@@ -737,60 +736,64 @@ module AXI_single_word_burst #(
 
     assign M_AXI_RREADY = axi_rready;
 
-    assign o_writeTxnDone = write_done;
-    assign o_readTxnDone = read_done;
     assign o_readPayload = read_data;
     assign o_error = error_reg;
 
     always @(posedge M_AXI_ACLK) begin
-        if (M_AXI_ARESETN == 0) begin
-            axi_awvalid <= 1'b0;
-            axi_wvalid <= 1'b0;
-            axi_bready <= 1'b0;
-            axi_arvalid <= 1'b0;
-            axi_rready <= 1'b0;
-            write_done <= 1'b0;
-            read_done <= 1'b0;
-            error_reg <= 1'b0;
-        end else begin
-            // Write transaction
-            if (i_initWriteTxn && !write_done) begin
-                axi_awaddr <= i_writeAddress;
-                axi_awvalid <= 1'b1;
-                axi_wdata <= i_writePayload;
-                axi_wvalid <= 1'b1;
-                if (M_AXI_AWREADY && axi_awvalid) axi_awvalid <= 1'b0;
-                if (M_AXI_WREADY && axi_wvalid) axi_wvalid <= 1'b0;
-                if (M_AXI_BVALID && !axi_bready) axi_bready <= 1'b1;
-                if (axi_bready) begin
-                    axi_bready <= 1'b0;
-                    write_done <= 1'b1;
-                end
-            end else begin
-                write_done <= 1'b0;
-            end
+			if (M_AXI_ARESETN == 0) begin
+				axi_awvalid <= 1'b0;
+				axi_wvalid <= 1'b0;
+				axi_bready <= 1'b0;
+				axi_arvalid <= 1'b0;
+				axi_rready <= 1'b0;
+				o_writeTxnDone <= 1'b0;
+				o_readTxnDone <= 1'b0;
+				last_initWriteTxn <= 1'b0;
+				error_reg <= 1'b0;
+			end else begin
+				// Write transaction
+				last_initWriteTxn <= i_initWriteTxn;
+				if (i_initWriteTxn && !o_writeTxnDone) begin
+					if (!axi_awvalid && !axi_wvalid && !last_initWriteTxn) begin
+							axi_awaddr <= i_writeAddress;
+							axi_wdata <= i_writePayload;
+							axi_awvalid <= 1'b1;
+							axi_wvalid <= 1'b1;
+					end
 
-            // Read transaction
-            if (i_initReadTxn && !read_done) begin
-                axi_araddr <= i_readAddress;
-                axi_arvalid <= 1'b1;
-                if (M_AXI_ARREADY && axi_arvalid) axi_arvalid <= 1'b0;
-                if (M_AXI_RVALID && !axi_rready) begin
-                    axi_rready <= 1'b1;
-                    read_data <= M_AXI_RDATA;
-                end
-                if (axi_rready && M_AXI_RVALID) begin
-                    axi_rready <= 1'b0;
-                    read_done <= 1'b1;
-                end
-            end else begin
-                read_done <= 1'b0;
-            end
+					if (M_AXI_AWREADY && axi_awvalid) axi_awvalid <= 1'b0;
+					if (M_AXI_WREADY && axi_wvalid) axi_wvalid <= 1'b0;
 
-            // Error detection
-            if (M_AXI_BVALID && M_AXI_BRESP[1]) error_reg <= 1'b1;
-            if (M_AXI_RVALID && M_AXI_RRESP[1]) error_reg <= 1'b1;
-        end
+					if (M_AXI_BVALID && !axi_bready) axi_bready <= 1'b1;
+					if (axi_bready && M_AXI_BVALID) begin
+							axi_bready <= 1'b0;
+							o_writeTxnDone <= 1'b1;
+					end
+				end else begin
+					o_writeTxnDone <= 1'b0;
+				end
+
+				// Read transaction
+				if (i_initReadTxn && !o_readTxnDone) begin
+						axi_araddr <= i_readAddress;
+						axi_arvalid <= 1'b1;
+						if (M_AXI_ARREADY && axi_arvalid) axi_arvalid <= 1'b0;
+						if (M_AXI_RVALID && !axi_rready) begin
+								axi_rready <= 1'b1;
+								read_data <= M_AXI_RDATA;
+						end
+						if (axi_rready && M_AXI_RVALID) begin
+								axi_rready <= 1'b0;
+								o_readTxnDone <= 1'b1;
+						end
+				end else begin
+						o_readTxnDone <= 1'b0;
+				end
+
+				// Error detection
+				if (M_AXI_BVALID && M_AXI_BRESP[1]) error_reg <= 1'b1;
+				if (M_AXI_RVALID && M_AXI_RRESP[1]) error_reg <= 1'b1;
+			end
     end
 
 endmodule
