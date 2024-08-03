@@ -110,16 +110,16 @@ module MemMU_pointcloud #(
       wire [31:0] rewriteAddress_high_bits;
 
       assign writeAddress_high_bits[2:0] = 3'b00;
-      assign writeAddress_high_bits[20:3] = representationAddress;
-      assign writeAddress_high_bits[31:21] = 0;
+      assign writeAddress_high_bits[21:3] = representationAddress;
+      assign writeAddress_high_bits[31:22] = 0;
 
       assign readAddress_high_bits[2:0] = 3'b00;
-      assign readAddress_high_bits[20:3] = i_ExMU_pointReadID;
-      assign readAddress_high_bits[31:21] = 0;
+      assign readAddress_high_bits[21:3] = i_ExMU_pointReadID;
+      assign readAddress_high_bits[31:22] = 0;
 
       assign rewriteAddress_high_bits[2:0] = 3'b00;
-      assign rewriteAddress_high_bits[20:3] = i_ExMU_pointReWriteID;
-      assign rewriteAddress_high_bits[31:21] = 0;
+      assign rewriteAddress_high_bits[21:3] = i_ExMU_pointReWriteID;
+      assign rewriteAddress_high_bits[31:22] = 0;
 
 
       assign o_MemMU_P_writeAddress = writeAddress_high_bits + i_MonU_MemMU_parameter;

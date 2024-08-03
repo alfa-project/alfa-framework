@@ -13,14 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 `timescale 1ns / 1ps
 
-/* Module: MemMU_SR_P
-    The MemMU Spherical Representation Payload Module::
-
-    The MemMU Spherical Representation Payload module is *TODO*
-*/
 module MemMU_sphericalRepresentationPayload (
 
     /* Input: Input ports
@@ -32,21 +27,21 @@ module MemMU_sphericalRepresentationPayload (
         <SIU::reflR1> - Second return intensity/reflection value.
         <SIU::label> - Point label.
     */
-    input [7:0] i_MemMU_SR_A_correction,
-    input [15:0] i_SIU_distR0, 
+    input [ 7:0] i_MemMU_SR_A_correction,
+    input [15:0] i_SIU_distR0,
     input [15:0] i_SIU_distR1,
-    input [7:0] i_SIU_reflR0,
-    input [7:0] i_SIU_reflR1,
-    input [7:0] i_SIU_label,
+    input [ 7:0] i_SIU_reflR0,
+    input [ 7:0] i_SIU_reflR1,
+    input [ 7:0] i_SIU_label,
 
     /* Output: Output ports
 
         payload - 64 bits output. Outputs the point clouds payload in the basic struture.
     */
     output [63:0] o_MemMU_SR_P_payload
-    );
+);
 
-    /* Assigns: Main Combinational block
+  /* Assigns: Main Combinational block
 
         *assign* o_MemMU_SR_P_payload:::
 
@@ -56,12 +51,12 @@ module MemMU_sphericalRepresentationPayload (
         - For the next 8 bits - <SIU::reflR1>.
         - For the next 8 bits - <MemMU::correction>.
         - For the remaining bits - <SIU::label>.
-    */  
-    assign o_MemMU_SR_P_payload[15:0]  = i_SIU_distR0;
-    assign o_MemMU_SR_P_payload[23:16] = i_SIU_reflR0;
-    assign o_MemMU_SR_P_payload[39:24] = i_SIU_distR1;
-    assign o_MemMU_SR_P_payload[47:40] = i_SIU_reflR1;
-    assign o_MemMU_SR_P_payload[55:48] = i_MemMU_SR_A_correction;
-    assign o_MemMU_SR_P_payload[63:56] = i_SIU_label;
+    */
+  assign o_MemMU_SR_P_payload[15:0]  = i_SIU_distR0;
+  assign o_MemMU_SR_P_payload[23:16] = i_SIU_reflR0;
+  assign o_MemMU_SR_P_payload[39:24] = i_SIU_distR1;
+  assign o_MemMU_SR_P_payload[47:40] = i_SIU_reflR1;
+  assign o_MemMU_SR_P_payload[55:48] = i_MemMU_SR_A_correction;
+  assign o_MemMU_SR_P_payload[63:56] = i_SIU_label;
 
 endmodule

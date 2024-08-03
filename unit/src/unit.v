@@ -203,10 +203,10 @@ module ALFAUnit #(
     input wire [63:0] EXT_MEM_writePayload,
     input wire [31:0] EXT_MEM_readAddress,
     output wire [63:0] EXT_MEM_readPayload,
-    input wire  EXT_MEM_initWriteTxn,
-    input wire  EXT_MEM_initReadTxn,
-    output wire  EXT_MEM_writeTxnDone,
-    output wire  EXT_MEM_readTxnDone,
+    input wire EXT_MEM_initWriteTxn,
+    input wire EXT_MEM_initReadTxn,
+    output wire EXT_MEM_writeTxnDone,
+    output wire EXT_MEM_readTxnDone,
     output wire EXT_MEM_error
 );
 
@@ -457,7 +457,7 @@ module ALFAUnit #(
           .o_error       (INT_error)
       );
 
-       AXI_single_word_burst #(
+      AXI_single_word_burst #(
           .C_M_TARGET_SLAVE_BASE_ADDR(0),
           .C_M_AXI_ID_WIDTH(6),
           .C_M_AXI_ADDR_WIDTH(32),
