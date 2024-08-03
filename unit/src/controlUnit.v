@@ -55,13 +55,13 @@ module CU #(
     input wire [0:0]    i_CU_MonU_frameDone,          
     output wire [0:0]   o_CU_MonU_extReady,
     output reg [0:0]    o_CU_EXT_enable,
-    output reg [0:0]    o_CU_EXT_writeReady,
-    output reg [0:0]    o_CU_EXT_readValid,
+    output     [0:0]    o_CU_EXT_writeReady,
+    output     [0:0]    o_CU_EXT_readValid,
     output reg [0:0]    o_CU_INT_initWriteTx,
     output reg [0:0]    o_CU_INT_initReadTx,
     output reg [0:0]    o_CU_ExMU_readCache,
     output reg [0:0]    o_CU_ExMU_writeCache,
-    output reg [0:0]    o_CU_ExMU_readWriteID,
+    output     [0:0]    o_CU_ExMU_readWriteID,
     output     [0:0]    o_CU_ExMU_readPoint,
     output     [0:0]    o_CU_ExMU_writePoint,
     output reg [0:0]    o_CU_ExMU_writeMem,
@@ -94,7 +94,7 @@ module CU #(
 
     wire [3:0] error;
     wire finishing_process;
-    reg first_time, readReady;
+    reg first_time, readReady, CU_EXT_writeReady, CU_EXT_readValid;
 
     assign error[0]   = (i_MemMU_status == 32'hFFFFFFFF)? 1'b1 : 1'b0;
     assign error[1]   = (i_ExMU_status  == 32'hFFFFFFFF)? 1'b1 : 1'b0;
@@ -102,10 +102,13 @@ module CU #(
     assign error[3]   = (i_SIU_status   == 32'hFFFFFFFF)? 1'b1 : 1'b0;
     
     assign finishing_process = (o_status==EXT_LAST_WRITE || o_status==EXT_LAST_WRITE_T_OFF || o_status==EXT_END)? 1'b1 : 1'b0;
-    assign o_CU_ExMU_writePoint = (~finishing_process && i_ExMU_writeInCache && o_CU_EXT_writeReady && i_EXT_writeValid)? 1'b1 : 1'b0;
+    assign o_CU_ExMU_writePoint = (~finishing_process && i_ExMU_writeInCache && CU_EXT_writeReady && i_EXT_writeValid)? 1'b1 : 1'b0;
     assign o_CU_ExMU_readPoint = (~finishing_process && i_ExMU_readInCache && i_EXT_readReady && ~readReady) ? 1'b1 : 1'b0;
+    assign o_CU_EXT_writeReady = i_ExMU_writeInCache? CU_EXT_writeReady : 1'b0;
+    assign o_CU_EXT_readValid = i_ExMU_readInCache? CU_EXT_readValid : 1'b0;
     
     assign o_CU_MonU_extReady = ~o_CU_EXT_enable;
+    assign o_CU_ExMU_readWriteID = ~i_ExMU_writeInCache? 1'b1 : 1'b0;
     reg [0:0] pcReady_rise_up;
     
     always @(posedge i_SYSTEM_clk) begin
@@ -125,18 +128,18 @@ module CU #(
         if(i_SYSTEM_rst) begin
             if(~finishing_process) begin
                 readReady <= i_ExMU_readInCache & i_EXT_readReady;
-                o_CU_EXT_readValid = o_CU_ExMU_readPoint;
-                o_CU_EXT_writeReady <= i_ExMU_writeInCache & ~o_CU_ExMU_writePoint;  
+                CU_EXT_readValid = o_CU_ExMU_readPoint;
+                CU_EXT_writeReady <= i_ExMU_writeInCache & ~o_CU_ExMU_writePoint;  
             end
             else begin
-                o_CU_EXT_writeReady <= 1'b0;
-                o_CU_EXT_readValid <= 1'b0; 
+                CU_EXT_writeReady <= 1'b0;
+                CU_EXT_readValid <= 1'b0; 
                 readReady <= 1'b0;
             end
         end
         else begin
-            o_CU_EXT_writeReady <= 1'b0;
-            o_CU_EXT_readValid  <= 1'b0;
+            CU_EXT_writeReady <= 1'b0;
+            CU_EXT_readValid  <= 1'b0;
             readReady <= 1'b0;
         end
     end
@@ -315,7 +318,6 @@ module CU #(
                     o_CU_ExMU_writeCache        <= 1'b0;
                     o_CU_MonU_processingDone    <= 1'b0;
                     o_CU_SIU_ExMU               <= 1'b1;
-                    o_CU_ExMU_readWriteID       <= 1'b0;
                 end 
 
                 ERROR:
@@ -356,7 +358,6 @@ module CU #(
                 begin
                     o_CU_INT_initWriteTx        <= 1'b0;
                     o_CU_INT_initReadTx         <= 1'b1;
-                    o_CU_ExMU_readWriteID       <= 1'b1;
                     o_CU_ExMU_writeCache        <= 1'b0;
                     first_time                  <= 1'b0;  
                 end
@@ -374,6 +375,7 @@ module CU #(
                 EXT_READ_CACHE:
                 begin
                     o_CU_INT_initReadTx         <= 1'b1;
+                    o_CU_ExMU_readCache         <= 1'b0; 
                 end
 
                 EXT_READ_CACHE_T_OFF:
