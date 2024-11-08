@@ -130,3 +130,20 @@ AlfaGroundSegmentationMetrics evaluate_ground_segmentation_method(
 
   return metrics;
 }
+
+AlfaCompressionMetrics evaluate_compression_method(AlfaNode* node) {
+  AlfaCompressionMetrics metrics;
+
+  metrics.basic_metrics.number_input_points = node->get_input_pointcloud_size();
+  metrics.basic_metrics.number_output_points =
+      node->get_output_pointcloud_size();
+
+  metrics.cr = metrics.basic_metrics.number_input_points /
+               metrics.basic_metrics.number_output_points;
+
+  metrics.bpp =
+      (metrics.basic_metrics.number_output_points * sizeof(AlfaPoint) * 8) /
+      metrics.basic_metrics.number_input_points;
+
+  return metrics;
+}
