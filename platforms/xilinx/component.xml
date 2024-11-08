@@ -1291,7 +1291,7 @@
       </spirit:vendorExtensions>
     </spirit:busInterface>
     <spirit:busInterface>
-      <spirit:name>ALFA_Extension_Memory_Interface_1</spirit:name>
+      <spirit:name>ALFA_Extension_Memory_Interface</spirit:name>
       <spirit:busType spirit:vendor="alfa" spirit:library="user" spirit:name="ALFA_Extension_Memory_Interface" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="alfa" spirit:library="user" spirit:name="ALFA_Extension_Memory_Interface_rtl" spirit:version="1.0"/>
       <spirit:master/>
@@ -1369,6 +1369,13 @@
           </spirit:physicalPort>
         </spirit:portMap>
       </spirit:portMaps>
+      <spirit:vendorExtensions>
+        <xilinx:busInterfaceInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="BUSIF_ENABLEMENT.ALFA_Extension_Memory_Interface" xilinx:dependency="$EXTENSION_MEMORY = TRUE">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:busInterfaceInfo>
+      </spirit:vendorExtensions>
     </spirit:busInterface>
   </spirit:busInterfaces>
   <spirit:addressSpaces>
@@ -1413,7 +1420,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>66bec5a5</spirit:value>
+            <spirit:value>6fa31ac9</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1429,7 +1436,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>66bec5a5</spirit:value>
+            <spirit:value>6fa31ac9</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -4890,21 +4897,21 @@
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:vendorDisplayName>ALFA</xilinx:vendorDisplayName>
       <xilinx:vendorURL>http://www.alfa-project.org</xilinx:vendorURL>
-      <xilinx:coreRevision>25</xilinx:coreRevision>
+      <xilinx:coreRevision>27</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:ALFAUnit:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>ALFA:ALFA:ALFAUnit:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>ALFA:ALFA:ALFAUnit:1.1</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2024-07-15T15:32:29Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2024-08-02T10:25:27Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2022.2</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="41458152"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="a08858a1"/>
       <xilinx:checksum xilinx:scope="addressSpaces" xilinx:value="b089c41f"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="b0334704"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="3360101f"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="2da35c3f"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="f51bff56"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="b67efee0"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="1116403e"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="8496c381"/>
     </xilinx:packagingInfo>
