@@ -124,7 +124,7 @@ There are three main configuration sections:
 - *Pointcloud Id* - Specific Pointcloud Id that this Unit IP will manage and handle. ALFA-UNIT support up to 4 different point clouds running simultaneously.
 - *Representation Type* - Type of representation stored in the memory. ALFA-UNIT support Spherical Representations (SR) and Cartesian Representations (CR).
 
-**Sensor Interface** - Configure if and how the SIU handles the sensor data. Currently it is not fully supported.
+**Sensor Interface** - Configure if and how the SIU handles the sensor data. Currently, it is not fully supported.
 
 **Extension** - Configure if and how the Extension Management Unit handles the interface between the data and extension. 3 parameters compose this section:
 
