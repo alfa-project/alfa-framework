@@ -5,7 +5,17 @@ echo -e "\n############ ALFA Vivado Project Setup ############ \n"
 if [ -d "src" ]; then
 		echo -e "-> src folder already setup"
 	else
-		ln -s ../../unit/src/ src
+		ln -sf ../../unit/src/ src
+fi
+
+if [ -d "libs" ]; then
+		echo -e "-> reps folder already setup"
+	else
+    mkdir -p reps 
+		cd reps
+    ln -sf ../../../libs/hw/ libs
+    ln -sf ../../../extensions/hw/ extensions
+		cd ..
 fi
 
 if [ -z "$1" ]; then

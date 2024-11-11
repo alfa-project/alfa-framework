@@ -124,7 +124,7 @@ set bCheckIPsPassed 1
 set bCheckIPs 1
 if { $bCheckIPs == 1 } {
    set list_check_ips "\ 
-ALFA:ALFA:alfa_unit:1.*\
+ALFA:unit:alfa_unit:1.*\
 xilinx.com:ip:smartconnect:1.*\
 xilinx.com:ip:proc_sys_reset:5.*\
 xilinx.com:ip:zynq_ultra_ps_e:3.*\
@@ -557,7 +557,7 @@ proc create_root_design { parentCell } {
   create_hier_cell_ZCU104 [current_bd_instance .] ZCU104
 
   # Create instance: alfa_unit_0, and set properties
-  set alfa_unit_0 [ create_bd_cell -type ip -vlnv ALFA:ALFA:alfa_unit:1.* alfa_unit_0 ]
+  set alfa_unit_0 [ create_bd_cell -type ip -vlnv ALFA:unit:alfa_unit:1.* alfa_unit_0 ]
   set_property -dict [list \
     CONFIG.BRAM_DDR {1} \
     CONFIG.EXMU_SUPPORT {1} \
