@@ -620,18 +620,18 @@
         <xilinx:family xilinx:lifeCycle="Production">kintexu</xilinx:family>
       </xilinx:supportedFamilies>
       <xilinx:taxonomies>
-        <xilinx:taxonomy>/UserIP</xilinx:taxonomy>
+        <xilinx:taxonomy>/ALFA/extensions</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>ext-distance_filter</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:vendorDisplayName>ALFA</xilinx:vendorDisplayName>
       <xilinx:vendorURL>http://www.alfa-project.org</xilinx:vendorURL>
-      <xilinx:coreRevision>11</xilinx:coreRevision>
+      <xilinx:coreRevision>12</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:dummy:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>ALFA:ALFA:alfa_dummy:1.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2024-06-17T13:41:40Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2024-11-11T10:48:38Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="nopcore"/>
       </xilinx:tags>

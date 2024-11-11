@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <spirit:component xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <spirit:vendor>ALFA</spirit:vendor>
-  <spirit:library>ALFA</spirit:library>
+  <spirit:library>unit</spirit:library>
   <spirit:name>alfa_unit</spirit:name>
   <spirit:version>1.1</spirit:version>
   <spirit:busInterfaces>
@@ -1420,7 +1420,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>6fa31ac9</spirit:value>
+            <spirit:value>6cbd0a64</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1436,7 +1436,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>6fa31ac9</spirit:value>
+            <spirit:value>6cbd0a64</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -4642,7 +4642,7 @@
       <spirit:file>
         <spirit:name>src/unit.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_f0a80f55</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_d6e43e09</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -4891,26 +4891,27 @@
         <xilinx:family xilinx:lifeCycle="Production">kintexu</xilinx:family>
       </xilinx:supportedFamilies>
       <xilinx:taxonomies>
-        <xilinx:taxonomy>/UserIP</xilinx:taxonomy>
+        <xilinx:taxonomy>/ALFA/unit</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>ALFA-Unit</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:vendorDisplayName>ALFA</xilinx:vendorDisplayName>
       <xilinx:vendorURL>http://www.alfa-project.org</xilinx:vendorURL>
-      <xilinx:coreRevision>27</xilinx:coreRevision>
+      <xilinx:coreRevision>2</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:ALFAUnit:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>ALFA:ALFA:ALFAUnit:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>ALFA:ALFA:ALFAUnit:1.1</xilinx:canUpgradeFrom>
+        <xilinx:canUpgradeFrom>ALFA:ALFA:alfa_unit:1.1</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2024-08-02T10:25:27Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2024-11-11T10:33:43Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2022.2</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="a08858a1"/>
       <xilinx:checksum xilinx:scope="addressSpaces" xilinx:value="b089c41f"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="b0334704"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="f51bff56"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="03cac5d1"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="b67efee0"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="1116403e"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="8496c381"/>
