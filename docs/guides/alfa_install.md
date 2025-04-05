@@ -132,6 +132,12 @@ ln -s ../../alfa-framework/msgs alfa_msg
 ln -s ../../alfa-framework/extensions/sw alfa_ext
 ```
 
+- **software alfa-libs**
+
+```sh
+ln -s ../../alfa-framework/libs/sw alfa_lib
+```
+
 - **alfa-monitor**
 
 ```sh
