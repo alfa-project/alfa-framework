@@ -27,6 +27,8 @@ find_package(rclcpp REQUIRED)
 find_package(alfa_node REQUIRED)
 find_package(alfa_msg REQUIRED)
 find_package(alib_octree REQUIRED)
+find_package(alib_compression REQUIRED)
+
 
 find_package(sensor_msgs REQUIRED)
 find_package(PCL 1.8 REQUIRED)
@@ -34,7 +36,7 @@ find_package(pcl_conversions REQUIRED)
 
 add_executable(ext_octree_compression src/main.cpp)
 target_link_libraries(ext_octree_compression ${PCL_LIBRARIES})
-ament_target_dependencies(ext_octree_compression rclcpp alfa_node sensor_msgs alfa_msg pcl_conversions alib_octree)
+ament_target_dependencies(ext_octree_compression rclcpp alfa_node sensor_msgs alfa_msg pcl_conversions alib_octree alib_compression)
 
 install(TARGETS
   ext_octree_compression

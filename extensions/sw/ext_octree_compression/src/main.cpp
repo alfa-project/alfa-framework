@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+#include <bitset>
 #include <cmath>
 #include <vector>
 
 #include "alfa_node.hpp"
+#include "alib_compression.hpp"
 #include "alib_octree.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -44,46 +46,34 @@ void handler(AlfaNode *node) {
             node->get_extension_parameter("max_bounding_box_y"),
             node->get_extension_parameter("max_bounding_box_z"));
 
-  AlfaOctree octree1(bb, node->get_extension_parameter("octree_depth"), false);
+  AlfaOctree octree1(bb, (int)node->get_extension_parameter("octree_depth"),
+                     false);
   AlfaPoint point;
 
   octree1.insert_pointcloud(node->get_input_pointcloud());
-  vector<char> code = octree1.get_occupation_code_DFS();
+  auto original_size = octree1.get_number_of_points() * sizeof(AlfaPoint);
 
-  if (node->get_extension_parameter("Decompression Flag") == 1) {
+  vector<unsigned char> code = octree1.get_occupation_code_DFS();
+
+  if (node->get_extension_parameter("decompression_flag") == 1) {
     AlfaOctree octree2(bb, node->get_extension_parameter("octree_depth"),
                        false);
-
-    cout << "Size of AlfaPoint" << sizeof(AlfaPoint) << endl;
     octree2.init_octree_from_occupation_code_DFS(code, bb);
     auto pointcloud = octree2.convert_to_pointcloud();
     for (auto point : pointcloud) node->push_point_output_pointcloud(point);
 
   } else {
-    size_t code_index = 0;
+    auto compressed_code_RLE = alib_rle_encode(code);
+    auto compressed_code_LZ4 = alib_lz4_encode(code, 4, 65535, 15, 19);
+    auto compresed_code_lz77 = alib_lz77_encode(code, 4096, 18);
+    auto compressed_code_Huffman = alib_huffman_encode(code);
+    auto compressed_code_fog = alib_huffman_s_encode(code);
 
-    point.x = bb.min_x;
-    point.y = bb.min_y;
-    point.z = bb.min_z;
-    point.custom_field = code.size();
-    node->push_point_output_pointcloud(point);
-
-    point.x = bb.max_x;
-    point.y = bb.max_y;
-    point.z = bb.max_z;
-    point.custom_field = code.size();
-    node->push_point_output_pointcloud(point);
-
-    while (code_index + sizeof(AlfaPoint) < code.size()) {
-      std::memcpy(&point, &code[code_index], sizeof(AlfaPoint));
-      node->push_point_output_pointcloud(point);
-      code_index += sizeof(AlfaPoint);
-    }
-
-    if (code_index < code.size()) {
-      std::memcpy(&point, &code[code_index], sizeof(code.size() - code_index));
-      node->push_point_output_pointcloud(point);
-    }
+    cout << original_size << " " << code.size() << " "
+         << compressed_code_RLE.size() << " " << compressed_code_LZ4.size()
+         << " " << compresed_code_lz77.size() << " "
+         << compressed_code_Huffman.size() << " " << compressed_code_fog.size()
+         << endl;
   }
 
 #endif
@@ -97,10 +87,17 @@ void handler(AlfaNode *node) {
  */
 void post_processing(AlfaNode *node) {
 #ifdef EXT_HARDWARE
-  node->load_pointcloud(LOAD_STORE_CARTESIAN);
-  if (node->get_extension_parameter("Decompression Flag") == 1) {
-    size_t size_bitstream_bytes = static_cast<size_t>(get_debug_point(0));
 
+  struct bs_code {
+    uint64_t size;
+    std::vector<char> code;
+  } buffer;
+
+  node->read_ext_memory(0, sizeof(buffer.size), &(buffer.size));
+  buffer.code.resize(buffer.size);
+  node->read_ext_memory(1, buffer.size * sizeof(char), buffer.code.data());
+
+  if (node->get_extension_parameter("decompression_flag") == 1) {
     AlfaBB bb(node->get_extension_parameter("min_bounding_box_x"),
               node->get_extension_parameter("min_bounding_box_y"),
               node->get_extension_parameter("min_bounding_box_z"),
@@ -108,42 +105,26 @@ void post_processing(AlfaNode *node) {
               node->get_extension_parameter("max_bounding_box_y"),
               node->get_extension_parameter("max_bounding_box_z"));
 
-    AlfaOctree octree2(bb, node->get_extension_parameter("octree_depth"),
+    AlfaOctree octree1(bb, node->get_extension_parameter("octree_depth"),
                        false);
 
-    vector<char> code(size_bitstream_bytes);
-
-    for (size_t i = 0; i < size_bitstream_bytes / 2; i++) {
-      AlfaPoint point = node->get_point_output_pointcloud(i);
-      code[i] = point.custom_field;
-    }
-    octree2.init_octree_from_occupation_code_DFS(code, bb);
-    auto pointcloud = octree2.convert_to_pointcloud();
+    octree1.init_octree_from_occupation_code_DFS(buffer.code, bb);
+    auto pointcloud = octree1.convert_to_pointcloud();
     for (auto point : pointcloud) node->push_point_output_pointcloud(point);
 
   } else {
     size_t code_index = 0;
+    AlfaPoint point;
 
-    point.x = bb.min_x;
-    point.y = bb.min_y;
-    point.z = bb.min_z;
-    point.custom_field = code.size();
-    node->push_point_output_pointcloud(point);
-
-    point.x = bb.max_x;
-    point.y = bb.max_y;
-    point.z = bb.max_z;
-    point.custom_field = code.size();
-    node->push_point_output_pointcloud(point);
-
-    while (code_index + sizeof(AlfaPoint) < code.size()) {
-      std::memcpy(&point, &code[code_index], sizeof(AlfaPoint));
+    while (code_index + sizeof(AlfaPoint) < buffer.code.size()) {
+      std::memcpy(&point, &buffer.code[code_index], sizeof(AlfaPoint));
       node->push_point_output_pointcloud(point);
       code_index += sizeof(AlfaPoint);
     }
 
-    if (code_index < code.size()) {
-      std::memcpy(&point, &code[code_index], sizeof(code.size() - code_index));
+    if (code_index < buffer.code.size()) {
+      std::memcpy(&point, &buffer.code[code_index],
+                  sizeof(buffer.code.size() - code_index));
       node->push_point_output_pointcloud(point);
     }
   }
@@ -189,7 +170,7 @@ int main(int argc, char **argv) {
   conf.metrics_publishing_type = ALL_METRICS;
   conf.custom_field_conversion_type = CUSTOM_FIELD_INTENSITY;
 
-  parameters[0].parameter_value = 10;
+  parameters[0].parameter_value = 12;
   parameters[0].parameter_name = "octree_depth";
   parameters[1].parameter_value = 100;
   parameters[1].parameter_name = "max_bounding_box_x";
@@ -203,8 +184,8 @@ int main(int argc, char **argv) {
   parameters[5].parameter_name = "min_bounding_box_y";
   parameters[6].parameter_value = -100;
   parameters[6].parameter_name = "min_bounding_box_z";
-  parameters[7].parameter_value = 1;
-  parameters[7].parameter_name = "Decompression Flag";
+  parameters[7].parameter_value = 0;
+  parameters[7].parameter_name = "decompression_flag";
 
   // Create an instance of AlfaNode and spin it
   rclcpp::spin(
