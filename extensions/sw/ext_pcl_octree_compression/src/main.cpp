@@ -24,8 +24,8 @@
 
 #include "alfa_node.hpp"
 #include "alfa_structs.hpp"
-#include "rclcpp/rclcpp.hpp"
 #include "alib_octree.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 #define NODE_NAME "ext_pcl_octree_compression"
 #define DEFAULT_TOPIC "/velodyne_points"
@@ -34,31 +34,31 @@
 #define POINTCLOUD_ID 0
 
 // Conversion function from AlfaPoint to pcl::PointXYZ
-pcl::PointXYZ convertToPCLPoint(const AlfaPoint& point) {
-    pcl::PointXYZ pcl_point;
-    pcl_point.x = point.x;
-    pcl_point.y = point.y;
-    pcl_point.z = point.z;
-    return pcl_point;
+pcl::PointXYZ convertToPCLPoint(const AlfaPoint &point) {
+  pcl::PointXYZ pcl_point;
+  pcl_point.x = point.x;
+  pcl_point.y = point.y;
+  pcl_point.z = point.z;
+  return pcl_point;
 }
 
 // Conversion from pcl::PointXYZ back to AlfaPoint
-AlfaPoint convertToAlfaPoint(const pcl::PointXYZ& pcl_point) {
-    AlfaPoint point;
-    point.x = pcl_point.x;
-    point.y = pcl_point.y;
-    point.z = pcl_point.z;
-    point.custom_field = 0;  // Set default value for custom_field
-    return point;
+AlfaPoint convertToAlfaPoint(const pcl::PointXYZ &pcl_point) {
+  AlfaPoint point;
+  point.x = pcl_point.x;
+  point.y = pcl_point.y;
+  point.z = pcl_point.z;
+  point.custom_field = 0;  // Set default value for custom_field
+  return point;
 }
 // Check if it is inside BB
 bool is_point_inside_BB(AlfaPoint point, AlfaBB bounding_box) {
-    if (point.x >= bounding_box.min_x && point.x <= bounding_box.max_x &&
-        point.y >= bounding_box.min_y && point.y <= bounding_box.max_y &&
-        point.z >= bounding_box.min_z && point.z <= bounding_box.max_z)
-        return true;
-    else
-        return false;
+  if (point.x >= bounding_box.min_x && point.x <= bounding_box.max_x &&
+      point.y >= bounding_box.min_y && point.y <= bounding_box.max_y &&
+      point.z >= bounding_box.min_z && point.z <= bounding_box.max_z)
+    return true;
+  else
+    return false;
 }
 
 /**
@@ -117,11 +117,12 @@ void handler(AlfaNode *node) {
   alfa_cloud = node->get_input_pointcloud();
 
   // Create a new pcl::PointCloud<pcl::PointXYZ> for the octree compressor
-  pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cloud(
+      new pcl::PointCloud<pcl::PointXYZ>);
   int number_of_points = 0;
 
   // Convert each AlfaPoint to pcl::PointXYZ
-  for (const auto& point : alfa_cloud->points) {
+  for (const auto &point : alfa_cloud->points) {
     if (is_point_inside_BB(point, bb)) {
       pcl_cloud->points.push_back(convertToPCLPoint(point));
       number_of_points++;
@@ -134,7 +135,8 @@ void handler(AlfaNode *node) {
   // Check if decompression flag is set
   if (node->get_extension_parameter("decompression_flag") == 1) {
     // Decompress point cloud if decompression flag is set
-    pcl::PointCloud<pcl::PointXYZ>::Ptr decompressedCloud(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr decompressedCloud(
+        new pcl::PointCloud<pcl::PointXYZ>);
     pointcloud_compressor.decodePointCloud(compressedData, decompressedCloud);
 
     // Push decompressed points to output after converting to AlfaPoint
@@ -143,7 +145,8 @@ void handler(AlfaNode *node) {
       node->push_point_output_pointcloud(alfa_point);
     }
   } else {
-    // Handle direct output of compressed data using memcpy for speed and efficiency
+    // Handle direct output of compressed data using memcpy for speed and
+    // efficiency
     std::string compressedString = compressedData.str();
     size_t compressedSize = compressedString.size();
     size_t code_index = 0;
@@ -161,19 +164,21 @@ void handler(AlfaNode *node) {
       code_index += sizeof(AlfaPoint);
     }
 
-    // If there's leftover data at the end, copy what remains into the last point
+    // If there's leftover data at the end, copy what remains into the last
+    // point
     if (code_index < compressedSize) {
-      std::memcpy(&point, &compressedString[code_index], compressedSize - code_index);
-      node->push_point_output_pointcloud(point);  // Push the final, partially filled point
+      std::memcpy(&point, &compressedString[code_index],
+                  compressedSize - code_index);
+      node->push_point_output_pointcloud(
+          point);  // Push the final, partially filled point
     }
-
-    cout << compressedSize << endl;
   }
 #endif
 }
 
 /**
- * @brief Post-processing function that publishes output point cloud and metrics.
+ * @brief Post-processing function that publishes output point cloud and
+ * metrics.
  *
  * @param node Pointer to the AlfaNode object handling the incoming point cloud.
  */
@@ -239,7 +244,8 @@ int main(int argc, char **argv) {
   parameters[7].parameter_name = "decompression_flag";
 
   // Create an instance of AlfaNode and spin it
-  rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
+  rclcpp::spin(
+      std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
 
   // Shutdown ROS 2
   rclcpp::shutdown();
