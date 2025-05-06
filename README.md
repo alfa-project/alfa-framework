@@ -125,3 +125,7 @@ There are also several user guides available to help you get started with ALFA:
 [5] Roriz, R.; Gomes, T. ***"An Embedded Framework for Automotive LiDAR Sensors".***  embedded world Exhibition&Conference 2023.
 
 [6] Gomes, T.; Roriz, R.; Cunha, L.; Ganal, A.; Soares, N.; Araújo, T.; Monteiro, J. ***"Evaluation and testing system for automotive LiDAR sensors".***  Applied Sciences 12 (24), 13003. <https://doi.org/10.3390/app122413003>
+
+[7] Roriz, R.; Silva, H.; Dias, F.; Gomes, T. ***"A Survey on Data Compression Techniques for Automotive LiDAR Point Clouds".*** Sensors 2024, 24(10), 3185. <https://doi.org/10.3390/s24103185>
+
+[8] Roriz, R.; Costa, D.; Ekpanyapong, M.; Gomes, T. ***"FOG: Fast Octree Generator for LiDAR Point Clouds".*** IEEE Sensors Letters 2025, 9(1), 1–4. <https://doi.org/10.1109/lsens.2024.3520800>
