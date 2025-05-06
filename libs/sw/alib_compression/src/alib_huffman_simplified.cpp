@@ -155,36 +155,3 @@ std::vector<unsigned char> alib_huffman_s_decode(const std::vector<unsigned char
 
   return decoded_data;
 }
-
-// Function to decompress and compare with original data
-void compare_decompression(const std::vector<unsigned char>& original_data,
-                           const std::vector<unsigned char>& compressed_data) {
-  // Decompress the compressed data
-  std::vector<unsigned char> decompressed_data = alib_huffman_s_decode(compressed_data);
-
-  // Check if the decompressed data matches the original data
-  bool all_match = true;
-
-  if (decompressed_data.size() != original_data.size()) {
-    std::cout << "Size mismatch: Original data size (" << original_data.size()
-              << ") does not match decompressed data size (" << decompressed_data.size() << ").\n";
-    all_match = false;
-  }
-
-  // Compare each character in decompressed data with the original data
-  for (size_t i = 0; i < std::min(original_data.size(), decompressed_data.size()); ++i) {
-    if (original_data[i] != decompressed_data[i]) {
-      std::cout << "Mismatch at index " << i << ":\n"
-                << "Original character: " << static_cast<int>(original_data[i]) << "\n"
-                << "Decompressed character: " << static_cast<int>(decompressed_data[i]) << "\n";
-      all_match = false;
-    }
-  }
-
-  if (all_match) {
-    std::cout << "Decompression successful: All characters match the original "
-                 "data.\n";
-  } else {
-    std::cout << "Decompression mismatchs detected" << std::endl;
-  }
-}

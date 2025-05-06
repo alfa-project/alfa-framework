@@ -16,7 +16,9 @@
 
 #include "alib_compression.hpp"
 
-void calculateAndPrintFrequencies(const std::vector<unsigned char>& input) {
+#include "alfa_structs.hpp"
+
+void print_frequencies(const std::vector<unsigned char>& input) {
   std::unordered_map<unsigned char, int> frequency_map;
   for (unsigned char c : input) {
     frequency_map[c]++;
@@ -28,7 +30,8 @@ void calculateAndPrintFrequencies(const std::vector<unsigned char>& input) {
   }
 }
 
-void writeBinaryToFile(const std::string& file_path, const std::vector<unsigned char>& data) {
+void write_binary_file(const std::string& file_path,
+                       const std::vector<unsigned char>& data) {
   // Open the file in binary mode
   std::ofstream file(file_path, std::ios::binary);
   if (!file) {
@@ -50,9 +53,78 @@ void writeBinaryToFile(const std::string& file_path, const std::vector<unsigned 
   }
 }
 
-void printVectorAsBinary(const std::vector<unsigned char>& input) {
+void print_vector_binary(const std::vector<unsigned char>& input) {
   for (unsigned char c : input) {
     std::cout << std::bitset<8>(c) << ' ';
   }
   std::cout << std::endl;
+}
+
+void convert_code_pointcloud(const std::vector<unsigned char>& code,
+                             pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+  pointcloud->clear();
+  pointcloud->height = 1;
+  pointcloud->width = 0;
+  pointcloud->is_dense = false;
+
+  size_t code_index = 0;
+  size_t code_bytes_last_point = code.size() % sizeof(AlfaPoint);
+  AlfaPoint point_temp;
+
+  // Store the number of bytes used in last AlfaPoint
+  point_temp.x = static_cast<float>(code_bytes_last_point);
+  point_temp.y = static_cast<float>(code_bytes_last_point);
+  point_temp.z = static_cast<float>(code_bytes_last_point);
+  pointcloud->points.push_back(point_temp);
+  ++pointcloud->width;
+
+  // Store the remaining bytes in the pointcloud
+  while (code_index + sizeof(AlfaPoint) <= code.size()) {
+    std::memcpy(&point_temp, &code[code_index], sizeof(AlfaPoint));
+    pointcloud->points.push_back(point_temp);
+    ++pointcloud->width;
+    code_index += sizeof(AlfaPoint);
+  }
+
+  if (code_index < code.size()) {
+    std::memset(&point_temp, 0, sizeof(AlfaPoint));
+    std::memcpy(&point_temp, &code[code_index], code.size() - code_index);
+    pointcloud->points.push_back(point_temp);
+    ++pointcloud->width;
+  }
+}
+
+void convert_pointcloud_code(const pcl::PointCloud<AlfaPoint>::Ptr pointcloud,
+                             std::vector<unsigned char>& code) {
+  code.clear();
+
+  if (pointcloud->empty()) return;
+
+  // Read metadata from the first point
+  const AlfaPoint& point_temp = pointcloud->points[0];
+  size_t code_bytes_last_point = static_cast<size_t>(point_temp.x);
+  bool has_partial_point = (code_bytes_last_point > 0);
+
+  // Total data points = size - 1 (excluding metadata)
+  size_t total_data_points = pointcloud->points.size() - 1;
+  size_t num_full_points =
+      has_partial_point ? total_data_points - 1 : total_data_points;
+
+  // Allocate space for full points + partial (if any)
+  size_t total_code_size =
+      num_full_points * sizeof(AlfaPoint) + code_bytes_last_point;
+  code.resize(total_code_size);
+
+  // Copy full points
+  for (size_t i = 0; i < num_full_points; ++i) {
+    const AlfaPoint& pt = pointcloud->points[i + 1];  // skip metadata
+    std::memcpy(&code[i * sizeof(AlfaPoint)], &pt, sizeof(AlfaPoint));
+  }
+
+  // Copy partial point if needed
+  if (has_partial_point) {
+    const AlfaPoint& partial_pt = pointcloud->points.back();  // last point
+    std::memcpy(&code[num_full_points * sizeof(AlfaPoint)], &partial_pt,
+                code_bytes_last_point);
+  }
 }

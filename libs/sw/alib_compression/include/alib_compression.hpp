@@ -26,9 +26,19 @@
 #include "alfa_node.hpp"
 
 // Generic function
-void writeBinaryToFile(const std::string& file_path, const std::vector<unsigned char>& data);
-void calculateAndPrintFrequencies(const std::vector<unsigned char>& input);
-void printVectorAsBinary(const std::vector<unsigned char>& input);
+void write_binary_file(const std::string& file_path,
+                       const std::vector<unsigned char>& data);
+void print_frequencies(const std::vector<unsigned char>& input);
+void print_vector_binary(const std::vector<unsigned char>& input);
+void output_compression_code(const std::vector<unsigned char>& encoded_data);
+void output_decoded_compression_code(
+    const std::vector<unsigned char>& encoded_data);
+
+void convert_bitstream_pointcloud(
+    vector<unsigned char>& code, pcl::PointCloud<AlfaPoint>::Ptr pointcloud);
+
+void convert_pointcloud_bitstream(pcl::PointCloud<AlfaPoint>::Ptr pointcloud,
+                                     vector<unsigned char>& code);
 
 // RLE
 std::vector<unsigned char> alib_rle_encode(const std::vector<unsigned char>& input);
@@ -51,11 +61,9 @@ std::vector<unsigned char> alib_huffman_encode(const std::vector<unsigned char>&
 std::vector<unsigned char> alib_huffman_decode(const std::vector<unsigned char>& encoded);
 
 // Simplified Huffman
-std::vector<unsigned char> alib_huffman_s_encode(const std::vector<unsigned char>& input);
-std::vector<unsigned char> alib_huffman_s_decode(const std::vector<unsigned char>& encoded);
-void output_compression_code(const std::vector<unsigned char>& encoded_data);
-void output_decoded_compression_code(const std::vector<unsigned char>& encoded_data);
-void compare_decompression(const std::vector<unsigned char>& original_data,
-                           const std::vector<unsigned char>& encoded_data);
+std::vector<unsigned char> alib_huffman_s_encode(
+    const std::vector<unsigned char>& input);
+std::vector<unsigned char> alib_huffman_s_decode(
+    const std::vector<unsigned char>& encoded);
 
 #endif  // ALIB_COMPRESSION_H
