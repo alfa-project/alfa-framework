@@ -60,6 +60,8 @@ class AlfaOctree {
   float get_resolution_y();
   std::vector<unsigned char> get_occupation_code_DFS();
   std::vector<AlfaPoint> convert_to_pointcloud();
+  void convert_to_pointcloud(
+      pcl::PointCloud<AlfaPoint>::Ptr pointcloud);
   void init_octree_from_occupation_code_DFS(std::vector<unsigned char> DFS_code,
                                             AlfaBB bounding_box);
 

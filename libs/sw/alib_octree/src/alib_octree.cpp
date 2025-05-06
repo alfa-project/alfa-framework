@@ -306,6 +306,16 @@ void AlfaOctree::retrieve_points(AlfaOctreeNode *node, vector<AlfaPoint> &points
   }
 }
 
+void AlfaOctree::convert_to_pointcloud(
+    pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+  vector<AlfaPoint> points = convert_to_pointcloud();
+  pointcloud->points.insert(pointcloud->points.end(), points.begin(),
+                            points.end());
+  pointcloud->width = static_cast<uint32_t>(pointcloud->points.size());
+  pointcloud->height = 1;
+  pointcloud->is_dense = true;
+}
+
 vector<AlfaPoint> AlfaOctree::convert_to_pointcloud() {
   if (this->multithread) {
     return convert_to_pointcloud_multi_thread();
