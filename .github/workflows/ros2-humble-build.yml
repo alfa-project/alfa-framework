@@ -3,8 +3,18 @@ name: ROS 2 Humble Build Check
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'extensions/sw/**'
+      - 'libs/sw/**'
+      - 'node/**'
+      - 'monitor/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'extensions/sw/**'
+      - 'libs/sw/**'
+      - 'node/**'
+      - 'monitor/**'
 
 jobs:
   build:
@@ -35,4 +45,3 @@ jobs:
             --base-paths extensions/sw libs/sw node monitor \
             --event-handlers console_direct+ \
             --summarize
-
