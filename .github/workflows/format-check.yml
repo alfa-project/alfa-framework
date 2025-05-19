@@ -19,7 +19,7 @@ jobs:
           source: '.'
           extensions: 'c,h,cpp,hpp'
           clangFormatVersion: 14
-          style: file
+          style: file:ci/.clang-format
 
   verify-verilog-format:
     name: Check Verilog/SystemVerilog Format
