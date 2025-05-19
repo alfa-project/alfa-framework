@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,10 +48,10 @@ class BitWriter {
 };
 
 // LZ4 encoding function
-std::vector<unsigned char> alib_lz4_encode(
-    const std::vector<unsigned char>& input, size_t min_match_length = 4,
-    size_t max_offset = 65535, size_t max_literal_length = 15,
-    size_t max_match_length = 19) {
+std::vector<unsigned char> alib_lz4_encode(const std::vector<unsigned char>& input,
+                                           size_t min_match_length = 4, size_t max_offset = 65535,
+                                           size_t max_literal_length = 15,
+                                           size_t max_match_length = 19) {
   BitWriter writer;
   size_t input_size = input.size() * 8;  // Work with bits
   size_t input_index = 0;
@@ -61,21 +61,18 @@ std::vector<unsigned char> alib_lz4_encode(
     size_t best_match_offset = 0;
 
     // Sliding window search for matches
-    for (size_t j = (input_index > max_offset) ? input_index - max_offset : 0;
-         j < input_index; j++) {
+    for (size_t j = (input_index > max_offset) ? input_index - max_offset : 0; j < input_index;
+         j++) {
       size_t match_length = 0;
 
-      while (match_length < max_match_length &&
-             input_index + match_length < input_size &&
+      while (match_length < max_match_length && input_index + match_length < input_size &&
              ((input[j / 8] >> (j % 8)) & 1) ==
-                 ((input[(input_index + match_length) / 8] >>
-                   ((input_index + match_length) % 8)) &
+                 ((input[(input_index + match_length) / 8] >> ((input_index + match_length) % 8)) &
                   1)) {
         match_length++;
       }
 
-      if (match_length >= min_match_length &&
-          match_length > best_match_length) {
+      if (match_length >= min_match_length && match_length > best_match_length) {
         best_match_length = match_length;
         best_match_offset = input_index - j;
       }
@@ -115,8 +112,8 @@ std::vector<unsigned char> alib_lz4_encode(
 }
 
 // LZ4 decoding function
-std::vector<unsigned char> alib_lz4_decode(
-    const std::vector<unsigned char>& encoded, size_t min_match_length = 4) {
+std::vector<unsigned char> alib_lz4_decode(const std::vector<unsigned char>& encoded,
+                                           size_t min_match_length = 4) {
   std::vector<unsigned char> decoded;
   size_t encoded_index = 0;
   size_t encoded_size = encoded.size();
@@ -137,9 +134,8 @@ std::vector<unsigned char> alib_lz4_decode(
     if (encoded_index >= encoded_size) break;  // End of data
 
     // Decode match offset (two bytes)
-    uint16_t match_offset =
-        static_cast<uint8_t>(encoded[encoded_index]) |
-        (static_cast<uint8_t>(encoded[encoded_index + 1]) << 8);
+    uint16_t match_offset = static_cast<uint8_t>(encoded[encoded_index]) |
+                            (static_cast<uint8_t>(encoded[encoded_index + 1]) << 8);
     encoded_index += 2;
 
     // Decode match length (high nibble of the token + minimum match length)

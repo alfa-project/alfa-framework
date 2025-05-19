@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,7 @@
 
 #include "alib_compression.hpp"
 
-std::vector<unsigned char> alib_huffman_s_encode(
-    const std::vector<unsigned char>& input) {
+std::vector<unsigned char> alib_huffman_s_encode(const std::vector<unsigned char>& input) {
   std::vector<int> frequency(256, 0);
 
   // Calculate frequency of each character
@@ -101,14 +100,12 @@ std::vector<unsigned char> alib_huffman_s_encode(
   return encoded_data;
 }
 
-std::vector<unsigned char> alib_huffman_s_decode(
-    const std::vector<unsigned char>& encoded_data) {
+std::vector<unsigned char> alib_huffman_s_decode(const std::vector<unsigned char>& encoded_data) {
   // Extract last_byte_bits from the first byte
   size_t last_byte_bits = encoded_data[0];
 
   // Extract rank mapping from the encoded data
-  std::vector<unsigned char> rank_map(encoded_data.begin() + 1,
-                                      encoded_data.begin() + 257);
+  std::vector<unsigned char> rank_map(encoded_data.begin() + 1, encoded_data.begin() + 257);
 
   // Convert remaining data into a bit stream
   std::string bit_stream;
@@ -140,14 +137,13 @@ std::vector<unsigned char> alib_huffman_s_decode(
       index = 92 + std::stoi(bit_stream.substr(bit_index + 5, 8), nullptr, 2);
       bit_index += 13;
     } else {
-      std::cerr << "Error: Invalid tier or bit sequence detected at bit index "
-                << bit_index << std::endl;
+      std::cerr << "Error: Invalid tier or bit sequence detected at bit index " << bit_index
+                << std::endl;
       break;
     }
 
     if (index < 0 || index >= 256) {
-      std::cerr << "Error: Invalid index detected. Index: " << index
-                << std::endl;
+      std::cerr << "Error: Invalid index detected. Index: " << index << std::endl;
       break;
     }
 
@@ -164,28 +160,23 @@ std::vector<unsigned char> alib_huffman_s_decode(
 void compare_decompression(const std::vector<unsigned char>& original_data,
                            const std::vector<unsigned char>& compressed_data) {
   // Decompress the compressed data
-  std::vector<unsigned char> decompressed_data =
-      alib_huffman_s_decode(compressed_data);
+  std::vector<unsigned char> decompressed_data = alib_huffman_s_decode(compressed_data);
 
   // Check if the decompressed data matches the original data
   bool all_match = true;
 
   if (decompressed_data.size() != original_data.size()) {
     std::cout << "Size mismatch: Original data size (" << original_data.size()
-              << ") does not match decompressed data size ("
-              << decompressed_data.size() << ").\n";
+              << ") does not match decompressed data size (" << decompressed_data.size() << ").\n";
     all_match = false;
   }
 
   // Compare each character in decompressed data with the original data
-  for (size_t i = 0;
-       i < std::min(original_data.size(), decompressed_data.size()); ++i) {
+  for (size_t i = 0; i < std::min(original_data.size(), decompressed_data.size()); ++i) {
     if (original_data[i] != decompressed_data[i]) {
       std::cout << "Mismatch at index " << i << ":\n"
-                << "Original character: " << static_cast<int>(original_data[i])
-                << "\n"
-                << "Decompressed character: "
-                << static_cast<int>(decompressed_data[i]) << "\n";
+                << "Original character: " << static_cast<int>(original_data[i]) << "\n"
+                << "Decompressed character: " << static_cast<int>(decompressed_data[i]) << "\n";
       all_match = false;
     }
   }

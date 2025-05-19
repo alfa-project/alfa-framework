@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
+#include <QApplication>
+
 #include "pclviewer.h"
 #include "rclcpp/rclcpp.hpp"
 
-#include <QApplication>
+int main(int argc, char **argv) {
+  rclcpp::init(argc, argv);
 
-int main(int argc, char **argv)
-{
-    rclcpp::init(argc, argv);    
+  QApplication a(argc, argv);
+  PCLViewer w(argc, argv);
+  w.show();
 
-    QApplication a(argc, argv);
-    PCLViewer w(argc,argv);
-    w.show();
-
-    return a.exec();
+  return a.exec();
 }

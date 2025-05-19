@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 #ifndef STYLE_SHEAT_H
 #define STYLE_SHEAT_H
 #include "QString"
-
 
 QString black = R"(
             QWidget
@@ -1378,9 +1377,6 @@ QSizeGrip
 }
 )";
 
-
-
-
 QString combinear = R"(
 
                     /*-----QWidget-----*/
@@ -2351,6 +2347,4 @@ QString combinear = R"(
 
                     )";
 
-
-
-#endif // STYLE_SHEAT_H
+#endif  // STYLE_SHEAT_H

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,36 +17,36 @@
 `timescale 1ns / 1ps
 
 module distance_filter (
-    input  wire        i_SYSTEM_clk,
-    input  wire        i_SYSTEM_rst,
-    // Extension_Interface
-    output reg  [ 0:0] EXT_writeValid,
-    input  wire [ 0:0] EXT_writeReady,
-    output reg  [ 0:0] EXT_readReady,
-    input  wire [ 0:0] EXT_readValid,
-    input  wire [18:0] EXT_PCSize,
-    output reg  [ 0:0] EXT_doneProcessing,
-    output reg  [15:0] EXT_writeCustomField,
-    input  wire [15:0] EXT_readCustomField,
-    output reg  [18:0] EXT_writeID,
-    output reg  [18:0] EXT_readID,
-    input  wire [ 0:0] EXT_enable,
-    output wire [31:0] EXT_status,
+                                                                                                    input  wire        i_SYSTEM_clk,
+                                                                                                    input  wire        i_SYSTEM_rst,
+                                                                                                    // Extension_Interface
+                                                                                                    output reg  [ 0:0] EXT_writeValid,
+                                                                                                    input  wire [ 0:0] EXT_writeReady,
+                                                                                                    output reg  [ 0:0] EXT_readReady,
+                                                                                                    input  wire [ 0:0] EXT_readValid,
+                                                                                                    input  wire [18:0] EXT_PCSize,
+                                                                                                    output reg  [ 0:0] EXT_doneProcessing,
+                                                                                                    output reg  [15:0] EXT_writeCustomField,
+                                                                                                    input  wire [15:0] EXT_readCustomField,
+                                                                                                    output reg  [18:0] EXT_writeID,
+                                                                                                    output reg  [18:0] EXT_readID,
+                                                                                                    input  wire [ 0:0] EXT_enable,
+                                                                                                    output wire [31:0] EXT_status,
 
-    // Cartesian Representation
-    input  wire [15:0] EXT_pointX,
-    input  wire [15:0] EXT_pointY,
-    input  wire [15:0] EXT_pointZ,
-    // Debug and User Defined 
-    output reg  [31:0] o_number_points_inside,
-    input  wire [31:0] max_distance,
-    input  wire [31:0] min_distance
+                                                                                                    // Cartesian Representation
+                                                                                                    input  wire [15:0] EXT_pointX,
+                                                                                                    input  wire [15:0] EXT_pointY,
+                                                                                                    input  wire [15:0] EXT_pointZ,
+                                                                                                    // Debug and User Defined 
+                                                                                                    output reg  [31:0] o_number_points_inside,
+                                                                                                    input  wire [31:0] max_distance,
+                                                                                                    input  wire [31:0] min_distance
 );
 
-  reg reset_number_points_inside;
-  reg [31:0] temp_number_points_inside;
-  reg [18:0] point_counter;
-  reg [2:0] state;
+  reg         reset_number_points_inside;
+  reg  [31:0] temp_number_points_inside;
+  reg  [18:0] point_counter;
+  reg  [ 2:0] state;
 
   wire [15:0] pointX_temp;
   wire [15:0] pointY_temp;

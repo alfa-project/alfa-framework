@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,8 +46,7 @@ void handler(AlfaNode *node) {
             node->get_extension_parameter("max_bounding_box_y"),
             node->get_extension_parameter("max_bounding_box_z"));
 
-  AlfaOctree octree1(bb, (int)node->get_extension_parameter("octree_depth"),
-                     false);
+  AlfaOctree octree1(bb, (int)node->get_extension_parameter("octree_depth"), false);
   AlfaPoint point;
 
   octree1.insert_pointcloud(node->get_input_pointcloud());
@@ -56,8 +55,7 @@ void handler(AlfaNode *node) {
   vector<unsigned char> code = octree1.get_occupation_code_DFS();
 
   if (node->get_extension_parameter("decompression_flag") == 1) {
-    AlfaOctree octree2(bb, node->get_extension_parameter("octree_depth"),
-                       false);
+    AlfaOctree octree2(bb, node->get_extension_parameter("octree_depth"), false);
     octree2.init_octree_from_occupation_code_DFS(code, bb);
     auto pointcloud = octree2.convert_to_pointcloud();
     for (auto point : pointcloud) node->push_point_output_pointcloud(point);
@@ -69,11 +67,9 @@ void handler(AlfaNode *node) {
     auto compressed_code_Huffman = alib_huffman_encode(code);
     auto compressed_code_fog = alib_huffman_s_encode(code);
 
-    cout << original_size << " " << code.size() << " "
-         << compressed_code_RLE.size() << " " << compressed_code_LZ4.size()
-         << " " << compresed_code_lz77.size() << " "
-         << compressed_code_Huffman.size() << " " << compressed_code_fog.size()
-         << endl;
+    cout << original_size << " " << code.size() << " " << compressed_code_RLE.size() << " "
+         << compressed_code_LZ4.size() << " " << compresed_code_lz77.size() << " "
+         << compressed_code_Huffman.size() << " " << compressed_code_fog.size() << endl;
   }
 
 #endif
@@ -105,8 +101,7 @@ void post_processing(AlfaNode *node) {
               node->get_extension_parameter("max_bounding_box_y"),
               node->get_extension_parameter("max_bounding_box_z"));
 
-    AlfaOctree octree1(bb, node->get_extension_parameter("octree_depth"),
-                       false);
+    AlfaOctree octree1(bb, node->get_extension_parameter("octree_depth"), false);
 
     octree1.init_octree_from_occupation_code_DFS(buffer.code, bb);
     auto pointcloud = octree1.convert_to_pointcloud();
@@ -123,8 +118,7 @@ void post_processing(AlfaNode *node) {
     }
 
     if (code_index < buffer.code.size()) {
-      std::memcpy(&point, &buffer.code[code_index],
-                  sizeof(buffer.code.size() - code_index));
+      std::memcpy(&point, &buffer.code[code_index], sizeof(buffer.code.size() - code_index));
       node->push_point_output_pointcloud(point);
     }
   }
@@ -188,8 +182,7 @@ int main(int argc, char **argv) {
   parameters[7].parameter_name = "decompression_flag";
 
   // Create an instance of AlfaNode and spin it
-  rclcpp::spin(
-      std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
+  rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
 
   // Shutdown ROS 2
   rclcpp::shutdown();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,7 @@ using std::placeholders::_1;
 // Global QoS variable
 rclcpp::QoS qos(rclcpp::KeepLast(10));
 
-RosInterface::RosInterface(std::mutex* mutex)
-    : Node("alfa_monitor"), mutex(mutex) {
+RosInterface::RosInterface(std::mutex* mutex) : Node("alfa_monitor"), mutex(mutex) {
   monitor_publisher = nullptr;
   bag_publisher = nullptr;
   raw_topic = "";
@@ -76,8 +75,7 @@ void RosInterface::connect_alfa(QString new_topic) {
   }
 }
 
-void RosInterface::raw_callback(
-    const sensor_msgs::msg::PointCloud2::SharedPtr cloud) {
+void RosInterface::raw_callback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud) {
   static unsigned int index = 0;
   try {
     if ((cloud->width * cloud->height) == 0) return;
@@ -97,8 +95,7 @@ void RosInterface::raw_callback(
   }
 }
 
-void RosInterface::alfa_callback(
-    const sensor_msgs::msg::PointCloud2::SharedPtr cloud) {
+void RosInterface::alfa_callback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud) {
   try {
     if ((cloud->width * cloud->height) == 0) return;
 
@@ -116,9 +113,8 @@ void RosInterface::alfa_callback(
   }
 }
 
-void RosInterface::publish_point_cloud(
-    pcl::PointCloud<pcl::PointXYZI>::Ptr frame, std::string topic_name,
-    bool publish_in_monitor) {
+void RosInterface::publish_point_cloud(pcl::PointCloud<pcl::PointXYZI>::Ptr frame,
+                                       std::string topic_name, bool publish_in_monitor) {
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher;
   if (publish_in_monitor)
     publisher = monitor_publisher;
@@ -127,8 +123,7 @@ void RosInterface::publish_point_cloud(
 
   if (publisher == nullptr || topic_name != publisher->get_topic_name()) {
     publisher.reset();
-    publisher =
-        this->create_publisher<sensor_msgs::msg::PointCloud2>(topic_name, qos);
+    publisher = this->create_publisher<sensor_msgs::msg::PointCloud2>(topic_name, qos);
   }
 
   // Message preparation and publishing
@@ -136,15 +131,14 @@ void RosInterface::publish_point_cloud(
   pcl::toROSMsg(*frame, pcl2_frame);
 
   pcl2_frame.header.frame_id =
-      "alfa_monitor_pointcloud";  // Create the pointcloud2 header to publish
+      "alfa_monitor_pointcloud";          // Create the pointcloud2 header to publish
   pcl2_frame.header.stamp = this->now();  // Get current time
 
   publisher->publish(pcl2_frame);  // Publish the point cloud in the ROS topic
 }
 
 void RosInterface::publish_pcl2_msg(const sensor_msgs::msg::PointCloud2& msg,
-                                    std::string topic_name,
-                                    bool publish_in_monitor) {
+                                    std::string topic_name, bool publish_in_monitor) {
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher;
   if (publish_in_monitor)
     publisher = monitor_publisher;
@@ -153,8 +147,7 @@ void RosInterface::publish_pcl2_msg(const sensor_msgs::msg::PointCloud2& msg,
 
   if (publisher == nullptr || topic_name != publisher->get_topic_name()) {
     publisher.reset();
-    publisher =
-        this->create_publisher<sensor_msgs::msg::PointCloud2>(topic_name, qos);
+    publisher = this->create_publisher<sensor_msgs::msg::PointCloud2>(topic_name, qos);
   }
 
   publisher->publish(msg);  // Publish the point cloud in the ROS topic
@@ -184,8 +177,7 @@ void RosInterface::load_bag(std::string file_name) {
   // Find topics with pointcloud2 topics and store them for publishing
   const auto topics = bag_reader->get_all_topics_and_types();
   for (auto const& topic : topics) {
-    if (QString::fromStdString(topic.type).contains("PointCloud2"))
-      bag_topic = topic.name;
+    if (QString::fromStdString(topic.type).contains("PointCloud2")) bag_topic = topic.name;
   }
 
   // Publish first frame
@@ -196,14 +188,13 @@ void RosInterface::reload_bag() { load_bag(bag_file_name); }
 
 void RosInterface::publish_next_bag_pointcloud() {
   sensor_msgs::msg::PointCloud2 msg;
-  auto type_support = rosidl_typesupport_cpp::get_message_type_support_handle<
-      sensor_msgs::msg::PointCloud2>();
+  auto type_support =
+      rosidl_typesupport_cpp::get_message_type_support_handle<sensor_msgs::msg::PointCloud2>();
 
   if (bag_loaded) {
     while (bag_reader->has_next()) {
       auto serialized_message = bag_reader->read_next();
-      rclcpp::SerializedMessage extracted_serialized_msg(
-          *serialized_message->serialized_data);
+      rclcpp::SerializedMessage extracted_serialized_msg(*serialized_message->serialized_data);
       auto current_topic = serialized_message->topic_name;
 
       if (bag_topic == current_topic)  // It is the topic with pointcloud2 data

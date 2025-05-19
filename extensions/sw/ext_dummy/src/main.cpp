@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,8 +95,7 @@ int main(int argc, char **argv) {
   conf.custom_field_conversion_type = CUSTOM_FIELD_INTENSITY;
 
   // Create an instance of AlfaNode and spin it
-  rclcpp::spin(
-      std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
+  rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
 
   // Shutdown ROS 2
   rclcpp::shutdown();

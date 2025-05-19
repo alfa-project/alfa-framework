@@ -21,17 +21,17 @@
 #include <linux/fs.h>
 #include <linux/types.h>
 #include <pthread.h>
+#include <sys/mman.h>
 #include <unistd.h>
 
 #include <atomic>
 #include <condition_variable>
 #include <csignal>
 #include <deque>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
-#include <sys/mman.h>
-#include <iostream>
 
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/point_cloud2.hpp"
@@ -62,19 +62,16 @@
 using namespace std;
 
 // Register custom point struct according to PCL
-POINT_CLOUD_REGISTER_POINT_STRUCT(AlfaPoint,
-                                  (float, x, x)(float, y, y)(float, z,
-                                                             z)(std::uint32_t,
-                                                                custom_field,
-                                                                custom_field))
+POINT_CLOUD_REGISTER_POINT_STRUCT(AlfaPoint, (float, x, x)(float, y, y)(float, z, z)(std::uint32_t,
+                                                                                     custom_field,
+                                                                                     custom_field))
 
 // AlfaNode class
 class AlfaNode : public rclcpp::Node {
  public:
   // Constructor and Destructor
   AlfaNode(AlfaConfiguration conf, AlfaExtensionParameter *parameters,
-           void (*handler_pointcloud)(AlfaNode *),
-           void (*post_processing_pointcloud)(AlfaNode *));
+           void (*handler_pointcloud)(AlfaNode *), void (*post_processing_pointcloud)(AlfaNode *));
   ~AlfaNode();
 
   // Parameter handling
@@ -104,14 +101,11 @@ class AlfaNode : public rclcpp::Node {
   AlfaPoint get_point_output_pointcloud(std::uint32_t position);
   bool get_point_input_pointcloud(AlfaPoint &point);
   bool reset_input_pointcloud_counter();
-  bool set_custom_field_output_pointcloud(std::uint32_t position,
-                                          std::uint32_t custom_field);
+  bool set_custom_field_output_pointcloud(std::uint32_t position, std::uint32_t custom_field);
 
   // Hardware Store and Load
-  void store_pointcloud(int type,
-                        pcl::PointCloud<AlfaPoint>::Ptr pointcloud = nullptr);
-  void load_pointcloud(int type,
-                       pcl::PointCloud<AlfaPoint>::Ptr pointcloud = nullptr);
+  void store_pointcloud(int type, pcl::PointCloud<AlfaPoint>::Ptr pointcloud = nullptr);
+  void load_pointcloud(int type, pcl::PointCloud<AlfaPoint>::Ptr pointcloud = nullptr);
 
   // Extension memory
   void read_ext_memory(uint32_t offset, size_t size, void *buffer);
@@ -132,12 +126,10 @@ class AlfaNode : public rclcpp::Node {
   std::uint32_t timeout_counter;
 
   // ROS subscribers and publishers
-  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr
-      pointcloud_subscriber;
+  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_subscriber;
   rclcpp::Publisher<alfa_msg::msg::AlfaMetrics>::SharedPtr metrics_publisher;
   rclcpp::Publisher<alfa_msg::msg::AlfaAlivePing>::SharedPtr alive_publisher;
-  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr
-      pointcloud_publisher;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_publisher;
 
   // Files
   int ext_fd, mem_fd, ext_mem_fd;
@@ -155,14 +147,12 @@ class AlfaNode : public rclcpp::Node {
   std::thread *ticker_thread, *pointcloud_publisher_thread, *alfa_main_thread;
 
   // Mutexes and condition variables
-  std::mutex input_mutex, output_mutex, output_counter_mutex,
-      ros_pointcloud_mutex, pcl2_frame_mutex, ros_pointcloud_condition_mutex,
-      pcl2_frame_condition_mutex;
+  std::mutex input_mutex, output_mutex, output_counter_mutex, ros_pointcloud_mutex,
+      pcl2_frame_mutex, ros_pointcloud_condition_mutex, pcl2_frame_condition_mutex;
   std::condition_variable ros_pointcloud_condition, pcl2_frame_condition;
 
   // Metrics
-  AlfaMetric handler_metric, full_processing_metric, publishing_metric,
-      number_of_processed_points;
+  AlfaMetric handler_metric, full_processing_metric, publishing_metric, number_of_processed_points;
   alfa_msg::msg::MetricMessage debug_points_message[20];
   std::deque<sensor_msgs::msg::PointCloud2> pcl2_frame;
   std::deque<sensor_msgs::msg::PointCloud2> ros_pointcloud;

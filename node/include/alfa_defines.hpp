@@ -25,12 +25,9 @@
 #define ALFA_MEM_IOC_FLUSH_CACHE _IO(ALFA_MEM_IOC_MAGIC, 2)
 
 #define ALFA_EXT_IOC_MAGIC 'k'
-#define ALFA_EXT_IOC_WRITE_REGISTER \
-  _IOW(ALFA_EXT_IOC_MAGIC, 1, struct alfa_ext_ioctl_data)
-#define ALFA_EXT_IOC_READ_REGISTER \
-  _IOR(ALFA_EXT_IOC_MAGIC, 2, struct alfa_ext_ioctl_data)
-#define ALFA_EXT_IOC_WAIT_FOR_VALUE \
-  _IOW(ALFA_EXT_IOC_MAGIC, 3, struct alfa_ext_ioctl_data)
+#define ALFA_EXT_IOC_WRITE_REGISTER _IOW(ALFA_EXT_IOC_MAGIC, 1, struct alfa_ext_ioctl_data)
+#define ALFA_EXT_IOC_READ_REGISTER _IOR(ALFA_EXT_IOC_MAGIC, 2, struct alfa_ext_ioctl_data)
+#define ALFA_EXT_IOC_WAIT_FOR_VALUE _IOW(ALFA_EXT_IOC_MAGIC, 3, struct alfa_ext_ioctl_data)
 
 #define ALFA_EXT_MEM_SIZE 0xA00000  // 10MB buffer size
 #define ALFA_EXT_MEM_GET_PHYS_ADDR _IOR('a', 1, unsigned long)

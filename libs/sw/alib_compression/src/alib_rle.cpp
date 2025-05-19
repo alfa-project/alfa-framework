@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@
 #include "alib_compression.hpp"
 
 // RLE encoding function
-std::vector<unsigned char> alib_rle_encode(
-    const std::vector<unsigned char>& input) {
+std::vector<unsigned char> alib_rle_encode(const std::vector<unsigned char>& input) {
   std::vector<unsigned char> encoded;
   size_t bit_count = input.size() * 8;  // Total number of bits
   size_t bit_index = 0;
@@ -63,8 +62,7 @@ std::vector<unsigned char> alib_rle_encode(
 }
 
 // RLE decoding function
-std::vector<unsigned char> alib_rle_decode(
-    const std::vector<unsigned char>& encoded) {
+std::vector<unsigned char> alib_rle_decode(const std::vector<unsigned char>& encoded) {
   std::vector<unsigned char> decoded;
   uint8_t current_byte = 0;
   uint8_t bit_position = 7;  // Start filling bits from the MSB

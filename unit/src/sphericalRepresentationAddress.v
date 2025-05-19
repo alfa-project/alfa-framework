@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 `timescale 1ns / 1ps
 
 /* Module: MemMU_SR_A
@@ -32,58 +32,58 @@
 */
 module MemMU_sphericalRepresentationAddress #(
 
-    /* Parameters integer: Representation
+                                                                                                    /* Parameters integer: Representation
 
         FOV - Representation Field of View. 
         NUMBER_OF_ADDR_BITS - Number of address bits for storing the representation's angle.
     */
-    parameter NUMBER_OF_ADDR_BITS = 14,
-    parameter FOV = 360
-    )(
+                                                                                                    parameter NUMBER_OF_ADDR_BITS = 14,
+                                                                                                    parameter FOV = 360
+) (
 
-    /* Input: Input ports
+                                                                                                    /* Input: Input ports
 
         <SIU::angleH> or <SIU::angleV> - Sensor angle.
-    */  
-    input [15:0] i_SIU_angle,    
+    */
+                                                                                                    input [15:0] i_SIU_angle,
 
-    /* Output: Output ports
+                                                                                                    /* Output: Output ports
 
         correction - 4 bits output. Outputs the correction value between the address and actually the measured angle.
         address - [NUMBER_OF_ADDR_BITS-1:0] bits output. Outputs the representation address (Sequential).
     */
-    output [3:0] o_MemMU_SR_A_correction,
-    output [NUMBER_OF_ADDR_BITS-1:0] o_MemMU_SR_A_address
-    );
-    
-    /* Localparams integer: Representation
+                                                                                                    output [3:0] o_MemMU_SR_A_correction,
+                                                                                                    output [NUMBER_OF_ADDR_BITS-1:0] o_MemMU_SR_A_address
+);
+
+  /* Localparams integer: Representation
 
         NUMBER_OF_INDIVIDUAL_MEASUREMENTS - Number of measurements to achieve the total FOV. 
         RESOLUTION - Resolution (degrees) for each measurement.
     */
-    localparam integer NUMBER_OF_INDIVIDUAL_MEASUREMENTS = (2**NUMBER_OF_ADDR_BITS);
-    localparam integer RESOLUTION = ((FOV*100) / NUMBER_OF_INDIVIDUAL_MEASUREMENTS)+1;
-    localparam integer MAXFOV = (FOV*100)-1;
-    localparam integer DEEP = NUMBER_OF_ADDR_BITS;
-    localparam integer FACTOR = 2**(DEEP)/RESOLUTION;
-    
-    /* Wires: Connectors for horizontal axis
+  localparam integer NUMBER_OF_INDIVIDUAL_MEASUREMENTS = (2 ** NUMBER_OF_ADDR_BITS);
+  localparam integer RESOLUTION = ((FOV * 100) / NUMBER_OF_INDIVIDUAL_MEASUREMENTS) + 1;
+  localparam integer MAXFOV = (FOV * 100) - 1;
+  localparam integer DEEP = NUMBER_OF_ADDR_BITS;
+  localparam integer FACTOR = 2 ** (DEEP) / RESOLUTION;
+
+  /* Wires: Connectors for horizontal axis
 
         true_angle - 16 bits connector to truncate FOV degree angles . 
         ang_of_address - 16 x <NUMBER_OF_INDIVIDUAL_MEASUREMENTS> static array with all angle to address translation. .  
         index_array - <NUMBER_OF_ADDR_BITS> bits connector that converts the received <i_SIU_angle> signal into the index used in <ang_of_address> 
     */
-    wire [15:0] true_angle;
-    wire [15:0] ang_of_address [NUMBER_OF_INDIVIDUAL_MEASUREMENTS-1:0];
-    wire [NUMBER_OF_ADDR_BITS-1:0] index_array;
-    wire [31:0] index_array_temp;
-    
-    assign true_angle = i_SIU_angle>=MAXFOV? MAXFOV : i_SIU_angle;
-    
-    /* Always: Main Combinational block
+  wire [                   15:0] true_angle;
+  wire [                   15:0] ang_of_address   [NUMBER_OF_INDIVIDUAL_MEASUREMENTS-1:0];
+  wire [NUMBER_OF_ADDR_BITS-1:0] index_array;
+  wire [                   31:0] index_array_temp;
+
+  assign true_angle = i_SIU_angle >= MAXFOV ? MAXFOV : i_SIU_angle;
+
+  /* Always: Main Combinational block
         *TODO*.
     */
-    assign o_MemMU_SR_A_address  = (true_angle*FACTOR)>>DEEP;
-    assign o_MemMU_SR_A_correction = true_angle - ((true_angle*FACTOR)>>DEEP)*RESOLUTION;
-       
+  assign o_MemMU_SR_A_address = (true_angle * FACTOR) >> DEEP;
+  assign o_MemMU_SR_A_correction = true_angle - ((true_angle * FACTOR) >> DEEP) * RESOLUTION;
+
 endmodule

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,18 +23,16 @@ void calculateAndPrintFrequencies(const std::vector<unsigned char>& input) {
   }
 
   for (const auto& pair : frequency_map) {
-    std::cout << "code " << static_cast<int>(pair.first) << " -> "
-              << pair.second << " times" << std::endl;
+    std::cout << "code " << static_cast<int>(pair.first) << " -> " << pair.second << " times"
+              << std::endl;
   }
 }
 
-void writeBinaryToFile(const std::string& file_path,
-                       const std::vector<unsigned char>& data) {
+void writeBinaryToFile(const std::string& file_path, const std::vector<unsigned char>& data) {
   // Open the file in binary mode
   std::ofstream file(file_path, std::ios::binary);
   if (!file) {
-    std::cerr << "Error: Could not open file " << file_path
-              << " for writing.\n";
+    std::cerr << "Error: Could not open file " << file_path << " for writing.\n";
     return;
   }
 

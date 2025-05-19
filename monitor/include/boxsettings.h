@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,71 +18,68 @@
 #define BOXSETTINGS_H
 
 // Point Cloud Library
+#include <pcl/filters/filter.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-#include <pcl/io/ply_io.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/filters/filter.h>
 #include <pcl/visualization/pcl_visualizer.h>
-#include <vector>
-#include <QDialog>
 
+#include <QDialog>
+#include <vector>
 
 using namespace std;
 
-
-struct box
-{
-    pcl::PointXYZ pStart, pEnd;
-    string name;
-    unsigned int index;
-    unsigned int type; //0-> Label Box 1->Noise Removal Box 2-> Noise Injection Box
+struct box {
+  pcl::PointXYZ pStart, pEnd;
+  string name;
+  unsigned int index;
+  unsigned int type;  // 0-> Label Box 1->Noise Removal Box 2-> Noise Injection Box
 };
 
-namespace Ui
-{
-    class BoxSettings;
+namespace Ui {
+class BoxSettings;
 }
 
-class BoxSettings : public QDialog
-{
-    Q_OBJECT
+class BoxSettings : public QDialog {
+  Q_OBJECT
 
-public:
-    explicit BoxSettings(QWidget *parent = nullptr);
-    explicit BoxSettings(QWidget *parent = nullptr, box *mBox = nullptr, vector<box> *mListBox = nullptr);
+ public:
+  explicit BoxSettings(QWidget *parent = nullptr);
+  explicit BoxSettings(QWidget *parent = nullptr, box *mBox = nullptr,
+                       vector<box> *mListBox = nullptr);
 
-    ~BoxSettings();
+  ~BoxSettings();
 
-private slots:
-    void on_spinXStart_valueChanged(double arg1);
-    void on_spinXEnd_valueChanged(double arg1);
-    void on_spinYStart_valueChanged(double arg1);
-    void on_spinYEnd_valueChanged(double arg1);
-    void on_spinZStart_valueChanged(double arg1);
-    void on_spinZEnd_valueChanged(double arg1);
-    void on_spinMoveZ_valueChanged(double arg1);
-    void on_spinMoveZ_editingFinished();
-    void on_spinMoveX_valueChanged(double arg1);
-    void on_spinMoveX_editingFinished();
-    void on_spinMoveY_valueChanged(double arg1);
-    void on_spinMoveY_editingFinished();
-    void on_spinSensi_valueChanged(double arg1);
-    void on_rbValue_clicked();
-    void on_rbArrows_clicked();
-    void on_cbLabelType_clicked();
-    void on_cbNoiseRType_clicked();
-    void on_cbNoiseInject_clicked();
+ private slots:
+  void on_spinXStart_valueChanged(double arg1);
+  void on_spinXEnd_valueChanged(double arg1);
+  void on_spinYStart_valueChanged(double arg1);
+  void on_spinYEnd_valueChanged(double arg1);
+  void on_spinZStart_valueChanged(double arg1);
+  void on_spinZEnd_valueChanged(double arg1);
+  void on_spinMoveZ_valueChanged(double arg1);
+  void on_spinMoveZ_editingFinished();
+  void on_spinMoveX_valueChanged(double arg1);
+  void on_spinMoveX_editingFinished();
+  void on_spinMoveY_valueChanged(double arg1);
+  void on_spinMoveY_editingFinished();
+  void on_spinSensi_valueChanged(double arg1);
+  void on_rbValue_clicked();
+  void on_rbArrows_clicked();
+  void on_cbLabelType_clicked();
+  void on_cbNoiseRType_clicked();
+  void on_cbNoiseInject_clicked();
 
-signals:
-    void build_boxs();
+ signals:
+  void build_boxs();
 
-private:
-    void updateSlider();
-    Ui::BoxSettings *ui;
-    vector<box> *boxlist;
-    box *boxseletecd;
-    box copy;
+ private:
+  void updateSlider();
+  Ui::BoxSettings *ui;
+  vector<box> *boxlist;
+  box *boxseletecd;
+  box copy;
 };
 
-#endif // BOXSETTINGS_H
+#endif  // BOXSETTINGS_H

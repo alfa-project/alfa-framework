@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@
 
 #include <thread>
 
-AlfaOctree::AlfaOctree(AlfaBB bounding_box, int max_depth = 20,
-                       bool multithread = false) {
+AlfaOctree::AlfaOctree(AlfaBB bounding_box, int max_depth = 20, bool multithread = false) {
   this->number_of_points = 0;
   this->number_of_nodes = 1;
   this->number_of_discarded_points = 0;
@@ -40,12 +39,9 @@ AlfaOctree::AlfaOctree(AlfaBB bounding_box, int max_depth = 20,
   this->voxel_sizes_z = new float[max_depth + 1];
 
   for (int i = 0; i < max_depth + 1; i++) {
-    this->voxel_sizes_x[i] =
-        (bounding_box.max_x - bounding_box.min_x) / (1 << i);
-    this->voxel_sizes_y[i] =
-        (bounding_box.max_y - bounding_box.min_y) / (1 << i);
-    this->voxel_sizes_z[i] =
-        (bounding_box.max_z - bounding_box.min_z) / (1 << i);
+    this->voxel_sizes_x[i] = (bounding_box.max_x - bounding_box.min_x) / (1 << i);
+    this->voxel_sizes_y[i] = (bounding_box.max_y - bounding_box.min_y) / (1 << i);
+    this->voxel_sizes_z[i] = (bounding_box.max_z - bounding_box.min_z) / (1 << i);
   }
 
   for (int i = 0; i < 8; i++) {
@@ -67,8 +63,7 @@ void AlfaOctree::insert_pointcloud(pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
   }
 }
 
-void AlfaOctree::insert_pointcloud_multi_thread(
-    pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+void AlfaOctree::insert_pointcloud_multi_thread(pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
   for (int i = 0; i < 8; i++) {
     if (this->root->branchs[i] == NULL) {
       this->root->branchs[i] = new AlfaOctreeNode();
@@ -99,9 +94,8 @@ void AlfaOctree::insert_pointcloud_multi_thread(
 
   // Create and run threads
   for (int i = 0; i < 8; i++) {
-    threads[i] =
-        std::thread(&AlfaOctree::insert_pointcloud_multi_thread_vector_handler,
-                    this, pointclouds[i], i);
+    threads[i] = std::thread(&AlfaOctree::insert_pointcloud_multi_thread_vector_handler, this,
+                             pointclouds[i], i);
 
     // Set thread affinity
     setup_thread(threads[i], i);
@@ -125,13 +119,12 @@ void AlfaOctree::insert_pointcloud_multi_thread(
   }
 }
 
-void AlfaOctree::insert_pointcloud_single_thread(
-    pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+void AlfaOctree::insert_pointcloud_single_thread(pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
   for (const auto &point : *pointcloud) insert_point(point);
 }
 
-void AlfaOctree::insert_pointcloud_multi_thread_vector_handler(
-    vector<AlfaPoint> pointcloud, int childIndex) {
+void AlfaOctree::insert_pointcloud_multi_thread_vector_handler(vector<AlfaPoint> pointcloud,
+                                                               int childIndex) {
   for (size_t i = 0; i < pointcloud.size(); i++) {
     insert_point_root_branch(pointcloud[i], childIndex);
   }
@@ -235,8 +228,7 @@ void AlfaOctree::insert_point_root_branch(AlfaPoint point, int rootchildIndex) {
   this->last_inserted_node[rootchildIndex] = pointer;
 }
 
-void AlfaOctree::retrieve_occupation_code_DFS(AlfaOctreeNode *node,
-                                              vector<unsigned char> &code) {
+void AlfaOctree::retrieve_occupation_code_DFS(AlfaOctreeNode *node, vector<unsigned char> &code) {
   if (!is_leaf(node)) {
     code.push_back(node->occupation_code);
     for (int i = 0; i < 8; i++) {
@@ -270,8 +262,7 @@ vector<unsigned char> AlfaOctree::get_occupation_code_DFS_multi_thread() {
 
   final_code.push_back(this->root->occupation_code);
   for (int i = 0; i < 8; i++) {
-    if (code[i].size() > 0)
-      final_code.insert(final_code.end(), code[i].begin(), code[i].end());
+    if (code[i].size() > 0) final_code.insert(final_code.end(), code[i].begin(), code[i].end());
   }
   return final_code;
 }
@@ -300,8 +291,7 @@ AlfaPoint AlfaOctree::get_centroid(AlfaOctreeNode *node) {
   return centroid;
 }
 
-void AlfaOctree::retrieve_points(AlfaOctreeNode *node,
-                                 vector<AlfaPoint> &points) {
+void AlfaOctree::retrieve_points(AlfaOctreeNode *node, vector<AlfaPoint> &points) {
   if (is_leaf(node)) {
     AlfaPoint centroid = get_centroid(node);
     convert_to_pointcloud_mutex.lock();
@@ -329,8 +319,8 @@ vector<AlfaPoint> AlfaOctree::convert_to_pointcloud_multi_thread() {
   std::thread threads[8];
   for (int i = 0; i < 8; i++) {
     if (this->root->branchs[i] != NULL) {
-      threads[i] = std::thread(&AlfaOctree::retrieve_points, this,
-                               this->root->branchs[i], std::ref(points));
+      threads[i] =
+          std::thread(&AlfaOctree::retrieve_points, this, this->root->branchs[i], std::ref(points));
       // Set thread affinity
       setup_thread(threads[i], i);
     }
@@ -357,8 +347,8 @@ float AlfaOctree::get_resolution_x() { return this->voxel_sizes_x[max_depth]; }
 
 float AlfaOctree::get_resolution_y() { return this->voxel_sizes_y[max_depth]; }
 
-void AlfaOctree::init_octree_from_occupation_code_DFS(
-    vector<unsigned char> code, AlfaBB bounding_box) {
+void AlfaOctree::init_octree_from_occupation_code_DFS(vector<unsigned char> code,
+                                                      AlfaBB bounding_box) {
   this->reset_octree(bounding_box);
   unsigned int index = 0;
   init_node_from_occupation_code_DFS(this->root, code, &index);
@@ -389,8 +379,7 @@ bool AlfaOctree::setup_thread(std::thread &thread, int core_id) {
   CPU_ZERO(&cpuset);
   CPU_SET(core_id, &cpuset);  // Pin thread to core_id
 
-  int rc = pthread_setaffinity_np(thread.native_handle(), sizeof(cpu_set_t),
-                                  &cpuset);
+  int rc = pthread_setaffinity_np(thread.native_handle(), sizeof(cpu_set_t), &cpuset);
   if (rc != 0) {
     return false;
   }
@@ -409,9 +398,7 @@ int AlfaOctree::get_number_of_points() { return this->number_of_points; }
 
 int AlfaOctree::get_number_of_nodes() { return this->number_of_nodes; }
 
-int AlfaOctree::get_number_of_discarded_points() {
-  return this->number_of_discarded_points;
-}
+int AlfaOctree::get_number_of_discarded_points() { return this->number_of_discarded_points; }
 
 bool AlfaOctree::is_point_inside_BB(AlfaPoint point, AlfaBB bounding_box) {
   if (point.x >= bounding_box.min_x && point.x <= bounding_box.max_x &&
@@ -423,25 +410,20 @@ bool AlfaOctree::is_point_inside_BB(AlfaPoint point, AlfaBB bounding_box) {
 }
 
 void AlfaOctree::set_node_BB(AlfaOctreeNode *node, int childIndex) {
-  node->bounding_box.min_x = node->parent->bounding_box.min_x +
-                             (childIndex & 1) * voxel_sizes_x[node->depth];
+  node->bounding_box.min_x =
+      node->parent->bounding_box.min_x + (childIndex & 1) * voxel_sizes_x[node->depth];
 
-  node->bounding_box.max_x =
-      node->bounding_box.min_x + voxel_sizes_x[node->depth];
+  node->bounding_box.max_x = node->bounding_box.min_x + voxel_sizes_x[node->depth];
 
   node->bounding_box.min_y =
-      node->parent->bounding_box.min_y +
-      ((childIndex >> 1) & 1) * voxel_sizes_y[node->depth];
+      node->parent->bounding_box.min_y + ((childIndex >> 1) & 1) * voxel_sizes_y[node->depth];
 
-  node->bounding_box.max_y =
-      node->bounding_box.min_y + voxel_sizes_y[node->depth];
+  node->bounding_box.max_y = node->bounding_box.min_y + voxel_sizes_y[node->depth];
 
   node->bounding_box.min_z =
-      node->parent->bounding_box.min_z +
-      ((childIndex >> 2) & 1) * voxel_sizes_z[node->depth];
+      node->parent->bounding_box.min_z + ((childIndex >> 2) & 1) * voxel_sizes_z[node->depth];
 
-  node->bounding_box.max_z =
-      node->bounding_box.min_z + voxel_sizes_z[node->depth];
+  node->bounding_box.max_z = node->bounding_box.min_z + voxel_sizes_z[node->depth];
 }
 
 void AlfaOctree::reset_octree(AlfaBB bounding_box) {

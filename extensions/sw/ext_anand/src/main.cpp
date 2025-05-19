@@ -1,3 +1,18 @@
+/*
+ * Copyright 2025 ALFA Project. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include <pcl/point_types.h>
 #include <pcl/point_types_conversion.h>
@@ -54,8 +69,8 @@ void handler(AlfaNode *node) {
   int num_cells_x = std::ceil((x_max - x_min) / csize);
   int num_cells_y = std::ceil((y_max - y_min) / csize);
 
-  std::vector<std::vector<std::vector<int> > > grid(
-      num_cells_x, std::vector<std::vector<int> >(num_cells_y));
+  std::vector<std::vector<std::vector<int> > > grid(num_cells_x,
+                                                    std::vector<std::vector<int> >(num_cells_y));
 
   int t = 0;
 
@@ -97,14 +112,12 @@ void handler(AlfaNode *node) {
                                  // are below z_min + delta
           {
             for (const auto index : grid[i][j]) {
-              node->set_custom_field_output_pointcloud(index,
-                                                       ALFA_LABEL_NO_GROUND);
+              node->set_custom_field_output_pointcloud(index, ALFA_LABEL_NO_GROUND);
               AlfaPoint point = node->get_point_input_pointcloud(index);
 
               if (point.z < (z_min + delta))  // GROUND
               {
-                node->set_custom_field_output_pointcloud(index,
-                                                         ALFA_LABEL_GROUND);
+                node->set_custom_field_output_pointcloud(index, ALFA_LABEL_GROUND);
               }
             }
           }
@@ -118,16 +131,14 @@ void handler(AlfaNode *node) {
 
               if (point.z < (z_min + z_th))  // GROUND
               {
-                node->set_custom_field_output_pointcloud(index,
-                                                         ALFA_LABEL_GROUND);
+                node->set_custom_field_output_pointcloud(index, ALFA_LABEL_GROUND);
               }
             }
           }
         } else  // Cell does not contain ground points
         {
           for (const auto index : grid[i][j]) {
-            node->set_custom_field_output_pointcloud(index,
-                                                     ALFA_LABEL_NO_GROUND);
+            node->set_custom_field_output_pointcloud(index, ALFA_LABEL_NO_GROUND);
           }
         }
       }
@@ -151,14 +162,11 @@ void post_processing(AlfaNode *node) {
   outside_points = node->get_debug_point(1);
 #endif
 
-  AlfaGroundSegmentationMetrics metrics =
-      evaluate_ground_segmentation_method(node, GROUND_LABELS);
+  AlfaGroundSegmentationMetrics metrics = evaluate_ground_segmentation_method(node, GROUND_LABELS);
 
   node->publish_pointcloud();
-  node->set_debug_point(0, metrics.basic_metrics.number_input_points,
-                        "Number of input points");
-  node->set_debug_point(1, metrics.basic_metrics.number_output_points,
-                        "Number of output points");
+  node->set_debug_point(0, metrics.basic_metrics.number_input_points, "Number of input points");
+  node->set_debug_point(1, metrics.basic_metrics.number_output_points, "Number of output points");
   node->set_debug_point(2, metrics.true_positive, "True positive");
   node->set_debug_point(3, metrics.false_positive, "False positive");
   node->set_debug_point(4, metrics.true_negative, "True negative");
@@ -167,10 +175,8 @@ void post_processing(AlfaNode *node) {
   node->set_debug_point(7, metrics.true_negative_rate, "True negative rate");
   node->set_debug_point(8, metrics.false_positive_rate, "False positive rate");
   node->set_debug_point(9, metrics.false_negative_rate, "False negative rate");
-  node->set_debug_point(10, metrics.positive_predictive_value,
-                        "Positive predictive value");
-  node->set_debug_point(11, metrics.negative_predictive_value,
-                        "Negative predictive value");
+  node->set_debug_point(10, metrics.positive_predictive_value, "Positive predictive value");
+  node->set_debug_point(11, metrics.negative_predictive_value, "Negative predictive value");
   node->set_debug_point(12, metrics.f1_score, "F1 score");
   node->set_debug_point(13, metrics.accuracy, "Accuracy");
   node->set_debug_point(14, metrics.IoUg, "IoUg");
@@ -231,8 +237,7 @@ int main(int argc, char **argv) {
   // rclcpp::on_shutdown(&callback_shutdown);
 
   // Create an instance of AlfaNode and spin it
-  rclcpp::spin(
-      std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
+  rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
 
   // Shutdown ROS 2
   rclcpp::shutdown();

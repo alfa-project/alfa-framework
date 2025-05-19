@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,7 @@ void signalHandler(int signal) {
 }
 
 // Constructor
-AlfaNode::AlfaNode(AlfaConfiguration conf,
-                   AlfaExtensionParameter parameters[10],
+AlfaNode::AlfaNode(AlfaConfiguration conf, AlfaExtensionParameter parameters[10],
                    void (*handler_pointcloud)(AlfaNode *) = NULL,
                    void (*post_processing_pointcloud)(AlfaNode *) = NULL)
     : Node(conf.node_name),
@@ -69,10 +68,8 @@ AlfaNode::AlfaNode(AlfaConfiguration conf,
   // If SIU is activated no subscriber is required to retrieve pointclouds
   if (!configuration.hardware_support.hardware_driver) {
     // Subscribe to the conf.subscriber_topic,
-    pointcloud_subscriber =
-        this->create_subscription<sensor_msgs::msg::PointCloud2>(
-            conf.subscriber_topic, qos,
-            std::bind(&AlfaNode::handler_callback, this, _1));
+    pointcloud_subscriber = this->create_subscription<sensor_msgs::msg::PointCloud2>(
+        conf.subscriber_topic, qos, std::bind(&AlfaNode::handler_callback, this, _1));
 #ifdef ALFA_VERBOSE
     verbose_ok("constructor", "setup handler_callback");
 #endif
@@ -125,16 +122,13 @@ AlfaNode::AlfaNode(AlfaConfiguration conf,
 
   // Parameters config
   for (int i = 0; i < 10; i++) {
-    if (parameters[i].parameter_name !=
-        "") {  // If the parameter is actually defined
+    if (parameters[i].parameter_name != "") {  // If the parameter is actually defined
       this->extension_parameters.push_back(parameters[i]);
-      this->declare_parameter(parameters[i].parameter_name,
-                              (double)parameters[i].parameter_value);
+      this->declare_parameter(parameters[i].parameter_name, (double)parameters[i].parameter_value);
       if (configuration.hardware_support.hardware_extension ||
           configuration.hardware_support.hardware_driver) {
-        unit_write_register(
-            UNIT_USER_DEFINE_0 + i * 4,
-            parameters[i].parameter_value * FIXED_POINT_MULTIPLIER);
+        unit_write_register(UNIT_USER_DEFINE_0 + i * 4,
+                            parameters[i].parameter_value * FIXED_POINT_MULTIPLIER);
       }
     }
   }
@@ -178,23 +172,19 @@ int AlfaNode::setup_thread(std::thread *thread, size_t CPU) {
   CPU_ZERO(&cpuset);
   CPU_SET(CPU, &cpuset);
 
-  int result = pthread_setaffinity_np(thread->native_handle(),
-                                      sizeof(cpu_set_t), &cpuset);
+  int result = pthread_setaffinity_np(thread->native_handle(), sizeof(cpu_set_t), &cpuset);
   if (result != 0) {
-    std::cerr << "Error setting thread affinity: " << strerror(result)
-              << std::endl;
+    std::cerr << "Error setting thread affinity: " << strerror(result) << std::endl;
     return 1;
   }
 
   sched_param sch;
   int policy;
   pthread_getschedparam(thread->native_handle(), &policy, &sch);
-  sch.sched_priority =
-      90;  // Set the priority, 99 is the maximum for SCHED_FIFO
+  sch.sched_priority = 90;  // Set the priority, 99 is the maximum for SCHED_FIFO
   result = pthread_setschedparam(thread->native_handle(), SCHED_FIFO, &sch);
   if (result != 0) {
-    std::cerr << "Failed to set thread scheduling: " << strerror(result)
-              << std::endl;
+    std::cerr << "Failed to set thread scheduling: " << strerror(result) << std::endl;
     return 1;
   }
 
@@ -209,18 +199,17 @@ bool AlfaNode::hardware_setup() {
       ((ext_mem_fd = open("/dev/alfa_ext_mem", O_RDWR | O_SYNC)) != -1)) {
     pointcloud_ptr_address = configuration.pointcloud_id;
 
-    this->pointcloud.ptr = (std::uint64_t *)mmap(
-        0x0, POINTCLOUD_BASE_PER_ID, PROT_READ | PROT_WRITE, MAP_SHARED, mem_fd,
-        pointcloud_ptr_address);
+    this->pointcloud.ptr =
+        (std::uint64_t *)mmap(0x0, POINTCLOUD_BASE_PER_ID, PROT_READ | PROT_WRITE, MAP_SHARED,
+                              mem_fd, pointcloud_ptr_address);
 
     if (this->pointcloud.ptr == MAP_FAILED) {
       return_value = 1;
       cout << "Failed to map memory" << endl;
     } else {
       //  Create parameter's callbacks
-      parameters_callback_handle =
-          this->add_on_set_parameters_callback(std::bind(
-              &AlfaNode::parameters_callback, this, std::placeholders::_1));
+      parameters_callback_handle = this->add_on_set_parameters_callback(
+          std::bind(&AlfaNode::parameters_callback, this, std::placeholders::_1));
       this->pointcloud.size = 0;
 
       // Get the physical address of the pointcloud buffer
@@ -240,8 +229,8 @@ bool AlfaNode::hardware_setup() {
       }
 
       // Map external memory buffer
-      ext_mem = (std::uint64_t *)mmap(
-          0x0, ALFA_EXT_MEM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, ext_mem_fd, 0);
+      ext_mem = (std::uint64_t *)mmap(0x0, ALFA_EXT_MEM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED,
+                                      ext_mem_fd, 0);
 
       if (ext_mem == MAP_FAILED) {
         return_value = 1;
@@ -249,7 +238,7 @@ bool AlfaNode::hardware_setup() {
       } else {
         // Set the external memory pointer
         unit_write_register(UNIT_PARAMETERS_EXMU, buffer_id);
-        }
+      }
     }
   } else
     return_value = 1;
@@ -263,8 +252,7 @@ bool AlfaNode::hardware_setup() {
   return return_value;
 }
 
-void AlfaNode::handler_callback(
-    const sensor_msgs::msg::PointCloud2::SharedPtr cloud) {
+void AlfaNode::handler_callback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud) {
   if ((cloud->width * cloud->height) == 0) {
     return;
   } else {
@@ -281,9 +269,8 @@ void AlfaNode::handler_callback(
     }
 
 #ifdef ALFA_VERBOSE
-    verbose_info("handler_callback",
-                 "Received a point cloud with: " +
-                     std::to_string(cloud->width * cloud->height) + " size");
+    verbose_info("handler_callback", "Received a point cloud with: " +
+                                         std::to_string(cloud->width * cloud->height) + " size");
 #endif
   }
 }
@@ -291,8 +278,7 @@ void AlfaNode::handler_callback(
 void AlfaNode::alfa_main_thread_handler() {
   while (rclcpp::ok() && g_running) {
     std::unique_lock<std::mutex> lk(ros_pointcloud_condition_mutex);
-    ros_pointcloud_condition.wait(
-        lk, [this] { return !ros_pointcloud.empty() || !g_running; });
+    ros_pointcloud_condition.wait(lk, [this] { return !ros_pointcloud.empty() || !g_running; });
     if (!g_running) {
       return;
     }
@@ -366,9 +352,8 @@ void AlfaNode::ticker_alive() {
       new_ping.default_configurations.push_back(msg_parameter);
     }
 
-    new_ping.current_status =
-        (int)(this->configuration.hardware_support.hardware_driver +
-              this->configuration.hardware_support.hardware_extension);
+    new_ping.current_status = (int)(this->configuration.hardware_support.hardware_driver +
+                                    this->configuration.hardware_support.hardware_extension);
     alive_publisher->publish(new_ping);
     std::this_thread::sleep_for(std::chrono::milliseconds(ALIVE_TIMER_SLEEP));
   }
@@ -382,8 +367,7 @@ void AlfaNode::ticker_alive() {
 void AlfaNode::pointcloud_publisher_thread_handler() {
   while (rclcpp::ok() && g_running) {
     std::unique_lock<std::mutex> lk(pcl2_frame_condition_mutex);
-    pcl2_frame_condition.wait(
-        lk, [this] { return !pcl2_frame.empty() || !g_running; });
+    pcl2_frame_condition.wait(lk, [this] { return !pcl2_frame.empty() || !g_running; });
 
     if (!g_running) {
       return;
@@ -413,11 +397,9 @@ void AlfaNode::publish_pointcloud(sensor_msgs::msg::PointCloud2 &pointcloud) {
   verbose_info("publish_pointcloud", "publishing pointcloud");
 #endif
   pointcloud.header.frame_id =
-      (string)this->get_name() +
-      "_pointcloud";  // Create the pointcloud2 header to publish
-  pointcloud.header.stamp = this->now();  // Get current time
-  pointcloud_publisher->publish(
-      pointcloud);  // Publish the point cloud in the ROS topic
+      (string)this->get_name() + "_pointcloud";  // Create the pointcloud2 header to publish
+  pointcloud.header.stamp = this->now();         // Get current time
+  pointcloud_publisher->publish(pointcloud);     // Publish the point cloud in the ROS topic
 }
 
 // Method for publishing a PCL type pointcloud
@@ -426,9 +408,8 @@ void AlfaNode::publish_pointcloud(pcl::PointCloud<AlfaPoint>::Ptr pointcloud,
   if (pointcloud == nullptr) pointcloud = this->output_pointcloud;
   this->configuration.latency = latency;
   sensor_msgs::msg::PointCloud2 pcl2_frame_temp;
-  pcl::toROSMsg(
-      *pointcloud,
-      pcl2_frame_temp);  // convert the pcl object to the pointcloud2 one
+  pcl::toROSMsg(*pointcloud,
+                pcl2_frame_temp);  // convert the pcl object to the pointcloud2 one
   std::lock_guard<std::mutex> lk(pcl2_frame_condition_mutex);
   pcl2_frame_mutex.lock();
   pcl2_frame.push_back(pcl2_frame_temp);
@@ -447,8 +428,7 @@ void AlfaNode::publish_metrics(alfa_msg::msg::AlfaMetrics &metrics) {
 // Returns the parameter's value using its name
 float AlfaNode::get_extension_parameter(string parameter_name) {
 #ifdef ALFA_VERBOSE
-  verbose_info("get_extension_parameter",
-               "getting parameter: " + parameter_name);
+  verbose_info("get_extension_parameter", "getting parameter: " + parameter_name);
 #endif
   return this->get_parameter(parameter_name).get_parameter_value().get<float>();
 }
@@ -473,8 +453,7 @@ std::vector<AlfaPoint> AlfaNode::get_input_pointcloud_as_vector() {
 #endif
   std::vector<AlfaPoint> r_input_pointcloud;
 
-  for (const auto &point : *input_pointcloud)
-    r_input_pointcloud.push_back(point);
+  for (const auto &point : *input_pointcloud) r_input_pointcloud.push_back(point);
 
   return r_input_pointcloud;
 }
@@ -485,8 +464,7 @@ std::vector<AlfaPoint> AlfaNode::get_output_pointcloud_as_vector() {
 #endif
   std::vector<AlfaPoint> r_output_pointcloud;
 
-  for (const auto &point : *output_pointcloud)
-    r_output_pointcloud.push_back(point);
+  for (const auto &point : *output_pointcloud) r_output_pointcloud.push_back(point);
 
   return r_output_pointcloud;
 }
@@ -512,8 +490,7 @@ void AlfaNode::read_ext_memory(uint32_t offset, size_t size, void *buffer) {
 float AlfaNode::get_debug_point(std::uint16_t number) {
   if (number <= configuration.number_of_debug_points)
     if (configuration.hardware_support.hardware_extension)
-      return static_cast<float>(
-          unit_read_register(UNIT_DEBUG_POINT_0 + number * 4));
+      return static_cast<float>(unit_read_register(UNIT_DEBUG_POINT_0 + number * 4));
     else
       return debug_points_message[number].metric;
   else {
@@ -522,8 +499,7 @@ float AlfaNode::get_debug_point(std::uint16_t number) {
   }
 }
 
-void AlfaNode::set_debug_point(std::uint16_t number, float value,
-                               string tag = "") {
+void AlfaNode::set_debug_point(std::uint16_t number, float value, string tag = "") {
   if (number <= configuration.number_of_debug_points &&
       !configuration.hardware_support.hardware_extension) {
     debug_points_message[number].metric = value;
@@ -540,17 +516,15 @@ rcl_interfaces::msg::SetParametersResult AlfaNode::parameters_callback(
     result.successful = true;
     result.reason = "success";
 
-    for (const auto &param :
-         parameters)  // Go through all the changed parameters
+    for (const auto &param : parameters)  // Go through all the changed parameters
     {
       for (std::uint16_t i = 0; i < extension_parameters.size();
            i++)  // Go through all current parameters, detect the changed
                  // one and change in memory
       {
         if (param.get_name() == extension_parameters[i].parameter_name) {
-          unit_write_register(
-              UNIT_USER_DEFINE_0 + i * 4,
-              static_cast<int32_t>(param.as_double() * FIXED_POINT_MULTIPLIER));
+          unit_write_register(UNIT_USER_DEFINE_0 + i * 4,
+                              static_cast<int32_t>(param.as_double() * FIXED_POINT_MULTIPLIER));
         }
       }
     }
@@ -593,8 +567,7 @@ bool AlfaNode::is_output_pointcloud_empty() {
 // input_pointcloud, meaning the next call of
 // get_point_sequentially_input_pointcloud(), will get the last point
 bool AlfaNode::is_last_input_pointcloud_point() {
-  if (is_input_pointcloud_empty() ||
-      point_counter >= (get_input_pointcloud_size() - 1))
+  if (is_input_pointcloud_empty() || point_counter >= (get_input_pointcloud_size() - 1))
     return true;
   else
     return false;
@@ -608,8 +581,7 @@ void AlfaNode::push_point_output_pointcloud(AlfaPoint point) {
 
 // Get specific point from input cloud, using the point argument. Returns true
 // if successfull, false otherwise
-bool AlfaNode::get_point_input_pointcloud(std::uint32_t position,
-                                          AlfaPoint &point) {
+bool AlfaNode::get_point_input_pointcloud(std::uint32_t position, AlfaPoint &point) {
   if (position < get_input_pointcloud_size() - 1) {
     point = (*input_pointcloud)[position];
     return true;
@@ -652,8 +624,7 @@ bool AlfaNode::get_point_input_pointcloud(AlfaPoint &point) {
 
 // Set specific custom field value in the output_pointcloud position, returns
 // true if successfull, false otherwise
-bool AlfaNode::set_custom_field_output_pointcloud(std::uint32_t position,
-                                                  std::uint32_t value) {
+bool AlfaNode::set_custom_field_output_pointcloud(std::uint32_t position, std::uint32_t value) {
   if (position < (get_output_pointcloud_size() - 1)) {
     (*output_pointcloud)[position].custom_field = value;
     return true;
@@ -669,13 +640,11 @@ bool AlfaNode::reset_input_pointcloud_counter() {
   return true;
 }
 
-void AlfaNode::set_multi_thread(int n_threads, void (*func)(AlfaNode *),
-                                AlfaNode *ptr) {
+void AlfaNode::set_multi_thread(int n_threads, void (*func)(AlfaNode *), AlfaNode *ptr) {
   vector<std::thread *> thread_list;
   thread_list.clear();
 
-  for (int i = 0; i < n_threads; i++)
-    thread_list.push_back(new std::thread(func, ptr));
+  for (int i = 0; i < n_threads; i++) thread_list.push_back(new std::thread(func, ptr));
 
   for (int i = 0; i < n_threads; i++) thread_list[i]->join();
 }
@@ -728,76 +697,64 @@ void AlfaNode::convert_msg_to_pointcloud() {
     case CUSTOM_FIELD_USER:
       findFieldOffsetByName("USER");
 #ifdef ALFA_VERBOSE
-      verbose_info("main_thread",
-                   "convert_msg_to_pointcloud: field name is USER");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is USER");
 #endif
       break;
 
     case CUSTOM_FIELD_INTENSITY:
       findFieldOffsetByName("", "intensity");
 #ifdef ALFA_VERBOSE
-      verbose_info("main_thread",
-                   "convert_msg_to_pointcloud: field name is intensity");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is intensity");
 #endif
       break;
 
     case CUSTOM_FIELD_LABEL:
       findFieldOffsetByName("", "label");
 #ifdef ALFA_VERBOSE
-      verbose_info("main_thread",
-                   "convert_msg_to_pointcloud: field name is label");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is label");
 #endif
       break;
 
     case CUSTOM_FIELD_RGB:
       findFieldOffsetByName("", "rgb");
 #ifdef ALFA_VERBOSE
-      verbose_info("main_thread",
-                   "convert_msg_to_pointcloud: field name is rgb");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is rgb");
 #endif
       break;
 
     case CUSTOM_FIELD_FILTER:
       findFieldOffsetByName("", "intensity");
 #ifdef ALFA_VERBOSE
-      verbose_info("main_thread",
-                   "convert_msg_to_pointcloud: field name is INTENSITY");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is INTENSITY");
 #endif
       break;
 
     case CUSTOM_FIELD_INTENSITY_LABEL:
       findFieldOffsetByName("intensity", "label");
 #ifdef ALFA_VERBOSE
-      verbose_info(
-          "main_thread",
-          "convert_msg_to_pointcloud: field name is INTENSITY and LABEL");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is INTENSITY and LABEL");
 #endif
       break;
 
     default:
       findFieldOffsetByName("intensity");
 #ifdef ALFA_VERBOSE
-      verbose_info(
-          "main_thread",
-          "convert_msg_to_pointcloud: field name is default: INTENSITY");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is default: INTENSITY");
 #endif
       break;
   }
 
 #ifdef ALFA_VERBOSE
-  verbose_info("main_thread",
-               "convert_msg_to_pointcloud: offset calculation ok");
+  verbose_info("main_thread", "convert_msg_to_pointcloud: offset calculation ok");
 #endif
   // Clear the existing data in input_pointcloud and reserve memory
   input_pointcloud->clear();
-  input_pointcloud->reserve(ros_pointcloud_temp.width *
-                            ros_pointcloud_temp.height);
+  input_pointcloud->reserve(ros_pointcloud_temp.width * ros_pointcloud_temp.height);
 
 #ifdef ALFA_VERBOSE
   verbose_info("main_thread", "convert_msg_to_pointcloud: converting points");
   cout << "data.size(): " << data.size() << endl;
-  cout << "ros_pointcloud_temp.point_step: " << ros_pointcloud_temp.point_step
-       << endl;
+  cout << "ros_pointcloud_temp.point_step: " << ros_pointcloud_temp.point_step << endl;
 #endif
 
   // Iterate through the data and populate custom point cloud
@@ -812,8 +769,7 @@ void AlfaNode::convert_msg_to_pointcloud() {
     point.custom_field = 0;
 
     // Extract the custom field from the data
-    auto fillCustomField = [&](const std::uint32_t &field_offset,
-                               const std::uint32_t &field_type,
+    auto fillCustomField = [&](const std::uint32_t &field_offset, const std::uint32_t &field_type,
                                const bool &byte_selector) {
       switch (field_type) {
         case sensor_msgs::msg::PointField::FLOAT32: {  // Intensity
@@ -857,8 +813,7 @@ void AlfaNode::convert_msg_to_pointcloud() {
 
     // Fill the custom field
     if (field_offset != -1) fillCustomField(field_offset, field_type, true);
-    if (field_offset_2 != -1)
-      fillCustomField(field_offset_2, field_type_2, false);
+    if (field_offset_2 != -1) fillCustomField(field_offset_2, field_type_2, false);
 
     input_pointcloud->emplace_back(std::move(point));  // Use emplace_back
   }
@@ -870,12 +825,11 @@ void AlfaNode::convert_msg_to_pointcloud() {
 
 // Metric functions
 void AlfaNode::metrics_update() {
-  auto duration_full_processing = duration_cast<microseconds>(
-      full_processing_metric.stop - full_processing_metric.start);
-  auto duration_handler =
-      duration_cast<microseconds>(handler_metric.stop - handler_metric.start);
-  auto duration_publishing = duration_cast<microseconds>(
-      publishing_metric.stop - publishing_metric.start);
+  auto duration_full_processing =
+      duration_cast<microseconds>(full_processing_metric.stop - full_processing_metric.start);
+  auto duration_handler = duration_cast<microseconds>(handler_metric.stop - handler_metric.start);
+  auto duration_publishing =
+      duration_cast<microseconds>(publishing_metric.stop - publishing_metric.start);
 
   /*FIXME*/ if (duration_handler.count() < 200000)
     handler_metric.message.metric = duration_handler.count();
@@ -963,8 +917,7 @@ alfa_msg::msg::MetricMessage AlfaNode::get_full_processing_time() {
 }
 
 // Hardware functions
-void AlfaNode::store_pointcloud(int type,
-                                pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+void AlfaNode::store_pointcloud(int type, pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
   if (pointcloud == nullptr) pointcloud = this->input_pointcloud;
   switch (type) {
     case LOAD_STORE_CARTESIAN:
@@ -980,8 +933,7 @@ void AlfaNode::store_pointcloud(int type,
   }
 }
 
-void AlfaNode::store_pointcloud_cartesian(
-    pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+void AlfaNode::store_pointcloud_cartesian(pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
   if (configuration.hardware_support.hardware_extension) {
     // Pointer to the memory where point cloud data will be stored
     std::uint64_t *mem = this->pointcloud.ptr;
@@ -990,8 +942,7 @@ void AlfaNode::store_pointcloud_cartesian(
     const size_t num_points = pointcloud->size();
 
     // Reserve memory for the point cloud data
-    std::vector<std::int16_t> a16_points(num_points *
-                                         4);  // Assuming 4 elements per point
+    std::vector<std::int16_t> a16_points(num_points * 4);  // Assuming 4 elements per point
 
     // Convert and pack points efficiently
     for (size_t i = 0; i < num_points; ++i) {
@@ -999,12 +950,9 @@ void AlfaNode::store_pointcloud_cartesian(
       std::int16_t *a16_point = &a16_points[i * 4];
 
       // Perform all conversions at once to minimize cache misses
-      a16_point[0] = static_cast<std::int16_t>(
-          std::round(point.x * FIXED_POINT_MULTIPLIER));
-      a16_point[1] = static_cast<std::int16_t>(
-          std::round(point.y * FIXED_POINT_MULTIPLIER));
-      a16_point[2] = static_cast<std::int16_t>(
-          std::round(point.z * FIXED_POINT_MULTIPLIER));
+      a16_point[0] = static_cast<std::int16_t>(std::round(point.x * FIXED_POINT_MULTIPLIER));
+      a16_point[1] = static_cast<std::int16_t>(std::round(point.y * FIXED_POINT_MULTIPLIER));
+      a16_point[2] = static_cast<std::int16_t>(std::round(point.z * FIXED_POINT_MULTIPLIER));
       a16_point[3] = static_cast<std::int16_t>(point.custom_field);
     }
 
@@ -1024,12 +972,10 @@ void AlfaNode::store_pointcloud_cartesian(
     }
 
 #ifdef ALFA_VERBOSE
-    verbose_info("store_pointcloud_cartesian",
-                 "stored " + std::to_string(num_points) + " points");
+    verbose_info("store_pointcloud_cartesian", "stored " + std::to_string(num_points) + " points");
     verbose_info("store_pointcloud_cartesian", "last point");
-    verbose_info(
-        "store_pointcloud_cartesian",
-        "fixed point multiplier: " + std::to_string(FIXED_POINT_MULTIPLIER));
+    verbose_info("store_pointcloud_cartesian",
+                 "fixed point multiplier: " + std::to_string(FIXED_POINT_MULTIPLIER));
     verbose_info("store_pointcloud_cartesian",
                  "x: " + std::to_string(a16_points[(num_points - 1) * 4]));
     verbose_info("store_pointcloud_cartesian",
@@ -1041,8 +987,7 @@ void AlfaNode::store_pointcloud_cartesian(
     verbose_not_defined("store_pointcloud_cartesian");
 }
 
-void AlfaNode::load_pointcloud(int type,
-                               pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+void AlfaNode::load_pointcloud(int type, pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
   if (pointcloud == nullptr) pointcloud = this->output_pointcloud;
   switch (type) {
     case LOAD_STORE_CARTESIAN:
@@ -1058,8 +1003,7 @@ void AlfaNode::load_pointcloud(int type,
   }
 }
 #pragma GCC optimize("prefetch-loop-arrays")
-void AlfaNode::load_pointcloud_cartesian(
-    pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+void AlfaNode::load_pointcloud_cartesian(pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
   if (configuration.hardware_support.hardware_extension) {
     auto custom_type = this->configuration.custom_field_conversion_type;
 
@@ -1067,8 +1011,7 @@ void AlfaNode::load_pointcloud_cartesian(
     const std::uint32_t POINT_STRIDE = 4;  // Assuming 4 elements per point
 
     // Calculate the number of points
-    const std::uint32_t num_points =
-        unit_read_register(UNIT_SIGNALS_SOFTWARE_POINTCLOUD_SIZE);
+    const std::uint32_t num_points = unit_read_register(UNIT_SIGNALS_SOFTWARE_POINTCLOUD_SIZE);
 
     // Reserve memory for the point cloud to avoid reallocations
     pointcloud->reserve(num_points);
@@ -1100,20 +1043,15 @@ void AlfaNode::load_pointcloud_cartesian(
     }
 
 #ifdef ALFA_VERBOSE
-    verbose_info("load_pointcloud_cartesian",
-                 "loaded " + std::to_string(num_points) + " points");
+    verbose_info("load_pointcloud_cartesian", "loaded " + std::to_string(num_points) + " points");
     verbose_info("load_pointcloud_cartesian", "last point");
-    verbose_info(
-        "load_pointcloud_cartesian",
-        "fixed point multiplier: " + std::to_string(FIXED_POINT_MULTIPLIER));
+    verbose_info("load_pointcloud_cartesian",
+                 "fixed point multiplier: " + std::to_string(FIXED_POINT_MULTIPLIER));
     if (!pointcloud->empty()) {
       const AlfaPoint &lastPoint = pointcloud->back();
-      verbose_info("load_pointcloud_cartesian",
-                   "x: " + std::to_string(lastPoint.x));
-      verbose_info("load_pointcloud_cartesian",
-                   "y: " + std::to_string(lastPoint.y));
-      verbose_info("load_pointcloud_cartesian",
-                   "z: " + std::to_string(lastPoint.z));
+      verbose_info("load_pointcloud_cartesian", "x: " + std::to_string(lastPoint.x));
+      verbose_info("load_pointcloud_cartesian", "y: " + std::to_string(lastPoint.y));
+      verbose_info("load_pointcloud_cartesian", "z: " + std::to_string(lastPoint.z));
     }
 #endif
   } else
@@ -1176,22 +1114,19 @@ void AlfaNode::unit_wait_for_value(unsigned int offset, unsigned int value) {
 }
 
 // Verbose functions
-void AlfaNode::verbose_constr_chracteristics(string subscriber_topic,
-                                             string node_name) {
+void AlfaNode::verbose_constr_chracteristics(string subscriber_topic, string node_name) {
   // Print the characteristics of the node
-  std::cout << "--------------------------------------------------------"
-            << std::endl;
+  std::cout << "--------------------------------------------------------" << std::endl;
   std::cout << "Starting ALFA node with the following settings:" << std::endl;
   std::cout << "Subscriber topic: " << subscriber_topic << std::endl;
   std::cout << "Name of the node: " << node_name << std::endl;
   std::cout << "Extension ID: " << configuration.extension_id << std::endl;
   std::cout << "Pointcloud ID: " << configuration.pointcloud_id << std::endl;
-  std::cout << "Hardware Driver (SIU): "
-            << configuration.hardware_support.hardware_driver << std::endl;
-  std::cout << "Hardware Extension: "
-            << configuration.hardware_support.hardware_extension << std::endl;
-  std::cout << "--------------------------------------------------------"
+  std::cout << "Hardware Driver (SIU): " << configuration.hardware_support.hardware_driver
             << std::endl;
+  std::cout << "Hardware Extension: " << configuration.hardware_support.hardware_extension
+            << std::endl;
+  std::cout << "--------------------------------------------------------" << std::endl;
 }
 
 void AlfaNode::verbose_begin(string function) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,8 +57,7 @@ void handler(AlfaNode *node) {
       number_outside_points++;
   }
 
-  node->set_debug_point(0, number_outside_points,
-                        "Number of points outside the distance range");
+  node->set_debug_point(0, number_outside_points, "Number of points outside the distance range");
 #endif
 }
 
@@ -117,8 +116,7 @@ int main(int argc, char **argv) {
   parameters[0].parameter_name = "max_distance";
 
   // Create an instance of AlfaNode and spin it
-  rclcpp::spin(
-      std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
+  rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
 
   // Shutdown ROS 2
   rclcpp::shutdown();

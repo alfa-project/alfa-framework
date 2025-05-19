@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,43 +18,43 @@
 
 
 module ExMU #(
-    parameter [7:0] REPRESENTATION_TYPE = 1'b0
+                                                                                                    parameter [7:0] REPRESENTATION_TYPE = 1'b0
 ) (
 
-    input      [   0:0] i_SYSTEM_clk,
-    input      [   0:0] i_SYSTEM_rst,
-    input      [2047:0] i_INT_readPayload,
-    input      [   0:0] i_CU_ExMU_readCache,
-    input      [   0:0] i_CU_ExMU_writeCache,
-    input      [   0:0] i_CU_ExMU_readWriteID,
-    input      [   0:0] i_CU_ExMU_readPoint,
-    input      [   0:0] i_CU_ExMU_writePoint,
-    input      [   0:0] i_CU_ExMU_writeMem,
-    output     [   0:0] o_ExMU_readInCache,
-    output     [   0:0] o_ExMU_writeInCache,
-    output reg [2047:0] o_ExMU_writePayload,
-    output reg [  18:0] o_ExMU_writeID,
-    output reg [  18:0] o_ExMU_readID,
-    output reg [  31:0] o_status,
+                                                                                                    input      [   0:0] i_SYSTEM_clk,
+                                                                                                    input      [   0:0] i_SYSTEM_rst,
+                                                                                                    input      [2047:0] i_INT_readPayload,
+                                                                                                    input      [   0:0] i_CU_ExMU_readCache,
+                                                                                                    input      [   0:0] i_CU_ExMU_writeCache,
+                                                                                                    input      [   0:0] i_CU_ExMU_readWriteID,
+                                                                                                    input      [   0:0] i_CU_ExMU_readPoint,
+                                                                                                    input      [   0:0] i_CU_ExMU_writePoint,
+                                                                                                    input      [   0:0] i_CU_ExMU_writeMem,
+                                                                                                    output     [   0:0] o_ExMU_readInCache,
+                                                                                                    output     [   0:0] o_ExMU_writeInCache,
+                                                                                                    output reg [2047:0] o_ExMU_writePayload,
+                                                                                                    output reg [  18:0] o_ExMU_writeID,
+                                                                                                    output reg [  18:0] o_ExMU_readID,
+                                                                                                    output reg [  31:0] o_status,
 
-    //Extension interface
-    input      [15:0] i_EXT_writeCustomField,
-    input      [18:0] i_EXT_writeID,
-    input      [18:0] i_EXT_readID,
-    output reg [15:0] o_EXT_pointAngleH,
-    output reg [15:0] o_EXT_pointAngleV,
-    output reg [15:0] o_EXT_pointRadius,
-    output reg [15:0] o_EXT_readCustomField,
-    output reg [15:0] o_EXT_pointX,
-    output reg [15:0] o_EXT_pointY,
-    output reg [15:0] o_EXT_pointZ
+                                                                                                    //Extension interface
+                                                                                                    input      [15:0] i_EXT_writeCustomField,
+                                                                                                    input      [18:0] i_EXT_writeID,
+                                                                                                    input      [18:0] i_EXT_readID,
+                                                                                                    output reg [15:0] o_EXT_pointAngleH,
+                                                                                                    output reg [15:0] o_EXT_pointAngleV,
+                                                                                                    output reg [15:0] o_EXT_pointRadius,
+                                                                                                    output reg [15:0] o_EXT_readCustomField,
+                                                                                                    output reg [15:0] o_EXT_pointX,
+                                                                                                    output reg [15:0] o_EXT_pointY,
+                                                                                                    output reg [15:0] o_EXT_pointZ
 );
 
-  reg [63:0] write_cache[31:0];
-  reg [63:0] read_cache[31:0];
+  reg  [63:0] write_cache       [31:0];
+  reg  [63:0] read_cache        [31:0];
 
-  reg [13:0] addr_read_cache;
-  reg [13:0] addr_write_cache;
+  reg  [13:0] addr_read_cache;
+  reg  [13:0] addr_write_cache;
 
   wire [13:0] id_read;
   wire [13:0] id_write;
@@ -90,8 +90,7 @@ module ExMU #(
     if (i_SYSTEM_rst) begin
       if (i_CU_ExMU_readWriteID) begin
         o_ExMU_readID <= (id_write << 5);
-      end
-      else o_ExMU_readID <= (id_read << 5);
+      end else o_ExMU_readID <= (id_read << 5);
     end else begin
       o_ExMU_readID <= 0;
     end
@@ -101,13 +100,21 @@ module ExMU #(
   always @(posedge i_SYSTEM_clk) begin
     if (i_SYSTEM_rst) begin
       if (i_CU_ExMU_readCache) begin
-        for (i = 0; i < 32; i = i + 1) begin
+        for (
+                                                                                                            i = 0;
+                                                                                                            i < 32;
+                                                                                                            i = i + 1
+        ) begin
           read_cache[i] <= i_INT_readPayload[i*64+:64];
         end
         addr_read_cache <= id_read;
       end
     end else begin
-      for (i = 0; i < 32; i = i + 1) begin
+      for (
+                                                                                                          i = 0;
+                                                                                                          i < 32;
+                                                                                                          i = i + 1
+      ) begin
         read_cache[i] <= 0;
       end
       addr_read_cache <= 1;
@@ -118,18 +125,26 @@ module ExMU #(
   always @(posedge i_SYSTEM_clk) begin
     if (i_SYSTEM_rst) begin
       if (i_CU_ExMU_writeCache) begin
-        for (i = 0; i < 32; i = i + 1) begin
+        for (
+                                                                                                            i = 0;
+                                                                                                            i < 32;
+                                                                                                            i = i + 1
+        ) begin
           write_cache[i] <= i_INT_readPayload[i*64+:64];
         end
         addr_write_cache <= o_ExMU_readID >> 5;
-        o_ExMU_writeID <= o_ExMU_readID;
+        o_ExMU_writeID   <= o_ExMU_readID;
       end else if (i_CU_ExMU_writePoint)
         write_cache[EXT_writeID_temp][63:48] <= i_EXT_writeCustomField;
     end else begin
-      for (i = 0; i < 32; i = i + 1) begin
+      for (
+                                                                                                          i = 0;
+                                                                                                          i < 32;
+                                                                                                          i = i + 1
+      ) begin
         write_cache[i] <= 0;
       end
-      o_ExMU_writeID <= 0;
+      o_ExMU_writeID   <= 0;
       addr_write_cache <= 1;
     end
   end
@@ -138,11 +153,19 @@ module ExMU #(
   always @(posedge i_SYSTEM_clk) begin
     if (i_SYSTEM_rst) begin
       if (i_CU_ExMU_writeMem)
-        for (i = 0; i < 32; i = i + 1) begin
+        for (
+                                                                                                            i = 0;
+                                                                                                            i < 32;
+                                                                                                            i = i + 1
+        ) begin
           o_ExMU_writePayload[i*64+:64] <= write_cache[i];
         end
     end else begin
-      for (i = 0; i < 32; i = i + 1) begin
+      for (
+                                                                                                          i = 0;
+                                                                                                          i < 32;
+                                                                                                          i = i + 1
+      ) begin
         o_ExMU_writePayload[i*64+:64] <= 0;
       end
     end

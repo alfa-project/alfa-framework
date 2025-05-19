@@ -60,8 +60,7 @@ struct AlfaCompressionMetrics {
   AlfaBasicMetrics basic_metrics;
 };
 
-AlfaGroundSegmentationMetrics evaluate_ground_segmentation_method(
-    AlfaNode* node, int map_type);
+AlfaGroundSegmentationMetrics evaluate_ground_segmentation_method(AlfaNode* node, int map_type);
 
 AlfaCompressionMetrics evaluate_compression_method(AlfaNode* node);
 #endif  // ALIB_METRICS_H

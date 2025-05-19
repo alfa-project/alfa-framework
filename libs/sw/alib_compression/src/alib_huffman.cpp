@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,12 +38,11 @@ struct HuffmanNode {
 // Function to build Huffman Tree
 std::shared_ptr<HuffmanNode> buildHuffmanTree(
     const std::unordered_map<unsigned char, int> &freq_map) {
-  auto comp = [](std::shared_ptr<HuffmanNode> left,
-                 std::shared_ptr<HuffmanNode> right) {
+  auto comp = [](std::shared_ptr<HuffmanNode> left, std::shared_ptr<HuffmanNode> right) {
     return left->freq > right->freq;
   };
-  std::priority_queue<std::shared_ptr<HuffmanNode>,
-                      std::vector<std::shared_ptr<HuffmanNode>>, decltype(comp)>
+  std::priority_queue<std::shared_ptr<HuffmanNode>, std::vector<std::shared_ptr<HuffmanNode>>,
+                      decltype(comp)>
       pq(comp);
 
   for (const auto &pair : freq_map) {
@@ -65,9 +64,8 @@ std::shared_ptr<HuffmanNode> buildHuffmanTree(
 }
 
 // Function to generate Huffman Codes from the tree
-void generateHuffmanCodes(
-    const std::shared_ptr<HuffmanNode> &node, const std::string &code,
-    std::unordered_map<unsigned char, std::string> &huffmanCode) {
+void generateHuffmanCodes(const std::shared_ptr<HuffmanNode> &node, const std::string &code,
+                          std::unordered_map<unsigned char, std::string> &huffmanCode) {
   if (!node) return;
 
   if (!node->left && !node->right) {
@@ -79,8 +77,7 @@ void generateHuffmanCodes(
 }
 
 // Huffman encoding function
-std::vector<unsigned char> alib_huffman_encode(
-    const std::vector<unsigned char> &input) {
+std::vector<unsigned char> alib_huffman_encode(const std::vector<unsigned char> &input) {
   // Calculate frequency of each character
   std::unordered_map<unsigned char, int> freq_map;
   for (unsigned char ch : input) {
@@ -96,12 +93,11 @@ std::vector<unsigned char> alib_huffman_encode(
 
   // Encode frequency map into header
   std::vector<unsigned char> encoded;
-  encoded.push_back(static_cast<unsigned char>(
-      freq_map.size()));  // Store number of unique characters
+  encoded.push_back(
+      static_cast<unsigned char>(freq_map.size()));  // Store number of unique characters
   for (const auto &pair : freq_map) {
-    encoded.push_back(pair.first);  // Store character
-    encoded.push_back(
-        static_cast<unsigned char>(pair.second));  // Store frequency
+    encoded.push_back(pair.first);                               // Store character
+    encoded.push_back(static_cast<unsigned char>(pair.second));  // Store frequency
   }
 
   // Encode the input data
@@ -116,8 +112,7 @@ std::vector<unsigned char> alib_huffman_encode(
     if (byte_str.size() < 8) {
       byte_str.append(8 - byte_str.size(), '0');
     }
-    unsigned char byte =
-        static_cast<unsigned char>(std::bitset<8>(byte_str).to_ulong());
+    unsigned char byte = static_cast<unsigned char>(std::bitset<8>(byte_str).to_ulong());
     encoded.push_back(byte);
   }
 
@@ -125,8 +120,7 @@ std::vector<unsigned char> alib_huffman_encode(
 }
 
 // Huffman decoding function
-std::vector<unsigned char> alib_huffman_decode(
-    const std::vector<unsigned char> &encoded) {
+std::vector<unsigned char> alib_huffman_decode(const std::vector<unsigned char> &encoded) {
   // Parse the frequency map from the encoded data
   size_t index = 0;
   int num_unique_chars = encoded[index++];

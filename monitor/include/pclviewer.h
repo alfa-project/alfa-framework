@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,48 +17,48 @@
 #pragma once
 
 // Qt
-#include <QMainWindow>
 #include <QFileDialog>
+#include <QMainWindow>
 
 // Point Cloud Library
+#include <pcl/filters/filter.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-#include <pcl/io/ply_io.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/filters/filter.h>
 #include <pcl/visualization/pcl_visualizer.h>
-#include <vector>
-#include <QWidgetItem>
-#include <QListWidgetItem>
-#include <boost/math/special_functions/round.hpp>
-#include "boxsettings.h"
 #include <vtkRenderWindow.h>
-#include "noisegenerator.h"
-#include <thread>
+
+#include <QListWidgetItem>
+#include <QWidgetItem>
+#include <boost/math/special_functions/round.hpp>
 #include <mutex>
+#include <thread>
+#include <vector>
+
+#include "boxsettings.h"
+#include "noisegenerator.h"
 #include "rosinterface.h"
 //#include "alfanode.h"
 
-#define TIMER_INTERVAL 1000 //reloading time in ms
+#define TIMER_INTERVAL 1000  // reloading time in ms
 
 typedef pcl::PointXYZI PointT;
 typedef pcl::PointCloud<PointT> PointCloudT;
 
-namespace Ui
-{
-  class PCLViewer;
+namespace Ui {
+class PCLViewer;
 }
 
-class PCLViewer : public QMainWindow
-{
+class PCLViewer : public QMainWindow {
   Q_OBJECT
 
-public:
+ public:
   explicit PCLViewer(int argc, char **argv, QWidget *parent = 0);
 
   ~PCLViewer();
 
-public Q_SLOTS:
+ public Q_SLOTS:
   void saveScreenButtonPressed();
 
   void loadFileButtonPressed();
@@ -66,10 +66,11 @@ public Q_SLOTS:
   void axisChosen();
 
   void lookUpTableChosen();
-  static void mouseEventClick(const pcl::visualization::PointPickingEvent &event, void *viewer_void);
+  static void mouseEventClick(const pcl::visualization::PointPickingEvent &event,
+                              void *viewer_void);
   void timer_callback();
 
-protected:
+ protected:
   pcl::visualization::PCLVisualizer::Ptr viewer_input;
   pcl::visualization::PCLVisualizer::Ptr viewer_output;
 
@@ -79,16 +80,17 @@ protected:
 
   int color_mode_;
 
-  void colorCloudDistances(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud,pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_int=nullptr);
+  void colorCloudDistances(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud,
+                           pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_int = nullptr);
 
-private slots:
+ private slots:
   void on_btnAddBox_clicked();
   void on_listWidget_itemClicked(QListWidgetItem *item);
   void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
   void on_btnDeletedSelected_clicked();
   void buidbox_slot();
 
-  //void print_nodes();
+  // void print_nodes();
 
   void on_btnSaveBox_clicked();
   void on_btnLoadBoxs_clicked();
@@ -109,11 +111,9 @@ private slots:
 
   void on_sync_cameras_clicked();
 
-
-
   void on_pb_PointParametersHint_pressed();
 
-  //void on_pb_reload1_clicked();
+  // void on_pb_reload1_clicked();
 
   void on_cb_RAW_activated(const QString &arg1);
 
@@ -139,10 +139,9 @@ private slots:
 
   void on_cb_InjectNoise_clicked();
 
-
   void on_l_ExecOrder_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
-  //void check_for_rosmaster();
+  // void check_for_rosmaster();
 
   void on_lw_confignodes_itemDoubleClicked(QListWidgetItem *item);
 
@@ -154,7 +153,7 @@ private slots:
 
   void on_pb_SendFrame_clicked();
 
-private:
+ private:
   void saveBoxToFile();
   bool btnAddBox;
   bool showFiltered;
@@ -165,11 +164,11 @@ private:
   bool insidepoint(box mBoxl, pcl::PointXYZI p1);
   void filter_decision(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud);
   void do_deletePointBox(pcl::PointCloud<pcl::PointXYZI>::Ptr output);
-  void to_color_pcloud(PointCloudT::Ptr input,bool is_alfa_cloud=0);
+  void to_color_pcloud(PointCloudT::Ptr input, bool is_alfa_cloud = 0);
   bool update_node_status();
 
   void t_calback_thread();
-  std::thread* timer_response;
+  std::thread *timer_response;
 
   vector<box> boxlist;
   vector<string> configurable_nodes;
@@ -203,9 +202,9 @@ private:
 
   bool ros_master_owner;
 
-  std::thread* bag_thread;
-  std::thread* master_thread;
-  std::thread* spinner;
+  std::thread *bag_thread;
+  std::thread *master_thread;
+  std::thread *spinner;
 
   uint alfa_pd_filter_selected;
   topic_list_t topics;
@@ -213,7 +212,7 @@ private:
   vector<string> pcl_topics;
   vector<string> metric_topics;
   vector<string> alfa_nodes;
-  //vector<AlfaNode*> nodes;
+  // vector<AlfaNode*> nodes;
   uint8_t exec_order[2];
   int metric_index_ui;
 };

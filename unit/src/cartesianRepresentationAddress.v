@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,21 @@
 */
 module MemMU_cartesianRepresentationAddress (
 
-    /* Input: Input ports
+                                                                                                    /* Input: Input ports
 
         TODO.
-    */  
-    input [18:0] i_SIU_pointID,    
+    */
+                                                                                                    input [18:0] i_SIU_pointID,
 
-    /* Output: Output ports
+                                                                                                    /* Output: Output ports
 
         TODO
     */
-    output [18:0] o_MemMU_CR_A_address
-    );
-    
-    /* Always: Main Combinational block
+                                                                                                    output [18:0] o_MemMU_CR_A_address
+);
+
+  /* Always: Main Combinational block
         *TODO*.
     */
-    assign o_MemMU_CR_A_address  = i_SIU_pointID;     
+  assign o_MemMU_CR_A_address = i_SIU_pointID;
 endmodule

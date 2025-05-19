@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 ALFA Project. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #include <linux/delay.h>
 #include <linux/fs.h>
 #include <linux/io.h>
@@ -14,12 +30,9 @@
 #define ALFA_EXT_IOC_MAGIC 'k'
 
 // IOCTL commands
-#define ALFA_EXT_IOC_WRITE_REGISTER \
-  _IOW(ALFA_EXT_IOC_MAGIC, 1, struct alfa_ext_ioctl_data)
-#define ALFA_EXT_IOC_READ_REGISTER \
-  _IOR(ALFA_EXT_IOC_MAGIC, 2, struct alfa_ext_ioctl_data)
-#define ALFA_EXT_IOC_WAIT_FOR_VALUE \
-  _IOW(ALFA_EXT_IOC_MAGIC, 3, struct alfa_ext_ioctl_data)
+#define ALFA_EXT_IOC_WRITE_REGISTER _IOW(ALFA_EXT_IOC_MAGIC, 1, struct alfa_ext_ioctl_data)
+#define ALFA_EXT_IOC_READ_REGISTER _IOR(ALFA_EXT_IOC_MAGIC, 2, struct alfa_ext_ioctl_data)
+#define ALFA_EXT_IOC_WAIT_FOR_VALUE _IOW(ALFA_EXT_IOC_MAGIC, 3, struct alfa_ext_ioctl_data)
 
 struct alfa_ext_ioctl_data {
   unsigned int extension_id;  // ID of the extension region
@@ -65,12 +78,11 @@ static int alfa_ext_release(struct inode *inode, struct file *file) {
   return 0;
 }
 
-static long alfa_ext_ioctl(struct file *file, unsigned int cmd,
-                           unsigned long arg) {
+static long alfa_ext_ioctl(struct file *file, unsigned int cmd, unsigned long arg) {
   struct alfa_ext_ioctl_data data;
   void __iomem *addr;
   unsigned int max_retries = 750;  // Maximum of 750 entries
-  unsigned int delay_us = 100;     // Delay of 0.1 ms (100 microseconds) 
+  unsigned int delay_us = 100;     // Delay of 0.1 ms (100 microseconds)
   unsigned int value;
 
   // Ensure all previous writes are visible before starting ioctl operations
@@ -86,8 +98,7 @@ static long alfa_ext_ioctl(struct file *file, unsigned int cmd,
       "value: %u\n",
       cmd, data.extension_id, data.offset, data.value);
 
-  if (data.extension_id >= NUM_REGIONS ||
-      data.offset >= alfa_size[data.extension_id]) {
+  if (data.extension_id >= NUM_REGIONS || data.offset >= alfa_size[data.extension_id]) {
     pr_err("alfa_ext: Invalid extension ID or offset\n");
     return -EINVAL;
   }
@@ -124,8 +135,7 @@ static long alfa_ext_ioctl(struct file *file, unsigned int cmd,
           rmb();
 
           if (value == data.value) {
-            LOG_INFO("alfa_ext: Value changed to %u at offset 0x%x\n",
-                     data.value, data.offset);
+            LOG_INFO("alfa_ext: Value changed to %u at offset 0x%x\n", data.value, data.offset);
             return 0;
           }
           // Sleep for 0.1 ms
@@ -133,8 +143,7 @@ static long alfa_ext_ioctl(struct file *file, unsigned int cmd,
         }
       }
 
-      pr_err("alfa_ext: Timeout waiting for value change at offset 0x%x\n",
-             data.offset);
+      pr_err("alfa_ext: Timeout waiting for value change at offset 0x%x\n", data.offset);
       return -ETIMEDOUT;
 
     default:
@@ -171,8 +180,7 @@ static int alfa_ext_probe(struct platform_device *pdev) {
       return PTR_ERR(alfa_base_addr[i]);
     }
 
-    LOG_INFO("alfa_ext: Region %d - phys: %pa, size: %pa\n", i,
-             &alfa_base_phys[i], &alfa_size[i]);
+    LOG_INFO("alfa_ext: Region %d - phys: %pa, size: %pa\n", i, &alfa_base_phys[i], &alfa_size[i]);
   }
 
   // Create device class
@@ -192,8 +200,7 @@ static int alfa_ext_probe(struct platform_device *pdev) {
     return ret;
   }
 
-  alfa_ext_device =
-      device_create(alfa_ext_class, NULL, MKDEV(ret, 0), NULL, DEVICE_NAME);
+  alfa_ext_device = device_create(alfa_ext_class, NULL, MKDEV(ret, 0), NULL, DEVICE_NAME);
   if (IS_ERR(alfa_ext_device)) {
     unregister_chrdev(ret, DEVICE_NAME);
     class_destroy(alfa_ext_class);
@@ -215,8 +222,7 @@ static int alfa_ext_remove(struct platform_device *pdev) {
   return 0;
 }
 
-static const struct of_device_id alfa_ext_of_ids[] = {
-    {.compatible = "alfa_ext"}, {}};
+static const struct of_device_id alfa_ext_of_ids[] = {{.compatible = "alfa_ext"}, {}};
 MODULE_DEVICE_TABLE(of, alfa_ext_of_ids);
 
 static struct platform_driver alfa_ext_driver = {
@@ -230,13 +236,9 @@ static struct platform_driver alfa_ext_driver = {
         },
 };
 
-static int __init alfa_ext_init(void) {
-  return platform_driver_register(&alfa_ext_driver);
-}
+static int __init alfa_ext_init(void) { return platform_driver_register(&alfa_ext_driver); }
 
-static void __exit alfa_ext_exit(void) {
-  platform_driver_unregister(&alfa_ext_driver);
-}
+static void __exit alfa_ext_exit(void) { platform_driver_unregister(&alfa_ext_driver); }
 
 module_init(alfa_ext_init);
 module_exit(alfa_ext_exit);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,8 +62,7 @@ static int alfa_ext_mem_release(struct inode *inode, struct file *filp) {
   return 0;
 }
 
-static long alfa_ext_mem_ioctl(struct file *file, unsigned int cmd,
-                           unsigned long arg) {
+static long alfa_ext_mem_ioctl(struct file *file, unsigned int cmd, unsigned long arg) {
   printk("alfa_ext_mem: ioctl cmd=%d\n", cmd);
   switch (cmd) {
     case ALFA_EXT_MEM_GET_PHYS_ADDR:
@@ -84,8 +83,7 @@ static int alfa_ext_mem_mmap(struct file *filp, struct vm_area_struct *vma) {
   printk("alfa_ext_mem: mmap size=%lx, off=%lx\n", size, off);
 
   if (size > DMA_BUF_SIZE) {
-    pr_err("alfa_ext_mem: Invalid mmap size: %lx (max: %lx)\n", size,
-           (unsigned long)DMA_BUF_SIZE);
+    pr_err("alfa_ext_mem: Invalid mmap size: %lx (max: %lx)\n", size, (unsigned long)DMA_BUF_SIZE);
     return -EINVAL;
   }
 
@@ -117,17 +115,14 @@ static int alfa_ext_mem_probe(struct platform_device *pdev) {
   g_pdev = pdev;
 
   // Allocate a single DMA buffer
-  dma_buf =
-      dma_alloc_coherent(&pdev->dev, DMA_BUF_SIZE, &dma_handle, GFP_KERNEL);
+  dma_buf = dma_alloc_coherent(&pdev->dev, DMA_BUF_SIZE, &dma_handle, GFP_KERNEL);
   if (!dma_buf) {
     dev_err(&pdev->dev, "Failed to allocate DMA buffer\n");
     return -ENOMEM;
   }
 
-  dev_info(
-      &pdev->dev,
-      "Allocated DMA buffer at virtual address %p, physical address %pad\n",
-      dma_buf, &dma_handle);
+  dev_info(&pdev->dev, "Allocated DMA buffer at virtual address %p, physical address %pad\n",
+           dma_buf, &dma_handle);
 
   // Create device class
   if (!alfa_ext_mem_class) {
@@ -168,8 +163,7 @@ static int alfa_ext_mem_remove(struct platform_device *pdev) {
   return 0;
 }
 
-static const struct of_device_id alfa_ext_mem_of_ids[] = {
-    {.compatible = "alfa_ext_mem"}, {}};
+static const struct of_device_id alfa_ext_mem_of_ids[] = {{.compatible = "alfa_ext_mem"}, {}};
 MODULE_DEVICE_TABLE(of, alfa_ext_mem_of_ids);
 
 static struct platform_driver alfa_ext_mem_driver = {
@@ -183,13 +177,9 @@ static struct platform_driver alfa_ext_mem_driver = {
         },
 };
 
-static int __init alfa_ext_mem_init(void) {
-  return platform_driver_register(&alfa_ext_mem_driver);
-}
+static int __init alfa_ext_mem_init(void) { return platform_driver_register(&alfa_ext_mem_driver); }
 
-static void __exit alfa_ext_mem_exit(void) {
-  platform_driver_unregister(&alfa_ext_mem_driver);
-}
+static void __exit alfa_ext_mem_exit(void) { platform_driver_unregister(&alfa_ext_mem_driver); }
 
 module_init(alfa_ext_mem_init);
 module_exit(alfa_ext_mem_exit);

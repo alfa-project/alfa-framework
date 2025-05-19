@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,27 @@
 
 #include "alib_metrics.hpp"
 
-const std::vector<int> alfa_label_to_alfa_ground = {
-    ALFA_LABEL_ROAD, ALFA_LABEL_PARKING, ALFA_LABEL_SIDEWALK,
-    ALFA_LABEL_OTHER_GROUND, ALFA_LABEL_LANE_MARKING};
+const std::vector<int> alfa_label_to_alfa_ground = {ALFA_LABEL_ROAD, ALFA_LABEL_PARKING,
+                                                    ALFA_LABEL_SIDEWALK, ALFA_LABEL_OTHER_GROUND,
+                                                    ALFA_LABEL_LANE_MARKING};
 
 const std::vector<int> alfa_label_to_alfa_ground_plus_terrain = {
     ALFA_LABEL_ROAD,         ALFA_LABEL_PARKING, ALFA_LABEL_SIDEWALK,
     ALFA_LABEL_OTHER_GROUND, ALFA_LABEL_TERRAIN, ALFA_LABEL_LANE_MARKING};
 
 const std::vector<int> alfa_label_to_alfa_ground_plus_terrain_vegetation = {
-    ALFA_LABEL_ROAD,         ALFA_LABEL_PARKING, ALFA_LABEL_SIDEWALK,
-    ALFA_LABEL_OTHER_GROUND, ALFA_LABEL_TERRAIN, ALFA_LABEL_VEGETATION,
-    ALFA_LABEL_LANE_MARKING};
+    ALFA_LABEL_ROAD,    ALFA_LABEL_PARKING,    ALFA_LABEL_SIDEWALK,    ALFA_LABEL_OTHER_GROUND,
+    ALFA_LABEL_TERRAIN, ALFA_LABEL_VEGETATION, ALFA_LABEL_LANE_MARKING};
 
 const std::vector<int> alfa_label_transversable_to_alfa_ground = {
-    ALFA_LABEL_ROAD, ALFA_LABEL_PARKING, ALFA_LABEL_OTHER_GROUND,
-    ALFA_LABEL_LANE_MARKING};
+    ALFA_LABEL_ROAD, ALFA_LABEL_PARKING, ALFA_LABEL_OTHER_GROUND, ALFA_LABEL_LANE_MARKING};
 
 bool is_label_in_vector(const std::vector<int>& labels, int label) {
   return std::find(labels.begin(), labels.end(), label) != labels.end();
 }
 
-AlfaGroundSegmentationMetrics evaluate_ground_segmentation_method(
-    AlfaNode* node, int map_type = 0) {
+AlfaGroundSegmentationMetrics evaluate_ground_segmentation_method(AlfaNode* node,
+                                                                  int map_type = 0) {
   AlfaGroundSegmentationMetrics metrics;
   metrics.number_input_ground_points = 0;
   metrics.number_output_ground_points = 0;
@@ -47,8 +45,7 @@ AlfaGroundSegmentationMetrics evaluate_ground_segmentation_method(
   metrics.false_negative = 0;
   metrics.true_negative = 0;
   metrics.basic_metrics.number_input_points = node->get_input_pointcloud_size();
-  metrics.basic_metrics.number_output_points =
-      node->get_output_pointcloud_size();
+  metrics.basic_metrics.number_output_points = node->get_output_pointcloud_size();
   metrics.true_positive_rate = 0;
   metrics.true_negative_rate = 0;
   metrics.false_positive_rate = 0;
@@ -69,20 +66,17 @@ AlfaGroundSegmentationMetrics evaluate_ground_segmentation_method(
 
     switch (map_type) {
       case GROUND_LABELS:
-        label_found =
-            is_label_in_vector(alfa_label_to_alfa_ground, input_label);
+        label_found = is_label_in_vector(alfa_label_to_alfa_ground, input_label);
         break;
       case GROUND_LABELS_PLUS_TERRAIN:
-        label_found = is_label_in_vector(alfa_label_to_alfa_ground_plus_terrain,
-                                         input_label);
+        label_found = is_label_in_vector(alfa_label_to_alfa_ground_plus_terrain, input_label);
         break;
       case GROUND_LABELS_PLUS_TERRAIN_VEGETATION:
-        label_found = is_label_in_vector(
-            alfa_label_to_alfa_ground_plus_terrain_vegetation, input_label);
+        label_found =
+            is_label_in_vector(alfa_label_to_alfa_ground_plus_terrain_vegetation, input_label);
         break;
       case GROUND_LABELS_TRANSVERSABLE:
-        label_found = is_label_in_vector(
-            alfa_label_transversable_to_alfa_ground, input_label);
+        label_found = is_label_in_vector(alfa_label_transversable_to_alfa_ground, input_label);
         break;
       default:
         throw std::invalid_argument("Unknown map type");
@@ -118,15 +112,13 @@ AlfaGroundSegmentationMetrics evaluate_ground_segmentation_method(
       metrics.true_positive / (metrics.true_positive + metrics.false_positive);
   metrics.negative_predictive_value =
       metrics.true_negative / (metrics.true_negative + metrics.false_negative);
-  metrics.f1_score =
-      2 * (metrics.true_positive_rate * metrics.positive_predictive_value) /
-      (metrics.true_positive_rate + metrics.positive_predictive_value);
+  metrics.f1_score = 2 * (metrics.true_positive_rate * metrics.positive_predictive_value) /
+                     (metrics.true_positive_rate + metrics.positive_predictive_value);
   metrics.accuracy = (metrics.true_positive + metrics.true_negative) /
-                     (metrics.true_positive + metrics.true_negative +
-                      metrics.false_positive + metrics.false_negative);
-  metrics.IoUg =
-      metrics.true_positive /
-      (metrics.true_positive + metrics.false_positive + metrics.false_negative);
+                     (metrics.true_positive + metrics.true_negative + metrics.false_positive +
+                      metrics.false_negative);
+  metrics.IoUg = metrics.true_positive /
+                 (metrics.true_positive + metrics.false_positive + metrics.false_negative);
 
   return metrics;
 }
@@ -135,15 +127,13 @@ AlfaCompressionMetrics evaluate_compression_method(AlfaNode* node) {
   AlfaCompressionMetrics metrics;
 
   metrics.basic_metrics.number_input_points = node->get_input_pointcloud_size();
-  metrics.basic_metrics.number_output_points =
-      node->get_output_pointcloud_size();
+  metrics.basic_metrics.number_output_points = node->get_output_pointcloud_size();
 
-  metrics.cr = metrics.basic_metrics.number_input_points /
-               metrics.basic_metrics.number_output_points;
+  metrics.cr =
+      metrics.basic_metrics.number_input_points / metrics.basic_metrics.number_output_points;
 
-  metrics.bpp =
-      (metrics.basic_metrics.number_output_points * sizeof(AlfaPoint) * 8) /
-      metrics.basic_metrics.number_input_points;
+  metrics.bpp = (metrics.basic_metrics.number_output_points * sizeof(AlfaPoint) * 8) /
+                metrics.basic_metrics.number_input_points;
 
   return metrics;
 }
