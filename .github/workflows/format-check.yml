@@ -1,33 +1,41 @@
-name: Verify Format and License
+name: Verify Format C/C++ and Verilog
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
+    branches: [ main ]
+  push:
     branches: [ main ]
 
 jobs:
-  verify-format-and-license:
-    name: Verify Format and License Headers
+  verify-cpp-format:
+    name: Check C/C++ Format
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install format tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-format
-          wget https://github.com/chipsalliance/verible/releases/download/v0.0-3311/verible-v0.0-3311-Ubuntu-22.04.tar.gz
-          tar -xzf verible-*.tar.gz
-          sudo cp verible-*/bin/verible-verilog-format /usr/local/bin/
+      - name: Run clang-format
+        uses: DoozyX/clang-format-lint-action@v0.15
+        with:
+          source: '.'
+          extensions: 'c,h,cpp,hpp'
+          clangFormatVersion: 14
+          style: file
 
-      - name: Check license headers and year
-        run: |
-          chmod +x ci/verify_headers.sh
-          ci/verify_headers.sh
+  verify-verilog-format:
+    name: Check Verilog/SystemVerilog Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-      - name: Check file format
-        run: |
-          chmod +x ci/verify_file_format.sh
-          ci/verify_file_format.sh
+      - name: Run verible-verilog-format in check mode
+        uses: chipsalliance/verible-linter-action@main
+        with:
+          paths: |
+            extensions/sw
+            libs/sw
+            node
+            monitor
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+          check_only: true
+          use_format: true
