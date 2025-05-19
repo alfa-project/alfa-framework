@@ -1,0 +1,9 @@
+BasedOnStyle: Google
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+ColumnLimit: 100
+AllowShortIfStatementsOnASingleLine: true
+BreakBeforeBraces: Attach
+SortIncludes: true
+SpaceBeforeParens: ControlStatements
