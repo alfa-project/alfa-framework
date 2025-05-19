@@ -1,0 +1,33 @@
+name: Verify Format and License
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify-format-and-license:
+    name: Verify Format and License Headers
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install format tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format
+          wget https://github.com/chipsalliance/verible/releases/download/v0.0-3311/verible-v0.0-3311-Ubuntu-22.04.tar.gz
+          tar -xzf verible-*.tar.gz
+          sudo cp verible-*/bin/verible-verilog-format /usr/local/bin/
+
+      - name: Check license headers and year
+        run: |
+          chmod +x ci/verify_headers.sh
+          ci/verify_headers.sh
+
+      - name: Check file format
+        run: |
+          chmod +x ci/verify_file_format.sh
+          ci/verify_file_format.sh

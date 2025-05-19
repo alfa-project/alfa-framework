@@ -2,12 +2,12 @@
 set -e
 
 echo "Adding missing license headers..."
-./ci/add_license_if_missing.sh
+./ci/fix_missing_headers.sh
 
 echo "Verifying license years..."
-./ci/check_license_year.sh
+./ci/fix_license_year.sh
 
-echo "Running clang-format..."
-./ci/check_file_format.sh
+echo "Running format verification tools..."
+./ci/fix_file_format.sh
 
 echo "All done. You can now commit and push your changes!!"
