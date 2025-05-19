@@ -27,9 +27,9 @@
 using namespace std;
 
 struct AlfaPoint {
-  PCL_ADD_POINT4D;  // quad-word XYZ
+  float x, y, z;
   std::uint32_t custom_field;
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW  // ensure proper alignment
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 } EIGEN_ALIGN16;
 
 struct AlfaHardwareSupport {
