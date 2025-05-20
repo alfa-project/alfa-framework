@@ -20,6 +20,8 @@ jobs:
   build:
     name: Build ROS 2 Packages (custom layout)
     runs-on: ubuntu-22.04
+    env:
+      ROS_DISTRO: humble
 
     steps:
       - name: Checkout repository
