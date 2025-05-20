@@ -33,6 +33,7 @@ jobs:
       - name: Install dependencies with rosdep
         run: |
           sudo apt update
+          sudo apt install -y ros-humble-pcl-msgs
           rosdep update
           rosdep install \
             --from-paths extensions/sw libs/sw node monitor \
