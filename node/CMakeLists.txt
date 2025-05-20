@@ -35,7 +35,7 @@ include_directories(include)
 
 # define a library target called alfa_node
 set(HEADER_FILES include/alfa_node.hpp)
-add_library(alfa_node src/alfa_node.cpp ${HEADER_FILES})
+add_library(alfa_node src/alfa_node.cpp src/alfa_hw.cpp src/alfa_metrics.cpp src/alfa_parameters.cpp src/alfa_pointclouds.cpp src/alfa_verbose.cpp ${HEADER_FILES})
 
 #add_compile_definitions(ALFA_VERBOSE)
 
