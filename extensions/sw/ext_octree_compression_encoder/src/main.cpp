@@ -48,10 +48,8 @@ void handler(AlfaNode *node) {
 
   AlfaOctree octree1(bb, (int)node->get_extension_parameter("octree_depth"),
                      false);
-  AlfaPoint point;
 
   octree1.insert_pointcloud(node->get_input_pointcloud());
-  auto original_size = octree1.get_number_of_points() * sizeof(AlfaPoint);
 
   vector<unsigned char> code = octree1.get_occupation_code_DFS();
   vector<unsigned char> compressed_code;
@@ -73,7 +71,9 @@ void handler(AlfaNode *node) {
   }
 
   // Copy the compressed code to the output point cloud
-  convert_bitstream_pointcloud(compressed_code, node->get_output_pointcloud());
+  auto pointcloud = convert_code_to_AlfaPoint_vector(compressed_code);
+
+  for (auto point : pointcloud) node->push_point_output_pointcloud(point);
 
 #endif
 }

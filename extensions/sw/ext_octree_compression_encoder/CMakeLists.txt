@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(ext_octree_compression_decoder)
+project(ext_octree_compression_encoder)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release) # Default to Release if not specified
@@ -34,12 +34,12 @@ find_package(sensor_msgs REQUIRED)
 find_package(PCL 1.8 REQUIRED)
 find_package(pcl_conversions REQUIRED)
 
-add_executable(ext_octree_compression_decoder src/main.cpp)
-target_link_libraries(ext_octree_compression_decoder ${PCL_LIBRARIES})
-ament_target_dependencies(ext_octree_compression_decoder rclcpp alfa_node sensor_msgs alfa_msg pcl_conversions alib_octree alib_compression)
+add_executable(ext_octree_compression_encoder src/main.cpp)
+target_link_libraries(ext_octree_compression_encoder ${PCL_LIBRARIES})
+ament_target_dependencies(ext_octree_compression_encoder rclcpp alfa_node sensor_msgs alfa_msg pcl_conversions alib_octree alib_compression)
 
 install(TARGETS
-ext_octree_compression_decoder
+ext_octree_compression_encoder
   DESTINATION lib/${PROJECT_NAME}/
 )
 

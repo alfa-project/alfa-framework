@@ -24,7 +24,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #define NODE_NAME "ext_octree_compression_decoder"
-#define DEFAULT_TOPIC "/ext_octree_compression_decoder_pointcloud"
+#define DEFAULT_TOPIC "/ext_octree_compression_encoder_pointcloud"
 
 #define NODE_ID 0
 #define POINTCLOUD_ID 0
@@ -43,8 +43,9 @@ void handler(AlfaNode *node) {
             node->get_extension_parameter("max_bounding_box_z"));
 
   // Convert input pointcloud into bitstream
-  vector<unsigned char> compressed_code, code;
-  convert_pointcloud_bitstream(node->get_input_pointcloud(), compressed_code);
+  vector<unsigned char> code;
+  auto compressed_code =
+      convert_AlfaPoint_vector_to_code(node->get_input_pointcloud_as_vector());
 
   AlfaOctree octree(bb, (int)node->get_extension_parameter("octree_depth"),
                     false);
@@ -106,7 +107,7 @@ int main(int argc, char **argv) {
   conf.latency = 0;
   conf.number_of_debug_points = 1;
   conf.metrics_publishing_type = ALL_METRICS;
-  conf.custom_field_conversion_type = CUSTOM_FIELD_INTENSITY;
+  conf.custom_field_conversion_type = CUSTOM_FIELD_USER;
 
   parameters[0].parameter_value = 12;
   parameters[0].parameter_name = "octree_depth";
