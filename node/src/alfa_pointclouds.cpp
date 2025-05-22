@@ -235,10 +235,10 @@ void AlfaNode::convert_msg_to_pointcloud() {
 
   switch (custom_type) {
     case CUSTOM_FIELD_USER:
-      findFieldOffsetByName("USER");
+      findFieldOffsetByName("","custom_field");
 #ifdef ALFA_VERBOSE
       verbose_info("main_thread",
-                   "convert_msg_to_pointcloud: field name is USER");
+                   "convert_msg_to_pointcloud: field name is custom_field");
 #endif
       break;
 
@@ -355,6 +355,13 @@ void AlfaNode::convert_msg_to_pointcloud() {
             point.custom_field |= temp_8 << 8;
           else
             point.custom_field |= temp_8;
+          break;
+        }
+
+        case sensor_msgs::msg::PointField::UINT32: { // Custom field
+          std::uint32_t temp_uint32;
+          memcpy(&temp_uint32, &data[i + field_offset], sizeof(std::uint32_t));
+          point.custom_field = static_cast<std::uint32_t>(temp_uint32);
           break;
         }
 
