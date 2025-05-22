@@ -52,8 +52,10 @@ std::vector<unsigned char> alib_huffman_s_encode(const std::vector<unsigned char
   std::vector<unsigned char> encoded_data;
 
   // Reserve space for last_byte_bits at the start
-  encoded_data.push_back(0);  // Placeholder for last_byte_bits
-  encoded_data.insert(encoded_data.end(), rank_map.begin(), rank_map.end());
+  encoded_data.reserve(1 + rank_map.size());
+  encoded_data.push_back(0);  // placeholder
+  std::copy(rank_map.begin(), rank_map.end(), std::back_inserter(encoded_data));
+  
 
   int bit_position = 0;
   unsigned char current_byte = 0;
@@ -71,7 +73,7 @@ std::vector<unsigned char> alib_huffman_s_encode(const std::vector<unsigned char
       code = "110" + std::bitset<4>(index - 12).to_string();
     } else if (index < 92) {
       code = "1110" + std::bitset<6>(index - 28).to_string();
-    } else if (index < 256) {
+    } else {
       code = "11110" + std::bitset<8>(index - 92).to_string();
     }
 
