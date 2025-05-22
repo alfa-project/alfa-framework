@@ -34,11 +34,10 @@ void output_compression_code(const std::vector<unsigned char>& encoded_data);
 void output_decoded_compression_code(
     const std::vector<unsigned char>& encoded_data);
 
-void convert_bitstream_pointcloud(
-    vector<unsigned char>& code, pcl::PointCloud<AlfaPoint>::Ptr pointcloud);
-
-void convert_pointcloud_bitstream(pcl::PointCloud<AlfaPoint>::Ptr pointcloud,
-                                     vector<unsigned char>& code);
+std::vector<AlfaPoint> convert_code_to_AlfaPoint_vector(
+    const std::vector<unsigned char>& code);
+std::vector<unsigned char> convert_AlfaPoint_vector_to_code(
+    const std::vector<AlfaPoint>& pointcloud);
 
 // RLE
 std::vector<unsigned char> alib_rle_encode(const std::vector<unsigned char>& input);
