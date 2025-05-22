@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@
 
 #include "alfa_node.hpp"
 #include "alfa_structs.hpp"
+#include "alib_compression.hpp"
 #include "alib_octree.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "alib_compression.hpp"
 
 #define NODE_NAME "ext_pcl_octree_compression_encoder"
 #define DEFAULT_TOPIC "/velodyne_points"
@@ -96,7 +96,7 @@ void handler(AlfaNode *node) {
     octreeResolution = 0.0122f;
 
   // Define custom parameters for the compression
-  float pointResolution = 0.001f;  // 1 mm precision for x, y, z coordinates
+  float pointResolution = 0.001f;       // 1 mm precision for x, y, z coordinates
   bool doVoxelGridDownSampling = true;  // Enable voxel grid downsampling
   unsigned int iFrameRate = 0;          // Disable i-frames
   bool doColorEncoding = false;         // Disable color encoding
@@ -118,8 +118,7 @@ void handler(AlfaNode *node) {
   alfa_cloud = node->get_input_pointcloud();
 
   // Create a new pcl::PointCloud<pcl::PointXYZ> for the octree compressor
-  pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cloud(
-      new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cloud(new pcl::PointCloud<pcl::PointXYZ>);
   int number_of_points = 0;
 
   // Convert each AlfaPoint to pcl::PointXYZ
@@ -138,13 +137,11 @@ void handler(AlfaNode *node) {
   std::string dataStr = compressed_data.str();
   std::vector<unsigned char> compressed_code(dataStr.begin(), dataStr.end());
 
-
   // Copy the compressed code to the output point cloud
   auto pointcloud = convert_code_to_AlfaPoint_vector(compressed_code);
 
   for (auto point : pointcloud) node->push_point_output_pointcloud(point);
 
-  
 #endif
 }
 
@@ -156,7 +153,8 @@ void handler(AlfaNode *node) {
  */
 void post_processing(AlfaNode *node) {
 #ifdef EXT_HARDWARE
-  while (1);  // Do nothing
+  while (1)
+    ;  // Do nothing
 #endif
 
   node->publish_pointcloud();
@@ -214,8 +212,7 @@ int main(int argc, char **argv) {
   parameters[6].parameter_name = "min_bounding_box_z";
 
   // Create an instance of AlfaNode and spin it
-  rclcpp::spin(
-      std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
+  rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
 
   // Shutdown ROS 2
   rclcpp::shutdown();

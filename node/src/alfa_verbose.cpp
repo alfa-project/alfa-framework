@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,20 @@
 
 #include "alfa_node.hpp"
 
-
 // Verbose functions
-void AlfaNode::verbose_constr_chracteristics(string subscriber_topic,
-                                             string node_name) {
+void AlfaNode::verbose_constr_chracteristics(string subscriber_topic, string node_name) {
   // Print the characteristics of the node
-  std::cout << "--------------------------------------------------------"
-            << std::endl;
+  std::cout << "--------------------------------------------------------" << std::endl;
   std::cout << "Starting ALFA node with the following settings:" << std::endl;
   std::cout << "Subscriber topic: " << subscriber_topic << std::endl;
   std::cout << "Name of the node: " << node_name << std::endl;
   std::cout << "Extension ID: " << configuration.extension_id << std::endl;
   std::cout << "Pointcloud ID: " << configuration.pointcloud_id << std::endl;
-  std::cout << "Hardware Driver (SIU): "
-            << configuration.hardware_support.hardware_driver << std::endl;
-  std::cout << "Hardware Extension: "
-            << configuration.hardware_support.hardware_extension << std::endl;
-  std::cout << "--------------------------------------------------------"
+  std::cout << "Hardware Driver (SIU): " << configuration.hardware_support.hardware_driver
             << std::endl;
+  std::cout << "Hardware Extension: " << configuration.hardware_support.hardware_extension
+            << std::endl;
+  std::cout << "--------------------------------------------------------" << std::endl;
 }
 
 void AlfaNode::verbose_begin(string function) {

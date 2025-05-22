@@ -30,8 +30,7 @@ void print_frequencies(const std::vector<unsigned char>& input) {
   }
 }
 
-void write_binary_file(const std::string& file_path,
-                       const std::vector<unsigned char>& data) {
+void write_binary_file(const std::string& file_path, const std::vector<unsigned char>& data) {
   // Open the file in binary mode
   std::ofstream file(file_path, std::ios::binary);
   if (!file) {
@@ -61,8 +60,7 @@ void print_vector_binary(const std::vector<unsigned char>& input) {
 }
 
 // Convert raw byte code into a vector of AlfaPoint
-std::vector<AlfaPoint> convert_code_to_AlfaPoint_vector(
-    const std::vector<unsigned char>& code) {
+std::vector<AlfaPoint> convert_code_to_AlfaPoint_vector(const std::vector<unsigned char>& code) {
   std::vector<AlfaPoint> pointcloud;
   if (code.empty()) return pointcloud;
 

@@ -26,16 +26,13 @@
 #include "alfa_node.hpp"
 
 // Generic function
-void write_binary_file(const std::string& file_path,
-                       const std::vector<unsigned char>& data);
+void write_binary_file(const std::string& file_path, const std::vector<unsigned char>& data);
 void print_frequencies(const std::vector<unsigned char>& input);
 void print_vector_binary(const std::vector<unsigned char>& input);
 void output_compression_code(const std::vector<unsigned char>& encoded_data);
-void output_decoded_compression_code(
-    const std::vector<unsigned char>& encoded_data);
+void output_decoded_compression_code(const std::vector<unsigned char>& encoded_data);
 
-std::vector<AlfaPoint> convert_code_to_AlfaPoint_vector(
-    const std::vector<unsigned char>& code);
+std::vector<AlfaPoint> convert_code_to_AlfaPoint_vector(const std::vector<unsigned char>& code);
 std::vector<unsigned char> convert_AlfaPoint_vector_to_code(
     const std::vector<AlfaPoint>& pointcloud);
 
@@ -60,9 +57,7 @@ std::vector<unsigned char> alib_huffman_encode(const std::vector<unsigned char>&
 std::vector<unsigned char> alib_huffman_decode(const std::vector<unsigned char>& encoded);
 
 // Simplified Huffman
-std::vector<unsigned char> alib_huffman_s_encode(
-    const std::vector<unsigned char>& input);
-std::vector<unsigned char> alib_huffman_s_decode(
-    const std::vector<unsigned char>& encoded);
+std::vector<unsigned char> alib_huffman_s_encode(const std::vector<unsigned char>& input);
+std::vector<unsigned char> alib_huffman_s_decode(const std::vector<unsigned char>& encoded);
 
 #endif  // ALIB_COMPRESSION_H

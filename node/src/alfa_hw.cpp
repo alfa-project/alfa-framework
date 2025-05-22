@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,18 +33,17 @@ bool AlfaNode::hardware_setup() {
       ((ext_mem_fd = open("/dev/alfa_ext_mem", O_RDWR | O_SYNC)) != -1)) {
     pointcloud_ptr_address = configuration.pointcloud_id;
 
-    this->pointcloud.ptr = (std::uint64_t *)mmap(
-        0x0, POINTCLOUD_BASE_PER_ID, PROT_READ | PROT_WRITE, MAP_SHARED, mem_fd,
-        pointcloud_ptr_address);
+    this->pointcloud.ptr =
+        (std::uint64_t *)mmap(0x0, POINTCLOUD_BASE_PER_ID, PROT_READ | PROT_WRITE, MAP_SHARED,
+                              mem_fd, pointcloud_ptr_address);
 
     if (this->pointcloud.ptr == MAP_FAILED) {
       return_value = 1;
       cout << "Failed to map memory" << endl;
     } else {
       //  Create parameter's callbacks
-      this->parameters_callback_handle =
-          this->add_on_set_parameters_callback(std::bind(
-              &AlfaNode::parameters_callback, this, std::placeholders::_1));
+      this->parameters_callback_handle = this->add_on_set_parameters_callback(
+          std::bind(&AlfaNode::parameters_callback, this, std::placeholders::_1));
       this->pointcloud.size = 0;
 
       // Get the physical address of the pointcloud buffer
@@ -64,9 +63,8 @@ bool AlfaNode::hardware_setup() {
       }
 
       // Map external memory buffer
-      ext_mem =
-          (std::uint64_t *)mmap(0x0, ALFA_EXT_MEM_SIZE, PROT_READ | PROT_WRITE,
-                                MAP_SHARED, ext_mem_fd, 0);
+      ext_mem = (std::uint64_t *)mmap(0x0, ALFA_EXT_MEM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED,
+                                      ext_mem_fd, 0);
 
       if (ext_mem == MAP_FAILED) {
         return_value = 1;
@@ -88,8 +86,7 @@ bool AlfaNode::hardware_setup() {
   return return_value;
 }
 
-void AlfaNode::store_pointcloud(int type,
-                                pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+void AlfaNode::store_pointcloud(int type, pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
   if (pointcloud == nullptr) pointcloud = this->input_pointcloud;
   switch (type) {
     case LOAD_STORE_CARTESIAN:
@@ -105,8 +102,7 @@ void AlfaNode::store_pointcloud(int type,
   }
 }
 
-void AlfaNode::store_pointcloud_cartesian(
-    pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+void AlfaNode::store_pointcloud_cartesian(pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
   if (configuration.hardware_support.hardware_extension) {
     // Pointer to the memory where point cloud data will be stored
     std::uint64_t *mem = this->pointcloud.ptr;
@@ -115,8 +111,7 @@ void AlfaNode::store_pointcloud_cartesian(
     const size_t num_points = pointcloud->size();
 
     // Reserve memory for the point cloud data
-    std::vector<std::int16_t> a16_points(num_points *
-                                         4);  // Assuming 4 elements per point
+    std::vector<std::int16_t> a16_points(num_points * 4);  // Assuming 4 elements per point
 
     // Convert and pack points efficiently
     for (size_t i = 0; i < num_points; ++i) {
@@ -124,12 +119,9 @@ void AlfaNode::store_pointcloud_cartesian(
       std::int16_t *a16_point = &a16_points[i * 4];
 
       // Perform all conversions at once to minimize cache misses
-      a16_point[0] = static_cast<std::int16_t>(
-          std::round(point.x * FIXED_POINT_MULTIPLIER));
-      a16_point[1] = static_cast<std::int16_t>(
-          std::round(point.y * FIXED_POINT_MULTIPLIER));
-      a16_point[2] = static_cast<std::int16_t>(
-          std::round(point.z * FIXED_POINT_MULTIPLIER));
+      a16_point[0] = static_cast<std::int16_t>(std::round(point.x * FIXED_POINT_MULTIPLIER));
+      a16_point[1] = static_cast<std::int16_t>(std::round(point.y * FIXED_POINT_MULTIPLIER));
+      a16_point[2] = static_cast<std::int16_t>(std::round(point.z * FIXED_POINT_MULTIPLIER));
       a16_point[3] = static_cast<std::int16_t>(point.custom_field);
     }
 
@@ -149,12 +141,10 @@ void AlfaNode::store_pointcloud_cartesian(
     }
 
 #ifdef ALFA_VERBOSE
-    verbose_info("store_pointcloud_cartesian",
-                 "stored " + std::to_string(num_points) + " points");
+    verbose_info("store_pointcloud_cartesian", "stored " + std::to_string(num_points) + " points");
     verbose_info("store_pointcloud_cartesian", "last point");
-    verbose_info(
-        "store_pointcloud_cartesian",
-        "fixed point multiplier: " + std::to_string(FIXED_POINT_MULTIPLIER));
+    verbose_info("store_pointcloud_cartesian",
+                 "fixed point multiplier: " + std::to_string(FIXED_POINT_MULTIPLIER));
     verbose_info("store_pointcloud_cartesian",
                  "x: " + std::to_string(a16_points[(num_points - 1) * 4]));
     verbose_info("store_pointcloud_cartesian",
@@ -166,8 +156,7 @@ void AlfaNode::store_pointcloud_cartesian(
     verbose_not_defined("store_pointcloud_cartesian");
 }
 
-void AlfaNode::load_pointcloud(int type,
-                               pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+void AlfaNode::load_pointcloud(int type, pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
   if (pointcloud == nullptr) pointcloud = this->output_pointcloud;
   switch (type) {
     case LOAD_STORE_CARTESIAN:
@@ -183,8 +172,7 @@ void AlfaNode::load_pointcloud(int type,
   }
 }
 #pragma GCC optimize("prefetch-loop-arrays")
-void AlfaNode::load_pointcloud_cartesian(
-    pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
+void AlfaNode::load_pointcloud_cartesian(pcl::PointCloud<AlfaPoint>::Ptr pointcloud) {
   if (configuration.hardware_support.hardware_extension) {
     auto custom_type = this->configuration.custom_field_conversion_type;
 
@@ -192,8 +180,7 @@ void AlfaNode::load_pointcloud_cartesian(
     const std::uint32_t POINT_STRIDE = 4;  // Assuming 4 elements per point
 
     // Calculate the number of points
-    const std::uint32_t num_points =
-        unit_read_register(UNIT_SIGNALS_SOFTWARE_POINTCLOUD_SIZE);
+    const std::uint32_t num_points = unit_read_register(UNIT_SIGNALS_SOFTWARE_POINTCLOUD_SIZE);
 
     // Reserve memory for the point cloud to avoid reallocations
     pointcloud->reserve(num_points);
@@ -225,20 +212,15 @@ void AlfaNode::load_pointcloud_cartesian(
     }
 
 #ifdef ALFA_VERBOSE
-    verbose_info("load_pointcloud_cartesian",
-                 "loaded " + std::to_string(num_points) + " points");
+    verbose_info("load_pointcloud_cartesian", "loaded " + std::to_string(num_points) + " points");
     verbose_info("load_pointcloud_cartesian", "last point");
-    verbose_info(
-        "load_pointcloud_cartesian",
-        "fixed point multiplier: " + std::to_string(FIXED_POINT_MULTIPLIER));
+    verbose_info("load_pointcloud_cartesian",
+                 "fixed point multiplier: " + std::to_string(FIXED_POINT_MULTIPLIER));
     if (!pointcloud->empty()) {
       const AlfaPoint &lastPoint = pointcloud->back();
-      verbose_info("load_pointcloud_cartesian",
-                   "x: " + std::to_string(lastPoint.x));
-      verbose_info("load_pointcloud_cartesian",
-                   "y: " + std::to_string(lastPoint.y));
-      verbose_info("load_pointcloud_cartesian",
-                   "z: " + std::to_string(lastPoint.z));
+      verbose_info("load_pointcloud_cartesian", "x: " + std::to_string(lastPoint.x));
+      verbose_info("load_pointcloud_cartesian", "y: " + std::to_string(lastPoint.y));
+      verbose_info("load_pointcloud_cartesian", "z: " + std::to_string(lastPoint.z));
     }
 #endif
   } else
@@ -303,14 +285,12 @@ void AlfaNode::unit_wait_for_value(unsigned int offset, unsigned int value) {
 void AlfaNode::read_ext_memory(uint32_t offset, size_t size, void *buffer) {
   if (configuration.hardware_support.hardware_extension) {
     if (size > ALFA_EXT_MEM_SIZE) {
-      verbose_fail("read_ext_memory",
-                   "Size is bigger than the external memory");
+      verbose_fail("read_ext_memory", "Size is bigger than the external memory");
       return;
     }
 
     if (offset + size > ALFA_EXT_MEM_SIZE) {
-      verbose_fail("read_ext_memory",
-                   "Offset is bigger than the external memory");
+      verbose_fail("read_ext_memory", "Offset is bigger than the external memory");
       return;
     }
 
@@ -323,8 +303,7 @@ void AlfaNode::read_ext_memory(uint32_t offset, size_t size, void *buffer) {
 float AlfaNode::get_debug_point(std::uint16_t number) {
   if (number <= configuration.number_of_debug_points)
     if (configuration.hardware_support.hardware_extension)
-      return static_cast<float>(
-          unit_read_register(UNIT_DEBUG_POINT_0 + number * 4));
+      return static_cast<float>(unit_read_register(UNIT_DEBUG_POINT_0 + number * 4));
     else
       return debug_points_message[number].metric;
   else {
@@ -333,8 +312,7 @@ float AlfaNode::get_debug_point(std::uint16_t number) {
   }
 }
 
-void AlfaNode::set_debug_point(std::uint16_t number, float value,
-                               string tag = "") {
+void AlfaNode::set_debug_point(std::uint16_t number, float value, string tag = "") {
   if (number <= configuration.number_of_debug_points &&
       !configuration.hardware_support.hardware_extension) {
     debug_points_message[number].metric = value;

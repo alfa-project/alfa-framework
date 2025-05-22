@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,9 @@ void AlfaNode::publish_pointcloud(sensor_msgs::msg::PointCloud2 &pointcloud) {
   verbose_info("publish_pointcloud", "publishing pointcloud");
 #endif
   pointcloud.header.frame_id =
-      (string)this->get_name() +
-      "_pointcloud";  // Create the pointcloud2 header to publish
-  pointcloud.header.stamp = this->now();  // Get current time
-  pointcloud_publisher->publish(
-      pointcloud);  // Publish the point cloud in the ROS topic
+      (string)this->get_name() + "_pointcloud";  // Create the pointcloud2 header to publish
+  pointcloud.header.stamp = this->now();         // Get current time
+  pointcloud_publisher->publish(pointcloud);     // Publish the point cloud in the ROS topic
 }
 
 // Method for publishing a PCL type pointcloud
@@ -35,9 +33,8 @@ void AlfaNode::publish_pointcloud(pcl::PointCloud<AlfaPoint>::Ptr pointcloud,
   if (pointcloud == nullptr) pointcloud = this->output_pointcloud;
   this->configuration.latency = latency;
   sensor_msgs::msg::PointCloud2 pcl2_frame_temp;
-  pcl::toROSMsg(
-      *pointcloud,
-      pcl2_frame_temp);  // convert the pcl object to the pointcloud2 one
+  pcl::toROSMsg(*pointcloud,
+                pcl2_frame_temp);  // convert the pcl object to the pointcloud2 one
   std::lock_guard<std::mutex> lk(pcl2_frame_condition_mutex);
   pcl2_frame_mutex.lock();
   pcl2_frame.push_back(pcl2_frame_temp);
@@ -65,8 +62,7 @@ std::vector<AlfaPoint> AlfaNode::get_input_pointcloud_as_vector() {
 #endif
   std::vector<AlfaPoint> r_input_pointcloud;
 
-  for (const auto &point : *input_pointcloud)
-    r_input_pointcloud.push_back(point);
+  for (const auto &point : *input_pointcloud) r_input_pointcloud.push_back(point);
 
   return r_input_pointcloud;
 }
@@ -77,8 +73,7 @@ std::vector<AlfaPoint> AlfaNode::get_output_pointcloud_as_vector() {
 #endif
   std::vector<AlfaPoint> r_output_pointcloud;
 
-  for (const auto &point : *output_pointcloud)
-    r_output_pointcloud.push_back(point);
+  for (const auto &point : *output_pointcloud) r_output_pointcloud.push_back(point);
 
   return r_output_pointcloud;
 }
@@ -113,8 +108,7 @@ bool AlfaNode::is_output_pointcloud_empty() {
 // input_pointcloud, meaning the next call of
 // get_point_sequentially_input_pointcloud(), will get the last point
 bool AlfaNode::is_last_input_pointcloud_point() {
-  if (is_input_pointcloud_empty() ||
-      point_counter >= (get_input_pointcloud_size() - 1))
+  if (is_input_pointcloud_empty() || point_counter >= (get_input_pointcloud_size() - 1))
     return true;
   else
     return false;
@@ -128,8 +122,7 @@ void AlfaNode::push_point_output_pointcloud(AlfaPoint point) {
 
 // Get specific point from input cloud, using the point argument. Returns true
 // if successfull, false otherwise
-bool AlfaNode::get_point_input_pointcloud(std::uint32_t position,
-                                          AlfaPoint &point) {
+bool AlfaNode::get_point_input_pointcloud(std::uint32_t position, AlfaPoint &point) {
   if (position < get_input_pointcloud_size() - 1) {
     point = (*input_pointcloud)[position];
     return true;
@@ -179,8 +172,7 @@ bool AlfaNode::reset_input_pointcloud_counter() {
 
 // Set specific custom field value in the output_pointcloud position, returns
 // true if successfull, false otherwise
-bool AlfaNode::set_custom_field_output_pointcloud(std::uint32_t position,
-                                                  std::uint32_t value) {
+bool AlfaNode::set_custom_field_output_pointcloud(std::uint32_t position, std::uint32_t value) {
   if (position < (get_output_pointcloud_size() - 1)) {
     (*output_pointcloud)[position].custom_field = value;
     return true;
@@ -235,78 +227,66 @@ void AlfaNode::convert_msg_to_pointcloud() {
 
   switch (custom_type) {
     case CUSTOM_FIELD_USER:
-      findFieldOffsetByName("","custom_field");
+      findFieldOffsetByName("", "custom_field");
 #ifdef ALFA_VERBOSE
-      verbose_info("main_thread",
-                   "convert_msg_to_pointcloud: field name is custom_field");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is custom_field");
 #endif
       break;
 
     case CUSTOM_FIELD_INTENSITY:
       findFieldOffsetByName("", "intensity");
 #ifdef ALFA_VERBOSE
-      verbose_info("main_thread",
-                   "convert_msg_to_pointcloud: field name is intensity");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is intensity");
 #endif
       break;
 
     case CUSTOM_FIELD_LABEL:
       findFieldOffsetByName("", "label");
 #ifdef ALFA_VERBOSE
-      verbose_info("main_thread",
-                   "convert_msg_to_pointcloud: field name is label");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is label");
 #endif
       break;
 
     case CUSTOM_FIELD_RGB:
       findFieldOffsetByName("", "rgb");
 #ifdef ALFA_VERBOSE
-      verbose_info("main_thread",
-                   "convert_msg_to_pointcloud: field name is rgb");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is rgb");
 #endif
       break;
 
     case CUSTOM_FIELD_FILTER:
       findFieldOffsetByName("", "intensity");
 #ifdef ALFA_VERBOSE
-      verbose_info("main_thread",
-                   "convert_msg_to_pointcloud: field name is INTENSITY");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is INTENSITY");
 #endif
       break;
 
     case CUSTOM_FIELD_INTENSITY_LABEL:
       findFieldOffsetByName("intensity", "label");
 #ifdef ALFA_VERBOSE
-      verbose_info(
-          "main_thread",
-          "convert_msg_to_pointcloud: field name is INTENSITY and LABEL");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is INTENSITY and LABEL");
 #endif
       break;
 
     default:
       findFieldOffsetByName("intensity");
 #ifdef ALFA_VERBOSE
-      verbose_info(
-          "main_thread",
-          "convert_msg_to_pointcloud: field name is default: INTENSITY");
+      verbose_info("main_thread", "convert_msg_to_pointcloud: field name is default: INTENSITY");
 #endif
       break;
   }
 
 #ifdef ALFA_VERBOSE
-  verbose_info("main_thread",
-               "convert_msg_to_pointcloud: offset calculation ok");
+  verbose_info("main_thread", "convert_msg_to_pointcloud: offset calculation ok");
 #endif
   // Clear the existing data in input_pointcloud and reserve memory
   input_pointcloud->clear();
-  input_pointcloud->reserve(ros_pointcloud_temp.width *
-                            ros_pointcloud_temp.height);
+  input_pointcloud->reserve(ros_pointcloud_temp.width * ros_pointcloud_temp.height);
 
 #ifdef ALFA_VERBOSE
   verbose_info("main_thread", "convert_msg_to_pointcloud: converting points");
   cout << "data.size(): " << data.size() << endl;
-  cout << "ros_pointcloud_temp.point_step: " << ros_pointcloud_temp.point_step
-       << endl;
+  cout << "ros_pointcloud_temp.point_step: " << ros_pointcloud_temp.point_step << endl;
 #endif
 
   // Iterate through the data and populate custom point cloud
@@ -321,8 +301,7 @@ void AlfaNode::convert_msg_to_pointcloud() {
     point.custom_field = 0;
 
     // Extract the custom field from the data
-    auto fillCustomField = [&](const std::uint32_t &field_offset,
-                               const std::uint32_t &field_type,
+    auto fillCustomField = [&](const std::uint32_t &field_offset, const std::uint32_t &field_type,
                                const bool &byte_selector) {
       switch (field_type) {
         case sensor_msgs::msg::PointField::FLOAT32: {  // Intensity
@@ -358,7 +337,7 @@ void AlfaNode::convert_msg_to_pointcloud() {
           break;
         }
 
-        case sensor_msgs::msg::PointField::UINT32: { // Custom field
+        case sensor_msgs::msg::PointField::UINT32: {  // Custom field
           std::uint32_t temp_uint32;
           memcpy(&temp_uint32, &data[i + field_offset], sizeof(std::uint32_t));
           point.custom_field = static_cast<std::uint32_t>(temp_uint32);
@@ -373,8 +352,7 @@ void AlfaNode::convert_msg_to_pointcloud() {
 
     // Fill the custom field
     if (field_offset != -1) fillCustomField(field_offset, field_type, true);
-    if (field_offset_2 != -1)
-      fillCustomField(field_offset_2, field_type_2, false);
+    if (field_offset_2 != -1) fillCustomField(field_offset_2, field_type_2, false);
 
     input_pointcloud->emplace_back(std::move(point));  // Use emplace_back
   }

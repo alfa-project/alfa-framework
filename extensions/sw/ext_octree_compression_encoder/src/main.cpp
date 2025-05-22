@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,8 +46,7 @@ void handler(AlfaNode *node) {
             node->get_extension_parameter("max_bounding_box_y"),
             node->get_extension_parameter("max_bounding_box_z"));
 
-  AlfaOctree octree1(bb, (int)node->get_extension_parameter("octree_depth"),
-                     false);
+  AlfaOctree octree1(bb, (int)node->get_extension_parameter("octree_depth"), false);
 
   octree1.insert_pointcloud(node->get_input_pointcloud());
 
@@ -94,8 +93,7 @@ void post_processing(AlfaNode *node) {
 
   node->read_ext_memory(0, sizeof(buffer.size), &(buffer.size));
   buffer.code.resize(buffer.size);
-  node->read_ext_memory(1, buffer.size * sizeof(unsigned char),
-                        buffer.code.data());
+  node->read_ext_memory(1, buffer.size * sizeof(unsigned char), buffer.code.data());
 
   // Copy the compressed code to the output point cloud
   convert_bitstream_pointcloud(buffer.code, node->get_output_pointcloud());
@@ -159,8 +157,7 @@ int main(int argc, char **argv) {
   parameters[7].parameter_name = "compression_algorithm";
 
   // Create an instance of AlfaNode and spin it
-  rclcpp::spin(
-      std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
+  rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
 
   // Shutdown ROS 2
   rclcpp::shutdown();

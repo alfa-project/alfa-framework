@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using namespace std::chrono;
 using std::placeholders::_1;
 using std::placeholders::_2;
 
-
 // Method for publishing a AlfaMetrics object
 void AlfaNode::publish_metrics(alfa_msg::msg::AlfaMetrics &metrics) {
 #ifdef ALFA_VERBOSE
@@ -30,12 +29,11 @@ void AlfaNode::publish_metrics(alfa_msg::msg::AlfaMetrics &metrics) {
 }
 
 void AlfaNode::metrics_update() {
-  auto duration_full_processing = duration_cast<microseconds>(
-      full_processing_metric.stop - full_processing_metric.start);
-  auto duration_handler =
-      duration_cast<microseconds>(handler_metric.stop - handler_metric.start);
-  auto duration_publishing = duration_cast<microseconds>(
-      publishing_metric.stop - publishing_metric.start);
+  auto duration_full_processing =
+      duration_cast<microseconds>(full_processing_metric.stop - full_processing_metric.start);
+  auto duration_handler = duration_cast<microseconds>(handler_metric.stop - handler_metric.start);
+  auto duration_publishing =
+      duration_cast<microseconds>(publishing_metric.stop - publishing_metric.start);
 
   /*FIXME*/ if (duration_handler.count() < 200000)
     handler_metric.message.metric = duration_handler.count();

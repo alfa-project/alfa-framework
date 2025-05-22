@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@
 
 #include "alfa_node.hpp"
 #include "alfa_structs.hpp"
-#include "alib_octree.hpp"
 #include "alib_compression.hpp"
+#include "alib_octree.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 #define NODE_NAME "ext_pcl_octree_compression_decoder"
@@ -96,7 +96,7 @@ void handler(AlfaNode *node) {
     octreeResolution = 0.0122f;
 
   // Define custom parameters for the compression
-  float pointResolution = 0.001f;  // 1 mm precision for x, y, z coordinates
+  float pointResolution = 0.001f;       // 1 mm precision for x, y, z coordinates
   bool doVoxelGridDownSampling = true;  // Enable voxel grid downsampling
   unsigned int iFrameRate = 0;          // Disable i-frames
   bool doColorEncoding = false;         // Disable color encoding
@@ -115,19 +115,17 @@ void handler(AlfaNode *node) {
   );
 
   // Get the compressed stream
-  std::vector<AlfaPoint> compressed_cloud =
-      node->get_input_pointcloud_as_vector();
+  std::vector<AlfaPoint> compressed_cloud = node->get_input_pointcloud_as_vector();
 
-  auto compressed_code= convert_AlfaPoint_vector_to_code(compressed_cloud);
+  auto compressed_code = convert_AlfaPoint_vector_to_code(compressed_cloud);
 
   // Convert vector to stringstream
   std::stringstream compressed_data;
   compressed_data.write(reinterpret_cast<const char *>(compressed_code.data()),
-                         compressed_code.size());
+                        compressed_code.size());
 
   // Create a new pcl::PointCloud<pcl::PointXYZ> for the octree compressor
-  pcl::PointCloud<pcl::PointXYZ>::Ptr decompressed_cloud(
-      new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr decompressed_cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
   // Decompress the point cloud
   pointcloud_decompressor.decodePointCloud(compressed_data, decompressed_cloud);
@@ -151,7 +149,8 @@ void handler(AlfaNode *node) {
  */
 void post_processing(AlfaNode *node) {
 #ifdef EXT_HARDWARE
-  while (1);  // Do nothing
+  while (1)
+    ;  // Do nothing
 #endif
 
   node->publish_pointcloud();
@@ -209,8 +208,7 @@ int main(int argc, char **argv) {
   parameters[6].parameter_name = "min_bounding_box_z";
 
   // Create an instance of AlfaNode and spin it
-  rclcpp::spin(
-      std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
+  rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
 
   // Shutdown ROS 2
   rclcpp::shutdown();

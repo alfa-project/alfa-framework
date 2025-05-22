@@ -55,7 +55,6 @@ std::vector<unsigned char> alib_huffman_s_encode(const std::vector<unsigned char
   encoded_data.reserve(1 + rank_map.size());
   encoded_data.push_back(0);  // placeholder
   std::copy(rank_map.begin(), rank_map.end(), std::back_inserter(encoded_data));
-  
 
   int bit_position = 0;
   unsigned char current_byte = 0;
