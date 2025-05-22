@@ -17,7 +17,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # Set ALFA HARDWARE EXTENSION, Comment the line below for software only extensions
-add_compile_definitions(EXT_HARDWARE) 
+#add_compile_definitions(EXT_HARDWARE) 
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
