@@ -132,9 +132,11 @@ AlfaNode::AlfaNode(AlfaConfiguration conf, AlfaExtensionParameter parameters[10]
   ticker_thread = new std::thread(&AlfaNode::ticker_alive, this);
   alfa_main_thread = new std::thread(&AlfaNode::alfa_main_thread_handler, this);
 
-  if (setup_thread(alfa_main_thread, 1) != 0) return;
-  if (setup_thread(pointcloud_publisher_thread, 2) != 0) return;
-  if (setup_thread(ticker_thread, 3) != 0) return;
+  if(geteuid()==0){  //Check if it is running with sudo
+    if (setup_thread(alfa_main_thread, 1) != 0) return;
+    if (setup_thread(pointcloud_publisher_thread, 2) != 0) return;
+    if (setup_thread(ticker_thread, 3) != 0) return;
+  }
 
   // Threads are detached
   pointcloud_publisher_thread->detach();
