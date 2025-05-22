@@ -26,8 +26,9 @@
 #include "alfa_structs.hpp"
 #include "alib_octree.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "alib_compression.hpp"
 
-#define NODE_NAME "ext_pcl_octree_compression"
+#define NODE_NAME "ext_pcl_octree_compression_encoder"
 #define DEFAULT_TOPIC "/velodyne_points"
 
 #define NODE_ID 0
@@ -129,50 +130,21 @@ void handler(AlfaNode *node) {
     }
   }
 
-  std::stringstream compressedData;
-  pointcloud_compressor.encodePointCloud(pcl_cloud, compressedData);
+  // Get the bitstream
+  std::stringstream compressed_data;
+  pointcloud_compressor.encodePointCloud(pcl_cloud, compressed_data);
 
-  // Check if decompression flag is set
-  if (node->get_extension_parameter("decompression_flag") == 1) {
-    // Decompress point cloud if decompression flag is set
-    pcl::PointCloud<pcl::PointXYZ>::Ptr decompressedCloud(
-        new pcl::PointCloud<pcl::PointXYZ>);
-    pointcloud_compressor.decodePointCloud(compressedData, decompressedCloud);
+  // Convert to vector<unsigned char>
+  std::string dataStr = compressed_data.str();
+  std::vector<unsigned char> compressed_code(dataStr.begin(), dataStr.end());
 
-    // Push decompressed points to output after converting to AlfaPoint
-    for (const auto &pcl_point : decompressedCloud->points) {
-      AlfaPoint alfa_point = convertToAlfaPoint(pcl_point);
-      node->push_point_output_pointcloud(alfa_point);
-    }
-  } else {
-    // Handle direct output of compressed data using memcpy for speed and
-    // efficiency
-    std::string compressedString = compressedData.str();
-    size_t compressedSize = compressedString.size();
-    size_t code_index = 0;
-    AlfaPoint point;
 
-    // Process all complete AlfaPoints in the buffer
-    while (code_index + sizeof(AlfaPoint) <= compressedSize) {
-      // Copy the binary data into the AlfaPoint structure
-      std::memcpy(&point, &compressedString[code_index], sizeof(AlfaPoint));
+  // Copy the compressed code to the output point cloud
+  auto pointcloud = convert_code_to_AlfaPoint_vector(compressed_code);
 
-      // Push the deserialized point to the output point cloud
-      node->push_point_output_pointcloud(point);
+  for (auto point : pointcloud) node->push_point_output_pointcloud(point);
 
-      // Move to the next chunk of compressed data
-      code_index += sizeof(AlfaPoint);
-    }
-
-    // If there's leftover data at the end, copy what remains into the last
-    // point
-    if (code_index < compressedSize) {
-      std::memcpy(&point, &compressedString[code_index],
-                  compressedSize - code_index);
-      node->push_point_output_pointcloud(
-          point);  // Push the final, partially filled point
-    }
-  }
+  
 #endif
 }
 
@@ -240,8 +212,6 @@ int main(int argc, char **argv) {
   parameters[5].parameter_name = "min_bounding_box_y";
   parameters[6].parameter_value = -100;
   parameters[6].parameter_name = "min_bounding_box_z";
-  parameters[7].parameter_value = 0;
-  parameters[7].parameter_name = "decompression_flag";
 
   // Create an instance of AlfaNode and spin it
   rclcpp::spin(

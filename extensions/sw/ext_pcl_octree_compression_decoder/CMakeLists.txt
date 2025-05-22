@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(ext_pcl_octree_compression)
+project(ext_pcl_octree_compression_decoder)
 
 # Default build type is Release
 if(NOT CMAKE_BUILD_TYPE)
@@ -24,6 +24,7 @@ find_package(rclcpp REQUIRED)
 find_package(alfa_node REQUIRED)
 find_package(alib_octree REQUIRED)
 find_package(alfa_msg REQUIRED)
+find_package(alib_compression REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(PCL 1.8 REQUIRED COMPONENTS io octree common)
 find_package(pcl_conversions REQUIRED)
@@ -31,10 +32,10 @@ find_package(FLANN REQUIRED)
 find_package(Qhull REQUIRED)
 
 # Add the executable and include both main.cpp and instantiations.cpp
-add_executable(ext_pcl_octree_compression src/main.cpp)
+add_executable(ext_pcl_octree_compression_decoder src/main.cpp)
 
 # Include directories for all necessary libraries
-target_include_directories(ext_pcl_octree_compression
+target_include_directories(ext_pcl_octree_compression_decoder
     PRIVATE
     ${alfa_node_INCLUDE_DIRS}
     ${FLANN_INCLUDE_DIRS}
@@ -43,7 +44,7 @@ target_include_directories(ext_pcl_octree_compression
 )
 
 # Explicitly link against the required libraries
-target_link_libraries(ext_pcl_octree_compression
+target_link_libraries(ext_pcl_octree_compression_decoder
     ${alfa_node_LIBRARIES}   # AlfaNode library
     ${FLANN_LIBRARIES}       # FLANN
     ${QHULL_LIBRARIES}       # Qhull
@@ -53,10 +54,11 @@ target_link_libraries(ext_pcl_octree_compression
 )
 
 # Link other dependencies
-ament_target_dependencies(ext_pcl_octree_compression 
+ament_target_dependencies(ext_pcl_octree_compression_decoder 
     rclcpp 
     alfa_node
-    alib_octree 
+    alib_octree
+    alib_compression 
     sensor_msgs 
     alfa_msg 
     pcl_conversions
@@ -64,7 +66,7 @@ ament_target_dependencies(ext_pcl_octree_compression
 
 # Install configuration
 install(TARGETS
-  ext_pcl_octree_compression
+  ext_pcl_octree_compression_decoder
   DESTINATION lib/${PROJECT_NAME}/
 )
 
