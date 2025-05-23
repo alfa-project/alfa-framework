@@ -30,7 +30,8 @@
 #define POINTCLOUD_ID 0
 
 /**
- * @brief Handler function that decodes the bitstream sent by ext_octree_compression_encoder_pointcloud topic and publishes that decoded point cloud.
+ * @brief Handler function that decodes the bitstream sent by
+ * ext_octree_compression_encoder_pointcloud topic and publishes that decoded point cloud.
  *
  * @param node Pointer to the AlfaNode object handling the incoming point cloud.
  */

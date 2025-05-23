@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 ALFA Project. All rights reserved.
+ * Copyright 2025 ALFA Project. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,26 +69,23 @@ struct ProcessingParams {
  * equal to the specified threshold, false otherwise
  */
 
-bool dynamicRadiusSearch(const AlfaPoint& point,
-                         pcl::KdTreeFLANN<AlfaPoint>& kdtree,
+bool dynamicRadiusSearch(const AlfaPoint& point, pcl::KdTreeFLANN<AlfaPoint>& kdtree,
                          const ProcessingParams& params) {
-  float distance_squared =
-      point.x * point.x + point.y * point.y + point.z * point.z;
+  float distance_squared = point.x * point.x + point.y * point.y + point.z * point.z;
   float search_radius;
 
   if (distance_squared < params.distance_th * params.distance_th) {
     search_radius = params.search_radius_min;
   } else {
     float distance = std::sqrt(distance_squared);
-    search_radius =
-        params.search_radius_min * (distance * params.angle_resolution);
+    search_radius = params.search_radius_min * (distance * params.angle_resolution);
   }
 
   std::vector<int> pointIdxRadiusSearch;
   std::vector<float> pointRadiusSquaredDistance;
 
-  int neighbors = kdtree.radiusSearch(
-      point, search_radius, pointIdxRadiusSearch, pointRadiusSquaredDistance);
+  int neighbors =
+      kdtree.radiusSearch(point, search_radius, pointIdxRadiusSearch, pointRadiusSquaredDistance);
 
   return neighbors >= params.number_of_neigh_th;
 }
@@ -107,10 +104,8 @@ bool dynamicRadiusSearch(const AlfaPoint& point,
  * @param kdtree Reference to the KD-tree used for neighbor search.
  * @param params Struct containing all the filtering parameters.
  */
-void worker(pcl::PointCloud<AlfaPoint>::Ptr input_pc,
-            pcl::PointCloud<AlfaPoint>::Ptr output_pc,
-            pcl::KdTreeFLANN<AlfaPoint>& kdtree,
-            const ProcessingParams& params) {
+void worker(pcl::PointCloud<AlfaPoint>::Ptr input_pc, pcl::PointCloud<AlfaPoint>::Ptr output_pc,
+            pcl::KdTreeFLANN<AlfaPoint>& kdtree, const ProcessingParams& params) {
   // Pre-allocate space in the output cloud
   output_pc->points.reserve(input_pc->points.size());
 
@@ -149,8 +144,7 @@ void handler(AlfaNode* node) {
   params.search_radius_min = node->get_extension_parameter("min_search_radius");
   params.distance_th = node->get_extension_parameter("distance_thr");
   params.intensity_th = node->get_extension_parameter("intensity_thr");
-  params.number_of_neigh_th =
-      node->get_extension_parameter("num_neighbors_thr");
+  params.number_of_neigh_th = node->get_extension_parameter("num_neighbors_thr");
 
   // Thread-related setup
   int thread_count = node->get_extension_parameter("num_threads");
@@ -163,25 +157,21 @@ void handler(AlfaNode* node) {
 
   for (int i = 0; i < thread_count; ++i) {
     size_t start_idx = i * points_per_thread;
-    size_t end_idx =
-        (i == thread_count - 1) ? total_points : start_idx + points_per_thread;
+    size_t end_idx = (i == thread_count - 1) ? total_points : start_idx + points_per_thread;
 
     pcl::PointCloud<AlfaPoint>::Ptr input_slice(new pcl::PointCloud<AlfaPoint>);
-    pcl::PointCloud<AlfaPoint>::Ptr output_slice(
-        new pcl::PointCloud<AlfaPoint>);
+    pcl::PointCloud<AlfaPoint>::Ptr output_slice(new pcl::PointCloud<AlfaPoint>);
     output_pc[i] = output_slice;
 
     // Slice the input
-    input_slice->points.insert(input_slice->points.end(),
-                               input->points.begin() + start_idx,
+    input_slice->points.insert(input_slice->points.end(), input->points.begin() + start_idx,
                                input->points.begin() + end_idx);
     input_slice->width = static_cast<uint32_t>(input_slice->points.size());
     input_slice->height = 1;
     input_slice->is_dense = input->is_dense;
 
     // Launch thread
-    thread_list.emplace_back(worker, input_slice, output_slice,
-                             std::ref(kdtree), params);
+    thread_list.emplace_back(worker, input_slice, output_slice, std::ref(kdtree), params);
   }
 
   // Wait for threads
@@ -261,8 +251,7 @@ int main(int argc, char** argv) {
   parameters[5].parameter_name = "num_threads";
 
   // Create an instance of AlfaNode and spin it
-  rclcpp::spin(
-      std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
+  rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
 
   // Shutdown ROS 2
   rclcpp::shutdown();
