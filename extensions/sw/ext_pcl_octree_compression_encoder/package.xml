@@ -11,6 +11,7 @@
   <depend>rclcpp</depend>
   <depend>alfa_node</depend>
   <depend>alib_octree</depend>
+  <depend>alib_compression</depend>
   
   <depend>sensor_msgs</depend>
   <depend>alfa_msg</depend>
