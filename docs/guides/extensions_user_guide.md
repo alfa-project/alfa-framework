@@ -72,7 +72,7 @@ To get further details on how to use the tool go to the [ALFA-Monitor guide](mon
 
 ## Point Cloud Visualization using RVIZ
 
-Before using the rviz2 tool, provided by ROS2, to visualize the point could output we need to apply a window transform for the output of ALFA dummy node and the bag point cloud:
+Before using the rviz2 tool, provided by ROS2, to visualize the point could output we need to apply a window transform for the output of ALFA extensions and the bag point cloud:
 
 ```sh
 ros2 run tf2_ros static_transform_publisher "0" "0" "0" "0" "0" "0" "map" "<extension_topic_name>" 
