@@ -1,14 +1,20 @@
 # ALFA-Node
 
-<p align="justify"> <b> ALFA Node</b>  is a ROS-based node that supports the ALFA Extensions to facilitate the development of point cloud processing algorithms. The ALFA Node receives configurations through the ROS2 set parameters command (<b>ros2 param set &ltnode_name&gt &ltparameter_name&gt &ltvalue&gt</b>), outputs real-time metrics (<b>/NODE_NAME_metrics</b>) and publishes the processed point cloud data into a new <b>PointCloud2</b> ROS2 topic (<b>NODE_NAME_pointcloud</b>). The point cloud data can be retrieved from a real LiDAR sensor connected to the platform or from a public dataset thtough a ROS2 Bag (rosbag tool). Additionally, the Desktop version of the framework supports the <b>ALFA Monitor</b>, a GUI tool specially designed to configure the ALFA Extension, visualize point cloud data, and read real-time metrics from every ALFA Node running both in the Desktop and the Embedded System.</p></a>
+<p align="justify"> <b> ALFA Node</b>  is a ROS-based node that supports the ALFA Extensions to facilitate the development of point cloud processing algorithms. The ALFA Node receives configurations through the ROS2 set parameters command (<b>ros2 param set &ltnode_name&gt &ltparameter_name&gt &ltvalue&gt</b>), outputs real-time metrics (<b>/NODE_NAME_metrics</b>) and publishes the processed point cloud data into a new <b>PointCloud2</b> ROS2 topic (<b>NODE_NAME_pointcloud</b>). The point cloud data can be retrieved from a real LiDAR sensor connected to the platform or from a public dataset through a ROS2 Bag (rosbag tool). Additionally, the Desktop version of the framework supports the <b>ALFA Monitor</b>, a GUI tool specially designed to configure the ALFA Extension, visualize point cloud data, and read real-time metrics from every ALFA Node running both in the Desktop and the Embedded System.</p></a>
 
 **Note:** Changing this package must be done carefully, as it may affect the ALFA Monitor and other ALFA Extensions.
 
 ## File Structure
+
 - **include/alfa_node.hpp:** Contains the ALFA Node class definition.
 - **include/alfa_defines.hpp:** Contains the ALFA Node defines.
 - **include/alfa_structs.hpp:** Contains the ALFA Node supporting structures.
-- **src/alfa_node.cpp:** Contains the source file of the ALFA Node class.
+- **src/alfa_node.cpp:** Contains the main source code of the ALFA Node class.
+- **src/alfa_hw.cpp:** Contains the hardware-related functions for the ALFA Node.
+- **src/alfa_parameters.cpp:** Contains the parameter handling functions for the ALFA Node.
+- **src/alfa_verbose.cpp:** Contains the verbose functions for logging and debugging.
+- **src/alfa_metrics.cpp:** Contains the metric handling functions for the ALFA Node.
+- **src/alfa_pointcloud.cpp:** Contains the point cloud handling functions for the ALFA Node.
 
 ## Class: AlfaNode
 
@@ -17,7 +23,7 @@ The AlfaNode class inherits from rclcpp::Node and provides several methods and m
 ### Public Members and Methods
 
 - **Constructor and Destructor:**
-  - AlfaNode(AlfaConfiguration conf, AlfaExtensionParameter *parameters, void (*handler_pointcloud)(AlfaNode *), void (*post_processing_pointcloud)(AlfaNode *))
+  - AlfaNode(AlfaConfiguration conf, vector<AlfaExtensionParameter> parameters, void (*handler_pointcloud)(AlfaNode *), void (*post_processing_pointcloud)(AlfaNode *))
   - ~AlfaNode()
 
 - **Parameter Handling:**
