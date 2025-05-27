@@ -127,7 +127,6 @@ int main(int argc, char **argv) {
 #endif
 
   AlfaConfiguration conf;
-  AlfaExtensionParameter parameters[10];
 
   conf.subscriber_topic = subscriber_topic;
   conf.node_name = NODE_NAME;
@@ -138,6 +137,9 @@ int main(int argc, char **argv) {
   conf.number_of_debug_points = 1;
   conf.metrics_publishing_type = ALL_METRICS;
   conf.custom_field_conversion_type = CUSTOM_FIELD_INTENSITY;
+
+  // Create the parameters
+  std::vector<AlfaExtensionParameter> parameters(8);
 
   parameters[0].parameter_value = 12;
   parameters[0].parameter_name = "octree_depth";

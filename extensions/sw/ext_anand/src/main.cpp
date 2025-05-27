@@ -204,7 +204,6 @@ int main(int argc, char **argv) {
 #endif
 
   AlfaConfiguration conf;
-  AlfaExtensionParameter parameters[30];
 
   conf.subscriber_topic = subscriber_topic;
   conf.node_name = NODE_NAME;
@@ -215,6 +214,9 @@ int main(int argc, char **argv) {
   conf.number_of_debug_points = 18;
   conf.metrics_publishing_type = METRICS;
   conf.custom_field_conversion_type = CUSTOM_FIELD_LABEL;
+
+  std::vector<AlfaExtensionParameter> parameters;
+  parameters.resize(4);  // Adjust the size of the parameters vector
 
   parameters[0].parameter_name = "zeta";  // threshold
   parameters[0].parameter_value = -1.0;   //[m]

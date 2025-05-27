@@ -98,7 +98,6 @@ int main(int argc, char **argv) {
 #endif
 
   AlfaConfiguration conf;
-  AlfaExtensionParameter parameters[10];
 
   conf.subscriber_topic = subscriber_topic;
   conf.node_name = NODE_NAME;
@@ -109,6 +108,9 @@ int main(int argc, char **argv) {
   conf.number_of_debug_points = 1;
   conf.metrics_publishing_type = ALL_METRICS;
   conf.custom_field_conversion_type = CUSTOM_FIELD_FILTER;
+
+  // Create the parameters
+  std::vector<AlfaExtensionParameter> parameters(2);
 
   parameters[1].parameter_value = 5;
   parameters[1].parameter_name = "min_distance";

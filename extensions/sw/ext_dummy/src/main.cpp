@@ -82,7 +82,6 @@ int main(int argc, char **argv) {
 #endif
 
   AlfaConfiguration conf;
-  AlfaExtensionParameter parameters[10];
 
   conf.subscriber_topic = subscriber_topic;
   conf.node_name = NODE_NAME;
@@ -93,6 +92,9 @@ int main(int argc, char **argv) {
   conf.number_of_debug_points = 1;
   conf.metrics_publishing_type = ALL_METRICS;
   conf.custom_field_conversion_type = CUSTOM_FIELD_INTENSITY;
+
+  // Initialize parameters
+  std::vector<AlfaExtensionParameter> parameters;
 
   // Create an instance of AlfaNode and spin it
   rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
