@@ -70,7 +70,7 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(AlfaPoint, (float, x, x)(float, y, y)(float, z
 class AlfaNode : public rclcpp::Node {
  public:
   // Constructor and Destructor
-  AlfaNode(AlfaConfiguration conf, AlfaExtensionParameter *parameters,
+  AlfaNode(AlfaConfiguration conf, std::vector<AlfaExtensionParameter> parameters,
            void (*handler_pointcloud)(AlfaNode *), void (*post_processing_pointcloud)(AlfaNode *));
   ~AlfaNode();
 

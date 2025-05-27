@@ -32,7 +32,7 @@ void signalHandler(int signal) {
 }
 
 // Constructor
-AlfaNode::AlfaNode(AlfaConfiguration conf, AlfaExtensionParameter parameters[10],
+AlfaNode::AlfaNode(AlfaConfiguration conf, std::vector<AlfaExtensionParameter> parameters,
                    void (*handler_pointcloud)(AlfaNode *) = NULL,
                    void (*post_processing_pointcloud)(AlfaNode *) = NULL)
     : Node(conf.node_name),
@@ -112,17 +112,25 @@ AlfaNode::AlfaNode(AlfaConfiguration conf, AlfaExtensionParameter parameters[10]
 #endif
 
   // Parameters config
-  for (int i = 0; i < 10; i++) {
-    if (parameters[i].parameter_name != "") {  // If the parameter is actually defined
-      this->extension_parameters.push_back(parameters[i]);
-      this->declare_parameter(parameters[i].parameter_name, (double)parameters[i].parameter_value);
+std::size_t i = 0;
+for (const auto& parameter : parameters) {
+  if (!parameter.parameter_name.empty()) {
+    this->extension_parameters.push_back(parameter);
+    this->declare_parameter(parameter.parameter_name,
+                            static_cast<double>(parameter.parameter_value));
+
+    if (i < 10) {  // Hardware can only support 10 parameters
       if (configuration.hardware_support.hardware_extension ||
           configuration.hardware_support.hardware_driver) {
-        unit_write_register(UNIT_USER_DEFINE_0 + i * 4,
-                            parameters[i].parameter_value * FIXED_POINT_MULTIPLIER);
+        unit_write_register(
+          UNIT_USER_DEFINE_0 + static_cast<int>(i) * 4,
+          static_cast<int>(parameter.parameter_value * FIXED_POINT_MULTIPLIER));
       }
     }
+    ++i;
   }
+}
+
   this->timeout_counter = 0;
 
   // Threads setup
