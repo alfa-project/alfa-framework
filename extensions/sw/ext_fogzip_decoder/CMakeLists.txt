@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(ext_fog_decoder)
+project(ext_fogzip_decoder)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release) # Default to Release if not specified
@@ -33,12 +33,12 @@ find_package(sensor_msgs REQUIRED)
 find_package(PCL 1.8 REQUIRED)
 find_package(pcl_conversions REQUIRED)
 
-add_executable(ext_fog_decoder src/main.cpp)
-target_link_libraries(ext_fog_decoder ${PCL_LIBRARIES})
-ament_target_dependencies(ext_fog_decoder rclcpp alfa_node sensor_msgs alfa_msg pcl_conversions alib_octree alib_compression)
+add_executable(ext_fogzip_decoder src/main.cpp)
+target_link_libraries(ext_fogzip_decoder ${PCL_LIBRARIES})
+ament_target_dependencies(ext_fogzip_decoder rclcpp alfa_node sensor_msgs alfa_msg pcl_conversions alib_octree alib_compression)
 
 install(TARGETS
-  ext_fog_decoder
+  ext_fogzip_decoder
   DESTINATION lib/${PROJECT_NAME}/
 )
 

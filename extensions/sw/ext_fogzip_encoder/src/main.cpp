@@ -23,8 +23,8 @@
 #include "alib_octree.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#define NODE_NAME "ext_fog_decoder"
-#define DEFAULT_TOPIC "/ext_fog_encoder_pointcloud"
+#define NODE_NAME "ext_fogzip_encoder"
+#define DEFAULT_TOPIC "/velodyne_points"
 
 #define NODE_ID 0
 #define POINTCLOUD_ID 0
@@ -35,6 +35,10 @@
  * @param node Pointer to the AlfaNode object handling the incoming point cloud.
  */
 void handler(AlfaNode *node) {
+#ifdef EXT_HARDWARE
+  node->store_pointcloud(LOAD_STORE_CARTESIAN);
+#else
+
   AlfaBB bb(node->get_extension_parameter("min_bounding_box_x"),
             node->get_extension_parameter("min_bounding_box_y"),
             node->get_extension_parameter("min_bounding_box_z"),
@@ -42,18 +46,20 @@ void handler(AlfaNode *node) {
             node->get_extension_parameter("max_bounding_box_y"),
             node->get_extension_parameter("max_bounding_box_z"));
 
-  // Convert input pointcloud into bitstream
-  vector<unsigned char> code;
+  AlfaOctree octree1(bb, (int)node->get_extension_parameter("octree_depth"), false);
+
+  octree1.insert_pointcloud(node->get_input_pointcloud());
+  vector<unsigned char> code = octree1.get_occupation_code_DFS();
   vector<unsigned char> compressed_code;
 
-  compressed_code = convert_AlfaPoint_vector_to_code(node->get_input_pointcloud_as_vector());
+  compressed_code = alib_huffman_s_encode(code);
 
-  AlfaOctree octree(bb, (int)node->get_extension_parameter("octree_depth"), false);
+  // Copy the compressed code to the output point cloud
+  auto pointcloud = convert_code_to_AlfaPoint_vector(compressed_code);
 
-  code = alib_huffman_s_decode(compressed_code);
+  for (auto point : pointcloud) node->push_point_output_pointcloud(point);
 
-  octree.init_octree_from_occupation_code_DFS(code, bb);
-  octree.convert_to_pointcloud(node->get_output_pointcloud());
+#endif
 }
 
 /**
@@ -62,7 +68,27 @@ void handler(AlfaNode *node) {
  *
  * @param node Pointer to the AlfaNode object handling the incoming point cloud.
  */
-void post_processing(AlfaNode *node) { node->publish_pointcloud(); }
+void post_processing(AlfaNode *node) {
+#ifdef EXT_HARDWARE
+
+  struct bs_code {
+    uint64_t size;
+    std::vector<unsigned char> code;
+  } buffer;
+
+  node->read_ext_memory(0, sizeof(buffer.size), &(buffer.size));
+  buffer.code.resize(buffer.size);
+  node->read_ext_memory(1, buffer.size * sizeof(unsigned char), buffer.code.data());
+
+  // Copy the compressed code to the output point cloud
+  auto pointcloud = convert_code_to_AlfaPoint_vector(buffer.code);
+
+  for (auto point : pointcloud) node->push_point_output_pointcloud(point);
+
+#endif
+
+  node->publish_pointcloud();
+}
 
 /**
  * @brief Entry point of the program.
@@ -97,7 +123,7 @@ int main(int argc, char **argv) {
   conf.latency = 0;
   conf.number_of_debug_points = 1;
   conf.metrics_publishing_type = ALL_METRICS;
-  conf.custom_field_conversion_type = CUSTOM_FIELD_USER;
+  conf.custom_field_conversion_type = CUSTOM_FIELD_INTENSITY;
 
   vector<AlfaExtensionParameter> parameters(7);
 
