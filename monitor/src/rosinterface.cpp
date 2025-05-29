@@ -26,7 +26,8 @@ using std::placeholders::_1;
 // Global QoS variable
 rclcpp::QoS qos(rclcpp::KeepLast(10));
 
-RosInterface::RosInterface(std::mutex* mutex) : Node("alfa_monitor"), mutex(mutex) {
+RosInterface::RosInterface(std::mutex* mutex)
+    : Node("alfa_monitor"), mutex(mutex) {
   monitor_publisher = nullptr;
   bag_publisher = nullptr;
   raw_topic = "";
@@ -75,7 +76,8 @@ void RosInterface::connect_alfa(QString new_topic) {
   }
 }
 
-void RosInterface::raw_callback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud) {
+void RosInterface::raw_callback(
+    const sensor_msgs::msg::PointCloud2::SharedPtr cloud) {
   static unsigned int index = 0;
   try {
     if ((cloud->width * cloud->height) == 0) return;
@@ -84,7 +86,7 @@ void RosInterface::raw_callback(const sensor_msgs::msg::PointCloud2::SharedPtr c
       if (cloud->height * cloud->width == 0) return;
 
       mutex->lock();
-      pcl::fromROSMsg(*cloud, *raw_frame);
+      fromALFAROSMsg(*cloud, raw_frame);
       raw_clouds++;
       mutex->unlock();
       index++;
@@ -95,7 +97,70 @@ void RosInterface::raw_callback(const sensor_msgs::msg::PointCloud2::SharedPtr c
   }
 }
 
-void RosInterface::alfa_callback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud) {
+void RosInterface::fromALFAROSMsg(
+    const sensor_msgs::msg::PointCloud2& msg,
+    pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_out) {
+  cloud_out->header = pcl_conversions::toPCL(msg.header);
+  cloud_out->width = msg.width;
+  cloud_out->height = msg.height;
+  cloud_out->is_dense = msg.is_dense != 0;
+  cloud_out->points.resize(msg.width * msg.height);
+
+  int offset_x = -1, offset_y = -1, offset_z = -1;
+  int offset_custom = -1;
+  int offset_intensity = -1;
+
+  for (const auto& field : msg.fields) {
+    if (field.name == "x")
+      offset_x = field.offset;
+    else if (field.name == "y")
+      offset_y = field.offset;
+    else if (field.name == "z")
+      offset_z = field.offset;
+    else if (field.name == "custom_field")
+      offset_custom = field.offset;
+    else if (field.name == "intensity")
+      offset_intensity = field.offset;
+  }
+
+  if (offset_x < 0 || offset_y < 0 || offset_z < 0) {
+    RCLCPP_ERROR(this->get_logger(),
+                 "Missing required x/y/z fields in alfa cloud!");
+    return;
+  }
+
+  if (offset_custom < 0 && offset_intensity < 0) {
+    RCLCPP_ERROR(this->get_logger(),
+                 "Missing both custom_field and intensity in alfa cloud!");
+    return;
+  }
+
+  const uint8_t* data_ptr = msg.data.data();
+  const size_t point_step = msg.point_step;
+
+  for (size_t i = 0; i < cloud_out->points.size(); ++i) {
+    pcl::PointXYZI pt;
+    const uint8_t* point_data = data_ptr + i * point_step;
+
+    std::memcpy(&pt.x, point_data + offset_x, sizeof(float));
+    std::memcpy(&pt.y, point_data + offset_y, sizeof(float));
+    std::memcpy(&pt.z, point_data + offset_z, sizeof(float));
+
+    if (offset_custom >= 0) {
+      std::uint32_t custom_val;
+      std::memcpy(&custom_val, point_data + offset_custom,
+                  sizeof(std::uint32_t));
+      pt.intensity = static_cast<float>(custom_val);
+    } else if (offset_intensity >= 0) {
+      std::memcpy(&pt.intensity, point_data + offset_intensity, sizeof(float));
+    }
+
+    cloud_out->points[i] = pt;
+  }
+}
+
+void RosInterface::alfa_callback(
+    const sensor_msgs::msg::PointCloud2::SharedPtr cloud) {
   try {
     if ((cloud->width * cloud->height) == 0) return;
 
@@ -103,7 +168,7 @@ void RosInterface::alfa_callback(const sensor_msgs::msg::PointCloud2::SharedPtr 
       if (cloud->height * cloud->width == 0) return;
 
       mutex->lock();
-      pcl::fromROSMsg(*cloud, *alfa_frame);
+      fromALFAROSMsg(*cloud, alfa_frame);
       alfa_clouds++;
       mutex->unlock();
       emit alfa_cloud_received();
@@ -113,8 +178,9 @@ void RosInterface::alfa_callback(const sensor_msgs::msg::PointCloud2::SharedPtr 
   }
 }
 
-void RosInterface::publish_point_cloud(pcl::PointCloud<pcl::PointXYZI>::Ptr frame,
-                                       std::string topic_name, bool publish_in_monitor) {
+void RosInterface::publish_point_cloud(
+    pcl::PointCloud<pcl::PointXYZI>::Ptr frame, std::string topic_name,
+    bool publish_in_monitor) {
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher;
   if (publish_in_monitor)
     publisher = monitor_publisher;
@@ -123,7 +189,8 @@ void RosInterface::publish_point_cloud(pcl::PointCloud<pcl::PointXYZI>::Ptr fram
 
   if (publisher == nullptr || topic_name != publisher->get_topic_name()) {
     publisher.reset();
-    publisher = this->create_publisher<sensor_msgs::msg::PointCloud2>(topic_name, qos);
+    publisher =
+        this->create_publisher<sensor_msgs::msg::PointCloud2>(topic_name, qos);
   }
 
   // Message preparation and publishing
@@ -131,14 +198,15 @@ void RosInterface::publish_point_cloud(pcl::PointCloud<pcl::PointXYZI>::Ptr fram
   pcl::toROSMsg(*frame, pcl2_frame);
 
   pcl2_frame.header.frame_id =
-      "alfa_monitor_pointcloud";          // Create the pointcloud2 header to publish
+      "alfa_monitor_pointcloud";  // Create the pointcloud2 header to publish
   pcl2_frame.header.stamp = this->now();  // Get current time
 
   publisher->publish(pcl2_frame);  // Publish the point cloud in the ROS topic
 }
 
 void RosInterface::publish_pcl2_msg(const sensor_msgs::msg::PointCloud2& msg,
-                                    std::string topic_name, bool publish_in_monitor) {
+                                    std::string topic_name,
+                                    bool publish_in_monitor) {
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher;
   if (publish_in_monitor)
     publisher = monitor_publisher;
@@ -147,7 +215,8 @@ void RosInterface::publish_pcl2_msg(const sensor_msgs::msg::PointCloud2& msg,
 
   if (publisher == nullptr || topic_name != publisher->get_topic_name()) {
     publisher.reset();
-    publisher = this->create_publisher<sensor_msgs::msg::PointCloud2>(topic_name, qos);
+    publisher =
+        this->create_publisher<sensor_msgs::msg::PointCloud2>(topic_name, qos);
   }
 
   publisher->publish(msg);  // Publish the point cloud in the ROS topic
@@ -177,7 +246,8 @@ void RosInterface::load_bag(std::string file_name) {
   // Find topics with pointcloud2 topics and store them for publishing
   const auto topics = bag_reader->get_all_topics_and_types();
   for (auto const& topic : topics) {
-    if (QString::fromStdString(topic.type).contains("PointCloud2")) bag_topic = topic.name;
+    if (QString::fromStdString(topic.type).contains("PointCloud2"))
+      bag_topic = topic.name;
   }
 
   // Publish first frame
@@ -188,13 +258,14 @@ void RosInterface::reload_bag() { load_bag(bag_file_name); }
 
 void RosInterface::publish_next_bag_pointcloud() {
   sensor_msgs::msg::PointCloud2 msg;
-  auto type_support =
-      rosidl_typesupport_cpp::get_message_type_support_handle<sensor_msgs::msg::PointCloud2>();
+  auto type_support = rosidl_typesupport_cpp::get_message_type_support_handle<
+      sensor_msgs::msg::PointCloud2>();
 
   if (bag_loaded) {
     while (bag_reader->has_next()) {
       auto serialized_message = bag_reader->read_next();
-      rclcpp::SerializedMessage extracted_serialized_msg(*serialized_message->serialized_data);
+      rclcpp::SerializedMessage extracted_serialized_msg(
+          *serialized_message->serialized_data);
       auto current_topic = serialized_message->topic_name;
 
       if (bag_topic == current_topic)  // It is the topic with pointcloud2 data

@@ -270,7 +270,7 @@
                     </size>
                    </property>
                    <property name="text">
-                    <string>Intensity:</string>
+                    <string>Custom Field:</string>
                    </property>
                    <property name="buddy">
                     <cstring>olllaaaa</cstring>
@@ -947,7 +947,7 @@
                     </font>
                    </property>
                    <property name="text">
-                    <string>Intensity</string>
+                    <string>Custom Field</string>
                    </property>
                    <property name="checked">
                     <bool>false</bool>
