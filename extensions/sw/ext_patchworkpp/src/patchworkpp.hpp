@@ -782,7 +782,7 @@ inline void PatchWorkpp<PointTP>::temporal_ground_revert(
     double prob_line = 1.0;
     if (candidate.line_variable >
         8.0)  //&& candidate.line_dir > M_PI/4)// candidate.ground_elevation >
-              //elevation_thr_[concentric_idx])
+              // elevation_thr_[concentric_idx])
     {
       // if (verbose_) cout << "line_dir: " << candidate.line_dir << endl;
       prob_line = 0.0;
