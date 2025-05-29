@@ -109,7 +109,7 @@ class RosInterface : public QObject, public rclcpp::Node {
 
   void raw_callback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud);
   void fromALFAROSMsg(const sensor_msgs::msg::PointCloud2& msg,
-    pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_out);
+                      pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_out);
   void alfa_callback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud);
 
   rosbag2_cpp::readers::SequentialReader* bag_reader;
