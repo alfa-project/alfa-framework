@@ -46,5 +46,4 @@ jobs:
           source /opt/ros/humble/setup.bash
           colcon build \
             --base-paths extensions/sw libs/sw node monitor \
-            --event-handlers console_direct+ \
-            --summarize
+            --event-handlers console_direct+ 
