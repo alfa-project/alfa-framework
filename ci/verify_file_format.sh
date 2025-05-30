@@ -28,15 +28,25 @@ fi
 
 echo "Checking Verilog formatting with verible-verilog-format..."
 
-VERILOG_FILES=$(find . -type f -name "*.v")
-SYSTEMVERILOG_FILES=$(find . -type f -name "*.sv")
+set -euo pipefail
 
-ALL_VERILOG_FILES=($VERILOG_FILES $SYSTEMVERILOG_FILES)
+# Find Verilog and SystemVerilog files
+readarray -d '' VERILOG_FILES < <(find . -type f -name "*.v" -print0)
+readarray -d '' SYSTEMVERILOG_FILES < <(find . -type f -name "*.sv" -print0)
 
+# Combine both arrays
+ALL_VERILOG_FILES=("${VERILOG_FILES[@]}" "${SYSTEMVERILOG_FILES[@]}")
+
+# Path to config file
+VERIBLE_CONFIG="ci/.rules.verible"
+
+# Check formatting
 if [[ ${#ALL_VERILOG_FILES[@]} -gt 0 ]]; then
   for file in "${ALL_VERILOG_FILES[@]}"; do
     echo "Checking $file"
-    verible-verilog-format --verify "$file"
+    verible-verilog-format \
+      --flagfile=="$VERIBLE_CONFIG" \
+      --verify "$file"
   done
 else
   echo "No Verilog or SystemVerilog files found."

@@ -20,7 +20,7 @@ jobs:
           extensions: 'c,h,cpp,hpp'
           clangFormatVersion: 14
           style: file:ci/.clang-format
-
+  
   verify-verilog-format:
     name: Check Verilog/SystemVerilog Format
     runs-on: ubuntu-latest
@@ -38,3 +38,4 @@ jobs:
           fail_on_error: true
           check_only: true
           use_format: true
+          verible_config: ci/.rules.verible

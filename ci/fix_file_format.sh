@@ -28,18 +28,28 @@ fi
 
 echo "Running verible-verilog-format on Verilog files..."
 
-VERILOG_FILES=$(find . -type f \( -name "*.v" -o -name "*.sv" \))
-if [[ -n "$VERILOG_FILES" ]]; then
-  for file in $VERILOG_FILES; do
-    echo "Formatting $file"
+set -euo pipefail
+
+# Find Verilog and SystemVerilog files
+readarray -d '' VERILOG_FILES < <(find . -type f -name "*.v" -print0)
+readarray -d '' SYSTEMVERILOG_FILES < <(find . -type f -name "*.sv" -print0)
+
+# Combine both arrays
+ALL_VERILOG_FILES=("${VERILOG_FILES[@]}" "${SYSTEMVERILOG_FILES[@]}")
+
+# Path to config file
+VERIBLE_CONFIG="ci/.rules.verible"
+
+# Check formatting
+if [[ ${#ALL_VERILOG_FILES[@]} -gt 0 ]]; then
+  for file in "${ALL_VERILOG_FILES[@]}"; do
+    echo "Checking $file"
     verible-verilog-format \
-      --indentation_spaces=2 \
-      --wrap_spaces=100 \
-      --module_net_variable_alignment=align \
+      --flagfile="$VERIBLE_CONFIG" \
       --inplace "$file"
   done
 else
-  echo "No Verilog files found."
+  echo "No Verilog or SystemVerilog files found."
 fi
 
 echo "Formatting complete."
