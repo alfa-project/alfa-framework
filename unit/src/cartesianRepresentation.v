@@ -24,16 +24,16 @@
 */
 module MemMU_cartesianRepresentation #(
 
-                                                                                                    /* Parameters integer: Representation
+    /* Parameters integer: Representation
 
         TODO - TODO. 
     */
-                                                                                                    parameter integer RESOLUTION_X = 10,
-                                                                                                    parameter integer RESOLUTION_Y = 10,
-                                                                                                    parameter integer RESOLUTION_Z = 10
+    parameter integer RESOLUTION_X = 10,
+    parameter integer RESOLUTION_Y = 10,
+    parameter integer RESOLUTION_Z = 10
 ) (
 
-                                                                                                    /* Input: Input ports
+    /* Input: Input ports
     
         <SYSTEM::clk> - System clock. 
         <SYSTEM::rst> - System reset.
@@ -46,26 +46,26 @@ module MemMU_cartesianRepresentation #(
         <SIU::reflR1> - Second return intensity/reflection value.
         <SIU::label> - Point label.
     */
-                                                                                                    input [0:0] i_SYSTEM_clk,
-                                                                                                    input [0:0] i_SYSTEM_rst,
-                                                                                                    input [18:0] i_SIU_pointID,
-                                                                                                    input [15:0] i_SIU_angleH,
-                                                                                                    input [15:0] i_SIU_angleV,
-                                                                                                    input [15:0] i_SIU_distR0,
-                                                                                                    input [15:0] i_SIU_distR1,
-                                                                                                    input [7:0] i_SIU_reflR0,
-                                                                                                    input [7:0] i_SIU_reflR1,
-                                                                                                    input [7:0] i_SIU_label,
+    input [ 0:0] i_SYSTEM_clk,
+    input [ 0:0] i_SYSTEM_rst,
+    input [18:0] i_SIU_pointID,
+    input [15:0] i_SIU_angleH,
+    input [15:0] i_SIU_angleV,
+    input [15:0] i_SIU_distR0,
+    input [15:0] i_SIU_distR1,
+    input [ 7:0] i_SIU_reflR0,
+    input [ 7:0] i_SIU_reflR1,
+    input [ 7:0] i_SIU_label,
 
 
-                                                                                                    /* Output: Output ports
+    /* Output: Output ports
 
         payload - 64 bits registered output. Outputs the representation payload.
         address - 17 bits registered output. Outputs the cartesian representation address based on <SIU::angleH> and <SIU::angleV>.
     */
-                                                                                                    output reg [18:0] o_MemMU_CR_size,
-                                                                                                    output reg [63:0] o_MemMU_CR_payload,
-                                                                                                    output reg [18:0] o_MemMU_CR_address
+    output reg [18:0] o_MemMU_CR_size,
+    output reg [63:0] o_MemMU_CR_payload,
+    output reg [18:0] o_MemMU_CR_address
 );
 
   /* Wires: Temp Connetors
@@ -80,25 +80,25 @@ module MemMU_cartesianRepresentation #(
   // MemMU_cartesianRepresentationAddress: address
   // Instantiation of a <MemMU_CR_A> module for getting address.
   MemMU_cartesianRepresentationAddress address (
-                                                                                                      .i_SIU_pointID(i_SIU_pointID),
-                                                                                                      .o_MemMU_CR_A_address(t_address)
+      .i_SIU_pointID(i_SIU_pointID),
+      .o_MemMU_CR_A_address(t_address)
   );
 
   // MemMU_cartesianRepresentationPayload: payload
   // Instantiation of a <MemMU_SR_P> module to retrieve the payload.
   MemMU_cartesianRepresentationPayload #(
-                                                                                                      .RESOLUTION_X(RESOLUTION_X),
-                                                                                                      .RESOLUTION_Y(RESOLUTION_Y),
-                                                                                                      .RESOLUTION_Z(RESOLUTION_Z)
+      .RESOLUTION_X(RESOLUTION_X),
+      .RESOLUTION_Y(RESOLUTION_Y),
+      .RESOLUTION_Z(RESOLUTION_Z)
   ) payload (
-                                                                                                      .i_SIU_angleH(i_SIU_angleH),
-                                                                                                      .i_SIU_angleV(i_SIU_angleV),
-                                                                                                      .i_SIU_distR0(i_SIU_distR0),
-                                                                                                      .i_SIU_distR1(i_SIU_distR1),
-                                                                                                      .i_SIU_reflR0(i_SIU_reflR0),
-                                                                                                      .i_SIU_reflR1(i_SIU_reflR1),
-                                                                                                      .i_SIU_label(i_SIU_label),
-                                                                                                      .o_MemMU_CR_P_payload(t_payload)
+      .i_SIU_angleH(i_SIU_angleH),
+      .i_SIU_angleV(i_SIU_angleV),
+      .i_SIU_distR0(i_SIU_distR0),
+      .i_SIU_distR1(i_SIU_distR1),
+      .i_SIU_reflR0(i_SIU_reflR0),
+      .i_SIU_reflR1(i_SIU_reflR1),
+      .i_SIU_label(i_SIU_label),
+      .o_MemMU_CR_P_payload(t_payload)
   );
 
   /* Always: Main Sequential block

@@ -24,17 +24,17 @@
 */
 module MemMU_cartesianRepresentationAddress (
 
-                                                                                                    /* Input: Input ports
+    /* Input: Input ports
 
         TODO.
     */
-                                                                                                    input [18:0] i_SIU_pointID,
+    input [18:0] i_SIU_pointID,
 
-                                                                                                    /* Output: Output ports
+    /* Output: Output ports
 
         TODO
     */
-                                                                                                    output [18:0] o_MemMU_CR_A_address
+    output [18:0] o_MemMU_CR_A_address
 );
 
   /* Always: Main Combinational block

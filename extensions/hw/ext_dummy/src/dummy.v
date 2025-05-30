@@ -17,26 +17,26 @@
 `timescale 1ns / 1ps
 
 module dummy (
-                                                                                                    input wire           i_SYSTEM_clk,
-                                                                                                    input wire           i_SYSTEM_rst,
-                                                                                                    // Extension_Interface
-                                                                                                    output  reg  [0:0]   EXT_writeValid,
-                                                                                                    input   wire [0:0]   EXT_writeReady,
-                                                                                                    output  reg  [0:0]   EXT_readReady,
-                                                                                                    input   wire [0:0]   EXT_readValid,
-                                                                                                    input   wire [18:0]  EXT_PCSize,
-                                                                                                    output  reg  [0:0]   EXT_doneProcessing,
-                                                                                                    output  reg  [15:0]  EXT_writeCustomField,
-                                                                                                    input   wire [15:0]  EXT_readCustomField,
-                                                                                                    output  reg  [18:0]  EXT_writeID,
-                                                                                                    output  reg  [18:0]  EXT_readID,
-                                                                                                    input   wire [0:0]   EXT_enable,
-                                                                                                    output  wire [31:0]  EXT_status,
+    input  wire        i_SYSTEM_clk,
+    input  wire        i_SYSTEM_rst,
+    // Extension_Interface
+    output reg  [ 0:0] EXT_writeValid,
+    input  wire [ 0:0] EXT_writeReady,
+    output reg  [ 0:0] EXT_readReady,
+    input  wire [ 0:0] EXT_readValid,
+    input  wire [18:0] EXT_PCSize,
+    output reg  [ 0:0] EXT_doneProcessing,
+    output reg  [15:0] EXT_writeCustomField,
+    input  wire [15:0] EXT_readCustomField,
+    output reg  [18:0] EXT_writeID,
+    output reg  [18:0] EXT_readID,
+    input  wire [ 0:0] EXT_enable,
+    output wire [31:0] EXT_status,
 
-                                                                                                    // Cartesian Representation
-                                                                                                    input   wire [15:0]  EXT_pointX,
-                                                                                                    input   wire [15:0]  EXT_pointY,
-                                                                                                    input   wire [15:0]  EXT_pointZ
+    // Cartesian Representation
+    input wire [15:0] EXT_pointX,
+    input wire [15:0] EXT_pointY,
+    input wire [15:0] EXT_pointZ
 );
 
   reg  [18:0] point_counter;

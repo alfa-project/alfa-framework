@@ -15,17 +15,17 @@
  */
 
 module alib_bram #(
-                                                                                                    parameter DATA_WIDTH = 8,  // Width of the data
-                                                                                                    parameter DEPTH = 1024     // Depth of the memory
+    parameter DATA_WIDTH = 8,  // Width of the data
+    parameter DEPTH = 1024     // Depth of the memory
 ) (
-                                                                                                    input wire clk,
-                                                                                                    input wire rst,  // RAM reset
-                                                                                                    input wire [$clog2(
+    input wire clk,
+    input wire rst,  // RAM reset
+    input wire [$clog2(
 DEPTH-1
 )-1:0] addr,  // Address width determined by DEPTH
-                                                                                                    input wire [DATA_WIDTH-1:0] din,
-                                                                                                    input wire we,
-                                                                                                    output wire [DATA_WIDTH-1:0] dout
+    input wire [DATA_WIDTH-1:0] din,
+    input wire we,
+    output wire [DATA_WIDTH-1:0] dout
 );
 
   // Memory declaration
@@ -46,23 +46,23 @@ DEPTH-1
 endmodule
 
 module alib_bram_r_w #(
-                                                                                                    parameter DATA_WIDTH = 8,  // Width of the data
-                                                                                                    parameter DEPTH = 1024     // Depth of the memory
+    parameter DATA_WIDTH = 8,  // Width of the data
+    parameter DEPTH = 1024     // Depth of the memory
 ) (
-                                                                                                    // Port A (Write Only)
-                                                                                                    input wire                       clk,    // Write clock
-                                                                                                    input wire [$clog2(
+    // Port A (Write Only)
+    input wire                         clk,    // Write clock
+    input wire [$clog2(
 DEPTH-1
 )-1:0] addra,  // Write address bus
-                                                                                                    input wire [     DATA_WIDTH-1:0] din,    // RAM input data
-                                                                                                    input wire                       we,     // Write enable
+    input wire [       DATA_WIDTH-1:0] din,    // RAM input data
+    input wire                         we,     // Write enable
 
-                                                                                                    // Port B (Read Only)
-                                                                                                    input  wire [$clog2(
+    // Port B (Read Only)
+    input  wire [$clog2(
 DEPTH-1
 )-1:0] addrb,  // Read address bus
-                                                                                                    input  wire                       rst,    // Output reset
-                                                                                                    output wire [     DATA_WIDTH-1:0] dout    // RAM output data
+    input  wire                         rst,    // Output reset
+    output wire [       DATA_WIDTH-1:0] dout    // RAM output data
 );
 
   // Memory declaration
@@ -88,23 +88,23 @@ DEPTH-1
 endmodule
 
 module alib_uram_r_w #(
-                                                                                                    parameter DATA_WIDTH = 8,  // Width of the data
-                                                                                                    parameter DEPTH = 1024     // Depth of the memory
+    parameter DATA_WIDTH = 8,  // Width of the data
+    parameter DEPTH = 1024     // Depth of the memory
 ) (
-                                                                                                    // Port A (Write Only)
-                                                                                                    input wire                       clk,    // Write clock
-                                                                                                    input wire [$clog2(
+    // Port A (Write Only)
+    input wire                         clk,    // Write clock
+    input wire [$clog2(
 DEPTH-1
 )-1:0] addra,  // Write address bus
-                                                                                                    input wire [     DATA_WIDTH-1:0] din,    // RAM input data
-                                                                                                    input wire                       we,     // Write enable
+    input wire [       DATA_WIDTH-1:0] din,    // RAM input data
+    input wire                         we,     // Write enable
 
-                                                                                                    // Port B (Read Only)
-                                                                                                    input  wire [$clog2(
+    // Port B (Read Only)
+    input  wire [$clog2(
 DEPTH-1
 )-1:0] addrb,  // Read address bus
-                                                                                                    input  wire                       rst,    // Output reset
-                                                                                                    output wire [     DATA_WIDTH-1:0] dout    // RAM output data
+    input  wire                         rst,    // Output reset
+    output wire [       DATA_WIDTH-1:0] dout    // RAM output data
 );
 
   // Memory declaration
@@ -130,17 +130,17 @@ DEPTH-1
 endmodule
 
 module alib_uram #(
-                                                                                                    parameter DATA_WIDTH = 8,  // Width of the data
-                                                                                                    parameter DEPTH = 1024     // Depth of the memory
+    parameter DATA_WIDTH = 8,  // Width of the data
+    parameter DEPTH = 1024     // Depth of the memory
 ) (
-                                                                                                    input wire clk,
-                                                                                                    input wire rst,  // RAM reset
-                                                                                                    input wire [$clog2(
+    input wire clk,
+    input wire rst,  // RAM reset
+    input wire [$clog2(
 DEPTH-1
 )-1:0] addr,  // Address width determined by DEPTH
-                                                                                                    input wire [DATA_WIDTH-1:0] din,
-                                                                                                    input wire we,
-                                                                                                    output wire [DATA_WIDTH-1:0] dout
+    input wire [DATA_WIDTH-1:0] din,
+    input wire we,
+    output wire [DATA_WIDTH-1:0] dout
 );
 
   // Memory declaration
@@ -160,17 +160,17 @@ DEPTH-1
 endmodule
 
 module alib_dram #(
-                                                                                                    parameter DATA_WIDTH = 8,  // Width of the data
-                                                                                                    parameter DEPTH = 1024     // Depth of the memory
+    parameter DATA_WIDTH = 8,  // Width of the data
+    parameter DEPTH = 1024     // Depth of the memory
 ) (
-                                                                                                    input wire clk,
-                                                                                                    input wire rst,  // RAM reset
-                                                                                                    input wire [$clog2(
+    input wire clk,
+    input wire rst,  // RAM reset
+    input wire [$clog2(
 DEPTH-1
 )-1:0] addr,  // Address width determined by DEPTH
-                                                                                                    input wire [DATA_WIDTH-1:0] din,
-                                                                                                    input wire we,
-                                                                                                    output wire [DATA_WIDTH-1:0] dout
+    input wire [DATA_WIDTH-1:0] din,
+    input wire we,
+    output wire [DATA_WIDTH-1:0] dout
 );
 
   // Memory declaration

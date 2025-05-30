@@ -23,52 +23,52 @@
 */
 module CU #(
 
-                                                                                                    /* Parameters integer: TODO.
+    /* Parameters integer: TODO.
 
         TODO = TODO;
     */
-                                                                                                    parameter [0:0]     SIU_SUPPORT = 1'h0,
-                                                                                                    parameter [0:0]     EXMU_SUPPORT = 1'h0
+    parameter [0:0] SIU_SUPPORT  = 1'h0,
+    parameter [0:0] EXMU_SUPPORT = 1'h0
 ) (
 
-                                                                                                    /* Input: Input ports
+    /* Input: Input ports
 
         <System::clk> - System clock. 
         <System::rst> - System reset.
     */
-                                                                                                    input wire [0:0]    i_SYSTEM_clk,
-                                                                                                    input wire [0:0]    i_SYSTEM_rst,
-                                                                                                    input wire [0:0]    i_SIU_newPoint,
-                                                                                                    input wire [0:0]    i_SIU_newFrame,
-                                                                                                    input wire [0:0]    i_ExMU_readInCache,
-                                                                                                    input wire [0:0]    i_ExMU_writeInCache,
-                                                                                                    input wire [0:0]    i_EXT_doneProcessing,
-                                                                                                    input wire [0:0]    i_EXT_writeValid,
-                                                                                                    input wire [0:0]    i_EXT_readReady,
-                                                                                                    input wire [31:0]   i_MemMU_status,
-                                                                                                    input wire [31:0]   i_ExMU_status,
-                                                                                                    input wire [31:0]   i_MonU_status,
-                                                                                                    input wire [31:0]   i_SIU_status,
-                                                                                                    input wire [0:0]    i_INT_writeTxnDone,
-                                                                                                    input wire [0:0]    i_INT_readTxnDone,
-                                                                                                    input wire [0:0]    i_CU_MonU_pcReady,
-                                                                                                    input wire [0:0]    i_CU_MonU_frameDone,
-                                                                                                    output wire [0:0]   o_CU_MonU_extReady,
-                                                                                                    output reg [0:0]    o_CU_EXT_enable,
-                                                                                                    output     [0:0]    o_CU_EXT_writeReady,
-                                                                                                    output     [0:0]    o_CU_EXT_readValid,
-                                                                                                    output reg [0:0]    o_CU_INT_initWriteTx,
-                                                                                                    output reg [0:0]    o_CU_INT_initReadTx,
-                                                                                                    output reg [0:0]    o_CU_ExMU_readCache,
-                                                                                                    output reg [0:0]    o_CU_ExMU_writeCache,
-                                                                                                    output     [0:0]    o_CU_ExMU_readWriteID,
-                                                                                                    output     [0:0]    o_CU_ExMU_readPoint,
-                                                                                                    output     [0:0]    o_CU_ExMU_writePoint,
-                                                                                                    output reg [0:0]    o_CU_ExMU_writeMem,
-                                                                                                    output reg [0:0]    o_CU_MonU_pcReady,
-                                                                                                    output reg [0:0]    o_CU_MonU_processingDone,
-                                                                                                    output reg [0:0]    o_CU_SIU_ExMU,
-                                                                                                    output reg [31:0]   o_status
+    input  wire [ 0:0] i_SYSTEM_clk,
+    input  wire [ 0:0] i_SYSTEM_rst,
+    input  wire [ 0:0] i_SIU_newPoint,
+    input  wire [ 0:0] i_SIU_newFrame,
+    input  wire [ 0:0] i_ExMU_readInCache,
+    input  wire [ 0:0] i_ExMU_writeInCache,
+    input  wire [ 0:0] i_EXT_doneProcessing,
+    input  wire [ 0:0] i_EXT_writeValid,
+    input  wire [ 0:0] i_EXT_readReady,
+    input  wire [31:0] i_MemMU_status,
+    input  wire [31:0] i_ExMU_status,
+    input  wire [31:0] i_MonU_status,
+    input  wire [31:0] i_SIU_status,
+    input  wire [ 0:0] i_INT_writeTxnDone,
+    input  wire [ 0:0] i_INT_readTxnDone,
+    input  wire [ 0:0] i_CU_MonU_pcReady,
+    input  wire [ 0:0] i_CU_MonU_frameDone,
+    output wire [ 0:0] o_CU_MonU_extReady,
+    output reg  [ 0:0] o_CU_EXT_enable,
+    output      [ 0:0] o_CU_EXT_writeReady,
+    output      [ 0:0] o_CU_EXT_readValid,
+    output reg  [ 0:0] o_CU_INT_initWriteTx,
+    output reg  [ 0:0] o_CU_INT_initReadTx,
+    output reg  [ 0:0] o_CU_ExMU_readCache,
+    output reg  [ 0:0] o_CU_ExMU_writeCache,
+    output      [ 0:0] o_CU_ExMU_readWriteID,
+    output      [ 0:0] o_CU_ExMU_readPoint,
+    output      [ 0:0] o_CU_ExMU_writePoint,
+    output reg  [ 0:0] o_CU_ExMU_writeMem,
+    output reg  [ 0:0] o_CU_MonU_pcReady,
+    output reg  [ 0:0] o_CU_MonU_processingDone,
+    output reg  [ 0:0] o_CU_SIU_ExMU,
+    output reg  [31:0] o_status
 );
 
   localparam [4:0] 
@@ -94,11 +94,7 @@ module CU #(
 
   wire [3:0] error;
   wire       finishing_process;
-  reg
-                                                                                                      first_time,
-                                                                                                      readReady,
-                                                                                                      CU_EXT_writeReady,
-                                                                                                      CU_EXT_readValid;
+  reg first_time, readReady, CU_EXT_writeReady, CU_EXT_readValid;
 
   assign error[0] = (i_MemMU_status == 32'hFFFFFFFF) ? 1'b1 : 1'b0;
   assign error[1] = (i_ExMU_status == 32'hFFFFFFFF) ? 1'b1 : 1'b0;

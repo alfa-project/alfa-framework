@@ -23,7 +23,7 @@
 */
 module MonU #(
 
-                                                                                                    /* Parameters integer: Pointcloud.
+    /* Parameters integer: Pointcloud.
 
         MEMORY_OFFSET = 0;
         POINTCLOUD_ID - Unique sensor ID.
@@ -34,87 +34,87 @@ module MonU #(
         REPRESENTATION_PARAM3 - *TODO*
         REPRESENTATION_PARAM4 - *TODO*
     */
-                                                                                                    parameter integer DATA_WIDTH	= 32,
-                                                                                                    parameter integer ADDR_WIDTH	= 32
+    parameter integer DATA_WIDTH = 32,
+    parameter integer ADDR_WIDTH = 32
 ) (
-                                                                                                    input wire  [DATA_WIDTH-1:0]    i_CU_status,
-                                                                                                    input wire  [DATA_WIDTH-1:0]    i_MemMU_status,
-                                                                                                    input wire  [DATA_WIDTH-1:0]    i_ExMU_status,
-                                                                                                    input wire  [DATA_WIDTH-1:0]    i_MonU_status,
-                                                                                                    input wire  [DATA_WIDTH-1:0]    i_SIU_status,
-                                                                                                    input wire  [0:0]               i_CU_pcReady,
-                                                                                                    output wire [0:0]               o_CU_pcReady,
-                                                                                                    input wire  [0:0]               i_CU_processingDone,
-                                                                                                    output wire [0:0]               o_CU_processingDone,
-                                                                                                    output wire [DATA_WIDTH-1:0]    o_MonU_PointCloudSize,
-                                                                                                    input wire [0:0]                i_CU_extReady,
-                                                                                                    output wire [0:0]               o_CU_frameDone,
-                                                                                                    input wire  [DATA_WIDTH-1:0]    i_EXT_status,
-                                                                                                    input wire  [DATA_WIDTH-1:0]    i_DP_0,
-                                                                                                    i_DP_1,
-                                                                                                    i_DP_2,
-                                                                                                    i_DP_3,
-                                                                                                    i_DP_4,
-                                                                                                    i_DP_5,
-                                                                                                    i_DP_6,
-                                                                                                    i_DP_7,
-                                                                                                    i_DP_8,
-                                                                                                    i_DP_9,
-                                                                                                    i_DP_10,
-                                                                                                    i_DP_11,
-                                                                                                    i_DP_12,
-                                                                                                    i_DP_13,
-                                                                                                    i_DP_14,
-                                                                                                    i_DP_15,
-                                                                                                    i_DP_16,
-                                                                                                    i_DP_17,
-                                                                                                    i_DP_18,
-                                                                                                    i_DP_19,
-                                                                                                    output wire [DATA_WIDTH-1:0]    o_USER_0,
-                                                                                                    o_USER_1,
-                                                                                                    o_USER_2,
-                                                                                                    o_USER_3,
-                                                                                                    o_USER_4,
-                                                                                                    o_USER_5,
-                                                                                                    o_USER_6,
-                                                                                                    o_USER_7,
-                                                                                                    o_USER_8,
-                                                                                                    o_USER_9,
-                                                                                                    output wire [DATA_WIDTH-1:0]    o_CU_parameter,
-                                                                                                    output wire [DATA_WIDTH-1:0]    o_MemMU_parameter,
-                                                                                                    output wire [DATA_WIDTH-1:0]    o_ExMU_parameter,
-                                                                                                    output wire [DATA_WIDTH-1:0]    o_MonU_parameter,
-                                                                                                    output wire [DATA_WIDTH-1:0]    o_SIU_parameter,
-                                                                                                    output reg  [DATA_WIDTH-1:0]    o_status,
+    input  wire [DATA_WIDTH-1:0] i_CU_status,
+    input  wire [DATA_WIDTH-1:0] i_MemMU_status,
+    input  wire [DATA_WIDTH-1:0] i_ExMU_status,
+    input  wire [DATA_WIDTH-1:0] i_MonU_status,
+    input  wire [DATA_WIDTH-1:0] i_SIU_status,
+    input  wire [           0:0] i_CU_pcReady,
+    output wire [           0:0] o_CU_pcReady,
+    input  wire [           0:0] i_CU_processingDone,
+    output wire [           0:0] o_CU_processingDone,
+    output wire [DATA_WIDTH-1:0] o_MonU_PointCloudSize,
+    input  wire [           0:0] i_CU_extReady,
+    output wire [           0:0] o_CU_frameDone,
+    input  wire [DATA_WIDTH-1:0] i_EXT_status,
+    input  wire [DATA_WIDTH-1:0] i_DP_0,
+    i_DP_1,
+    i_DP_2,
+    i_DP_3,
+    i_DP_4,
+    i_DP_5,
+    i_DP_6,
+    i_DP_7,
+    i_DP_8,
+    i_DP_9,
+    i_DP_10,
+    i_DP_11,
+    i_DP_12,
+    i_DP_13,
+    i_DP_14,
+    i_DP_15,
+    i_DP_16,
+    i_DP_17,
+    i_DP_18,
+    i_DP_19,
+    output wire [DATA_WIDTH-1:0] o_USER_0,
+    o_USER_1,
+    o_USER_2,
+    o_USER_3,
+    o_USER_4,
+    o_USER_5,
+    o_USER_6,
+    o_USER_7,
+    o_USER_8,
+    o_USER_9,
+    output wire [DATA_WIDTH-1:0] o_CU_parameter,
+    output wire [DATA_WIDTH-1:0] o_MemMU_parameter,
+    output wire [DATA_WIDTH-1:0] o_ExMU_parameter,
+    output wire [DATA_WIDTH-1:0] o_MonU_parameter,
+    output wire [DATA_WIDTH-1:0] o_SIU_parameter,
+    output reg  [DATA_WIDTH-1:0] o_status,
 
-                                                                                                    // AXI interface
-                                                                                                    input wire  [0:0]               S_AXI_ACLK,
-                                                                                                    input wire  [0:0]               S_AXI_ARESETN,
-                                                                                                    input wire  [ADDR_WIDTH-1:0]    S_AXI_AWADDR,
-                                                                                                    input wire  [2:0]               S_AXI_AWPROT,
-                                                                                                    input wire  [0:0]               S_AXI_AWVALID,
-                                                                                                    output wire [0:0]               S_AXI_AWREADY,
+    // AXI interface
+    input  wire [           0:0] S_AXI_ACLK,
+    input  wire [           0:0] S_AXI_ARESETN,
+    input  wire [ADDR_WIDTH-1:0] S_AXI_AWADDR,
+    input  wire [           2:0] S_AXI_AWPROT,
+    input  wire [           0:0] S_AXI_AWVALID,
+    output wire [           0:0] S_AXI_AWREADY,
 
-                                                                                                    // Write data (issued by master, acceped by Slave) 
-                                                                                                    input wire  [DATA_WIDTH-1:0]    S_AXI_WDATA,
-                                                                                                    input wire  [(DATA_WIDTH/8)-1:0] S_AXI_WSTRB,
-                                                                                                    input wire  [0:0]               S_AXI_WVALID,
-                                                                                                    output wire [0:0]               S_AXI_WREADY,
-                                                                                                    output wire [1:0]               S_AXI_BRESP,
-                                                                                                    output wire [0:0]               S_AXI_BVALID,
-                                                                                                    input wire  [0:0]               S_AXI_BREADY,
+    // Write data (issued by master, acceped by Slave) 
+    input  wire [    DATA_WIDTH-1:0] S_AXI_WDATA,
+    input  wire [(DATA_WIDTH/8)-1:0] S_AXI_WSTRB,
+    input  wire [               0:0] S_AXI_WVALID,
+    output wire [               0:0] S_AXI_WREADY,
+    output wire [               1:0] S_AXI_BRESP,
+    output wire [               0:0] S_AXI_BVALID,
+    input  wire [               0:0] S_AXI_BREADY,
 
-                                                                                                    // Read address (issued by master, acceped by Slave)
-                                                                                                    input wire  [ADDR_WIDTH-1:0]    S_AXI_ARADDR,
-                                                                                                    input wire  [2:0]               S_AXI_ARPROT,
-                                                                                                    input wire  [0:0]               S_AXI_ARVALID,
-                                                                                                    output wire [0:0]               S_AXI_ARREADY,
+    // Read address (issued by master, acceped by Slave)
+    input  wire [ADDR_WIDTH-1:0] S_AXI_ARADDR,
+    input  wire [           2:0] S_AXI_ARPROT,
+    input  wire [           0:0] S_AXI_ARVALID,
+    output wire [           0:0] S_AXI_ARREADY,
 
-                                                                                                    // Read data (issued by slave)
-                                                                                                    output wire [DATA_WIDTH-1 : 0]  S_AXI_RDATA,
-                                                                                                    output wire [1:0]               S_AXI_RRESP,
-                                                                                                    output wire [0:0]               S_AXI_RVALID,
-                                                                                                    input wire  [0:0]               S_AXI_RREADY
+    // Read data (issued by slave)
+    output wire [DATA_WIDTH-1 : 0] S_AXI_RDATA,
+    output wire [             1:0] S_AXI_RRESP,
+    output wire [             0:0] S_AXI_RVALID,
+    input  wire [             0:0] S_AXI_RREADY
 );
 
 
@@ -238,11 +238,7 @@ module MonU #(
 
   always @(posedge S_AXI_ACLK) begin
     if (S_AXI_ARESETN == 1'b0) begin
-      for (
-                                                                                                          i=0;
-                                                                                                          i<30;
-                                                                                                          i=i+1
-      ) begin
+      for (i = 0; i < 30; i = i + 1) begin
         slv_reg[i] <= 0;
       end
       o_status <= 1'b0;
@@ -284,182 +280,92 @@ module MonU #(
   // Memory mapped register select and write logic generation for parameters and signals from software
   always @(posedge S_AXI_ACLK) begin
     if (S_AXI_ARESETN == 1'b0) begin
-      for (
-                                                                                                          i=30;
-                                                                                                          i<50;
-                                                                                                          i=i+1
-      )
-      slv_reg[i] <= 0;
+      for (i = 30; i < 50; i = i + 1) slv_reg[i] <= 0;
     end else if (slv_reg_wren) begin
       case (axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB])
         8'h1E:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[30][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h1F:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[31][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h20:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[32][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h21:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[33][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h22:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[34][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h23:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[35][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h24:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[36][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h25:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[37][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h26:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[38][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h27:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[39][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h28:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[40][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h29:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[41][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h2A:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[42][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h2B:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[43][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h2C:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[44][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h2D:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[45][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h2E:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[46][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h2F:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[47][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h30:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[48][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
         8'h31:
-        for (
-                                                                                                            byte_index = 0;
-                                                                                                            byte_index <= (DATA_WIDTH/8)-1;
-                                                                                                            byte_index = byte_index+1
-        )
+        for (byte_index = 0; byte_index <= (DATA_WIDTH / 8) - 1; byte_index = byte_index + 1)
         if (S_AXI_WSTRB[byte_index] == 1)
           slv_reg[49][(byte_index*8)+:8] <= S_AXI_WDATA[(byte_index*8)+:8];
 
         default: begin
-          for (
-                                                                                                              i=0;
-                                                                                                              i<50;
-                                                                                                              i=i+1
-          )
-          slv_reg[i] <= slv_reg[i];
+          for (i = 0; i < 50; i = i + 1) slv_reg[i] <= slv_reg[i];
         end
       endcase
     end

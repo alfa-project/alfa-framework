@@ -23,16 +23,16 @@
 */
 module MemMU_cartesianRepresentationPayload #(
 
-                                                                                                    /* Parameters integer: Representation
+    /* Parameters integer: Representation
 
         TODO - TODO. 
     */
-                                                                                                    parameter integer RESOLUTION_X = 10,
-                                                                                                    parameter integer RESOLUTION_Y = 10,
-                                                                                                    parameter integer RESOLUTION_Z = 10
+    parameter integer RESOLUTION_X = 10,
+    parameter integer RESOLUTION_Y = 10,
+    parameter integer RESOLUTION_Z = 10
 ) (
 
-                                                                                                    /* Input: Input ports
+    /* Input: Input ports
     
         <MemMU::corretion> - Representation correction value.
         <SIU::distR0> - First return distance value.
@@ -41,19 +41,19 @@ module MemMU_cartesianRepresentationPayload #(
         <SIU::reflR1> - Second return intensity/reflection value.
         <SIU::label>  - Point label.
     */
-                                                                                                    input [15:0] i_SIU_angleH,
-                                                                                                    input [15:0] i_SIU_angleV,
-                                                                                                    input [15:0] i_SIU_distR0,
-                                                                                                    input [15:0] i_SIU_distR1,
-                                                                                                    input [7:0]  i_SIU_reflR0,
-                                                                                                    input [7:0]  i_SIU_reflR1,
-                                                                                                    input [7:0]  i_SIU_label,
+    input [15:0] i_SIU_angleH,
+    input [15:0] i_SIU_angleV,
+    input [15:0] i_SIU_distR0,
+    input [15:0] i_SIU_distR1,
+    input [ 7:0] i_SIU_reflR0,
+    input [ 7:0] i_SIU_reflR1,
+    input [ 7:0] i_SIU_label,
 
-                                                                                                    /* Output: Output ports
+    /* Output: Output ports
 
         payload - 64 bits output. Outputs the point clouds payload in the basic struture.
     */
-                                                                                                    output [63:0] o_MemMU_CR_P_payload
+    output [63:0] o_MemMU_CR_P_payload
 );
 
   /* Assigns: Main Combinational block

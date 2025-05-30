@@ -18,7 +18,7 @@
 
 module MemMU_sphericalRepresentationPayload (
 
-                                                                                                    /* Input: Input ports
+    /* Input: Input ports
     
         <MemMU::corretion> - Representation correction value.
         <SIU::distR0> - First return distance value.
@@ -27,18 +27,18 @@ module MemMU_sphericalRepresentationPayload (
         <SIU::reflR1> - Second return intensity/reflection value.
         <SIU::label> - Point label.
     */
-                                                                                                    input [ 7:0] i_MemMU_SR_A_correction,
-                                                                                                    input [15:0] i_SIU_distR0,
-                                                                                                    input [15:0] i_SIU_distR1,
-                                                                                                    input [ 7:0] i_SIU_reflR0,
-                                                                                                    input [ 7:0] i_SIU_reflR1,
-                                                                                                    input [ 7:0] i_SIU_label,
+    input [ 7:0] i_MemMU_SR_A_correction,
+    input [15:0] i_SIU_distR0,
+    input [15:0] i_SIU_distR1,
+    input [ 7:0] i_SIU_reflR0,
+    input [ 7:0] i_SIU_reflR1,
+    input [ 7:0] i_SIU_label,
 
-                                                                                                    /* Output: Output ports
+    /* Output: Output ports
 
         payload - 64 bits output. Outputs the point clouds payload in the basic struture.
     */
-                                                                                                    output [63:0] o_MemMU_SR_P_payload
+    output [63:0] o_MemMU_SR_P_payload
 );
 
   /* Assigns: Main Combinational block

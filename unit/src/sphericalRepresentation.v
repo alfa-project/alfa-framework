@@ -28,20 +28,20 @@
 */
 module MemMU_sphericalRepresentation #(
 
-                                                                                                    /* Parameters integer: Representation
+    /* Parameters integer: Representation
 
         FOV_H - Representation Horizontal Field of View. 
         FOV_V - Representation Vertical Field of View. 
         NUMBER_OF_ADDR_BITS_H - Number of address bits for storing the representation's horizontal angle.
         NUMBER_OF_ADDR_BITS_V - Number of address bits for storing the representation's vertical angle.
     */
-                                                                                                    parameter integer FOV_H = 360,
-                                                                                                    parameter integer FOV_V = 90,
-                                                                                                    parameter integer NUMBER_OF_ADDR_BITS_H = 11,
-                                                                                                    parameter integer NUMBER_OF_ADDR_BITS_V = 5
+    parameter integer FOV_H = 360,
+    parameter integer FOV_V = 90,
+    parameter integer NUMBER_OF_ADDR_BITS_H = 11,
+    parameter integer NUMBER_OF_ADDR_BITS_V = 5
 ) (
 
-                                                                                                    /* Input: Input ports
+    /* Input: Input ports
     
         <SYSTEM::clk> - System clock. 
         <SYSTEM::rst> - System reset.
@@ -53,25 +53,25 @@ module MemMU_sphericalRepresentation #(
         <SIU::reflR1> - Second return intensity/reflection value.
         <SIU::label> - Point label.
     */
-                                                                                                    input [0:0] i_SYSTEM_clk,
-                                                                                                    input [0:0] i_SYSTEM_rst,
-                                                                                                    input [15:0] i_SIU_angleH,
-                                                                                                    input [15:0] i_SIU_angleV,
-                                                                                                    input [15:0] i_SIU_distR0,
-                                                                                                    input [15:0] i_SIU_distR1,
-                                                                                                    input [7:0] i_SIU_reflR0,
-                                                                                                    input [7:0] i_SIU_reflR1,
-                                                                                                    input [7:0] i_SIU_label,
+    input [ 0:0] i_SYSTEM_clk,
+    input [ 0:0] i_SYSTEM_rst,
+    input [15:0] i_SIU_angleH,
+    input [15:0] i_SIU_angleV,
+    input [15:0] i_SIU_distR0,
+    input [15:0] i_SIU_distR1,
+    input [ 7:0] i_SIU_reflR0,
+    input [ 7:0] i_SIU_reflR1,
+    input [ 7:0] i_SIU_label,
 
 
-                                                                                                    /* Output: Output ports
+    /* Output: Output ports
 
         payload - 64 bits registered output. Outputs the representation payload.
         address - 17 bits registered output. Outputs the spherical representation address based on <SIU::angleH> and <SIU::angleV>.
     */
-                                                                                                    output [18:0] o_MemMU_SR_size,
-                                                                                                    output reg [63:0] o_MemMU_SR_payload,
-                                                                                                    output reg [18:0] o_MemMU_SR_address
+    output [18:0] o_MemMU_SR_size,
+    output reg [63:0] o_MemMU_SR_payload,
+    output reg [18:0] o_MemMU_SR_address
 );
 
   /* Wires: Connectors for horizontal axis
@@ -104,35 +104,35 @@ module MemMU_sphericalRepresentation #(
   // MemMU_sphericalRepresentationAddress: angleToAddress_h
   // Instantiation of a <MemMU_SR_A> module for horizontal angles.
   MemMU_sphericalRepresentationAddress #(
-                                                                                                      .NUMBER_OF_ADDR_BITS(NUMBER_OF_ADDR_BITS_H),
-                                                                                                      .FOV(FOV_H)
+      .NUMBER_OF_ADDR_BITS(NUMBER_OF_ADDR_BITS_H),
+      .FOV(FOV_H)
   ) angleToAddress_h (
-                                                                                                      .i_SIU_angle(i_SIU_angleH),
-                                                                                                      .o_MemMU_SR_A_address(t_address_h),
-                                                                                                      .o_MemMU_SR_A_correction(t_correction_h)
+      .i_SIU_angle(i_SIU_angleH),
+      .o_MemMU_SR_A_address(t_address_h),
+      .o_MemMU_SR_A_correction(t_correction_h)
   );
 
   // MemMU_sphericalRepresentationAddress: angleToAddress_v
   // Instantiation of a <MemMU_SR_A> module for vertical angles.   
   MemMU_sphericalRepresentationAddress #(
-                                                                                                      .NUMBER_OF_ADDR_BITS(NUMBER_OF_ADDR_BITS_V),
-                                                                                                      .FOV(FOV_V)
+      .NUMBER_OF_ADDR_BITS(NUMBER_OF_ADDR_BITS_V),
+      .FOV(FOV_V)
   ) angleToAddress_v (
-                                                                                                      .i_SIU_angle(i_SIU_angleV),
-                                                                                                      .o_MemMU_SR_A_address(t_address_v),
-                                                                                                      .o_MemMU_SR_A_correction(t_correction_v)
+      .i_SIU_angle(i_SIU_angleV),
+      .o_MemMU_SR_A_address(t_address_v),
+      .o_MemMU_SR_A_correction(t_correction_v)
   );
 
   // MemMU_sphericalRepresentationPayload: payload
   // Instantiation of a <MemMU_SR_P> module to retrieve the payload.
   MemMU_sphericalRepresentationPayload payload (
-                                                                                                      .i_MemMU_SR_A_correction(t_correction),
-                                                                                                      .i_SIU_distR0(i_SIU_distR0),
-                                                                                                      .i_SIU_distR1(i_SIU_distR1),
-                                                                                                      .i_SIU_reflR0(i_SIU_reflR0),
-                                                                                                      .i_SIU_reflR1(i_SIU_reflR1),
-                                                                                                      .i_SIU_label(i_SIU_label),
-                                                                                                      .o_MemMU_SR_P_payload(t_payload)
+      .i_MemMU_SR_A_correction(t_correction),
+      .i_SIU_distR0(i_SIU_distR0),
+      .i_SIU_distR1(i_SIU_distR1),
+      .i_SIU_reflR0(i_SIU_reflR0),
+      .i_SIU_reflR1(i_SIU_reflR1),
+      .i_SIU_label(i_SIU_label),
+      .o_MemMU_SR_P_payload(t_payload)
   );
 
   /* Assigns: Main Combinational block

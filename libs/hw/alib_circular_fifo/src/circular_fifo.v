@@ -15,17 +15,17 @@
  */
 
 module alib_circular_fifo #(
-                                                                                                    parameter DEPTH = 16,  // Depth of the FIFO buffer, determines maximum entries it can hold
-                                                                                                    parameter WIDTH = 8    // Width of each entry in the FIFO buffer
+    parameter DEPTH = 16,  // Depth of the FIFO buffer, determines maximum entries it can hold
+    parameter WIDTH = 8    // Width of each entry in the FIFO buffer
 ) (
-                                                                                                    input  wire             clk,       // Clock signal
-                                                                                                    input  wire             rst,       // Reset signal (active-high)
-                                                                                                    input  wire [WIDTH-1:0] data_in,   // Data input to the FIFO buffer
-                                                                                                    input  wire             wr_en,     // Write enable signal
-                                                                                                    input  wire             rd_en,     // Read enable signal
-                                                                                                    output reg  [WIDTH-1:0] data_out,  // Data output from the FIFO buffer
-                                                                                                    output wire             full,      // Indicates if the FIFO is full
-                                                                                                    output wire             empty      // Indicates if the FIFO is empty
+    input  wire             clk,       // Clock signal
+    input  wire             rst,       // Reset signal (active-high)
+    input  wire [WIDTH-1:0] data_in,   // Data input to the FIFO buffer
+    input  wire             wr_en,     // Write enable signal
+    input  wire             rd_en,     // Read enable signal
+    output reg  [WIDTH-1:0] data_out,  // Data output from the FIFO buffer
+    output wire             full,      // Indicates if the FIFO is full
+    output wire             empty      // Indicates if the FIFO is empty
 );
 
   // FIFO buffer memory array, with DEPTH entries of WIDTH-bit width each

@@ -23,7 +23,7 @@
 */
 module MemMU_pointcloud #(
 
-                                                                                                    /* Parameters integer: Pointcloud.
+    /* Parameters integer: Pointcloud.
 
         MEMORY_OFFSET = 0;
         POINTCLOUD_ID - Unique sensor ID.
@@ -34,17 +34,17 @@ module MemMU_pointcloud #(
         REPRESENTATION_PARAM3 - *TODO*
         REPRESENTATION_PARAM4 - *TODO*
     */
-                                                                                                    parameter [31:0] OFFSET = 0,
-                                                                                                    parameter [0:0] BRAM_DDR = 1'b1,
-                                                                                                    parameter [2:0] POINTCLOUD_ID = 0,
-                                                                                                    parameter [7:0] REPRESENTATION_TYPE = 0,
-                                                                                                    parameter [7:0] REPRESENTATION_PARAM1 = 360,
-                                                                                                    parameter [7:0] REPRESENTATION_PARAM2 = 90,
-                                                                                                    parameter [7:0] REPRESENTATION_PARAM3 = 11,
-                                                                                                    parameter [7:0] REPRESENTATION_PARAM4 = 5
+    parameter [31:0] OFFSET = 0,
+    parameter [0:0] BRAM_DDR = 1'b1,
+    parameter [2:0] POINTCLOUD_ID = 0,
+    parameter [7:0] REPRESENTATION_TYPE = 0,
+    parameter [7:0] REPRESENTATION_PARAM1 = 360,
+    parameter [7:0] REPRESENTATION_PARAM2 = 90,
+    parameter [7:0] REPRESENTATION_PARAM3 = 11,
+    parameter [7:0] REPRESENTATION_PARAM4 = 5
 ) (
 
-                                                                                                    /* Input: Input ports
+    /* Input: Input ports
 
         <System::clk> - System clock. 
         <System::rst> - System reset.
@@ -61,27 +61,27 @@ module MemMU_pointcloud #(
         <MemMU_address> - *TODO*.
 
     */
-                                                                                                    input i_SYSTEM_clk,
-                                                                                                    input i_SYSTEM_rst,
-                                                                                                    input [31:0] i_MonU_MemMU_parameter,
-                                                                                                    input [18:0] i_SIU_pointID,
-                                                                                                    input [0:0] i_SIU_newFrame,
-                                                                                                    input [15:0] i_SIU_angleH,
-                                                                                                    input [15:0] i_SIU_angleV,
-                                                                                                    input [15:0] i_SIU_distR0,
-                                                                                                    input [7:0] i_SIU_reflR0,
-                                                                                                    input [15:0] i_SIU_distR1,
-                                                                                                    input [7:0] i_SIU_reflR1,
-                                                                                                    input [7:0] i_SIU_label,
-                                                                                                    input [18:0] i_ExMU_pointReWriteID,
-                                                                                                    input [18:0] i_ExMU_pointReadID,
-                                                                                                    input [2047:0] i_ExMU_pointReWritePayload,
-                                                                                                    output wire [31:0] o_MemMU_P_writeAddress,
-                                                                                                    output wire [63:0] o_MemMU_P_writePayload,
-                                                                                                    output wire [31:0] o_MemMU_P_readAddress,
-                                                                                                    output wire [31:0] o_MemMU_P_rewriteAddress,
-                                                                                                    output wire [2047:0] o_MemMU_P_rewritePayload,
-                                                                                                    output wire [18:0] o_MemMU_P_size
+    input i_SYSTEM_clk,
+    input i_SYSTEM_rst,
+    input [31:0] i_MonU_MemMU_parameter,
+    input [18:0] i_SIU_pointID,
+    input [0:0] i_SIU_newFrame,
+    input [15:0] i_SIU_angleH,
+    input [15:0] i_SIU_angleV,
+    input [15:0] i_SIU_distR0,
+    input [7:0] i_SIU_reflR0,
+    input [15:0] i_SIU_distR1,
+    input [7:0] i_SIU_reflR1,
+    input [7:0] i_SIU_label,
+    input [18:0] i_ExMU_pointReWriteID,
+    input [18:0] i_ExMU_pointReadID,
+    input [2047:0] i_ExMU_pointReWritePayload,
+    output wire [31:0] o_MemMU_P_writeAddress,
+    output wire [63:0] o_MemMU_P_writePayload,
+    output wire [31:0] o_MemMU_P_readAddress,
+    output wire [31:0] o_MemMU_P_rewriteAddress,
+    output wire [2047:0] o_MemMU_P_rewritePayload,
+    output wire [18:0] o_MemMU_P_size
 );
 
   wire [18:0] representationAddress;
@@ -132,43 +132,43 @@ module MemMU_pointcloud #(
 
     if (REPRESENTATION_TYPE == 0) begin
       MemMU_sphericalRepresentation #(
-                                                                                                          .FOV_H(REPRESENTATION_PARAM1),
-                                                                                                          .FOV_V(REPRESENTATION_PARAM2),
-                                                                                                          .NUMBER_OF_ADDR_BITS_H(REPRESENTATION_PARAM3),
-                                                                                                          .NUMBER_OF_ADDR_BITS_V(REPRESENTATION_PARAM4)
+          .FOV_H(REPRESENTATION_PARAM1),
+          .FOV_V(REPRESENTATION_PARAM2),
+          .NUMBER_OF_ADDR_BITS_H(REPRESENTATION_PARAM3),
+          .NUMBER_OF_ADDR_BITS_V(REPRESENTATION_PARAM4)
       ) representation (
-                                                                                                          .i_SYSTEM_clk(i_SYSTEM_clk),
-                                                                                                          .i_SYSTEM_rst(i_SYSTEM_rst),
-                                                                                                          .i_SIU_angleH(i_SIU_angleH),
-                                                                                                          .i_SIU_angleV(i_SIU_angleV),
-                                                                                                          .i_SIU_distR0(i_SIU_distR0),
-                                                                                                          .i_SIU_distR1(i_SIU_distR1),
-                                                                                                          .i_SIU_reflR0(i_SIU_reflR0),
-                                                                                                          .i_SIU_reflR1(i_SIU_reflR1),
-                                                                                                          .i_SIU_label(i_SIU_label),
-                                                                                                          .o_MemMU_SR_size(o_MemMU_P_size),
-                                                                                                          .o_MemMU_SR_payload(o_MemMU_P_writePayload),
-                                                                                                          .o_MemMU_SR_address(representationAddress)
+          .i_SYSTEM_clk(i_SYSTEM_clk),
+          .i_SYSTEM_rst(i_SYSTEM_rst),
+          .i_SIU_angleH(i_SIU_angleH),
+          .i_SIU_angleV(i_SIU_angleV),
+          .i_SIU_distR0(i_SIU_distR0),
+          .i_SIU_distR1(i_SIU_distR1),
+          .i_SIU_reflR0(i_SIU_reflR0),
+          .i_SIU_reflR1(i_SIU_reflR1),
+          .i_SIU_label(i_SIU_label),
+          .o_MemMU_SR_size(o_MemMU_P_size),
+          .o_MemMU_SR_payload(o_MemMU_P_writePayload),
+          .o_MemMU_SR_address(representationAddress)
       );
     end else if (REPRESENTATION_TYPE == 1) begin
       MemMU_cartesianRepresentation #(
-                                                                                                          .RESOLUTION_X(REPRESENTATION_PARAM1),
-                                                                                                          .RESOLUTION_Y(REPRESENTATION_PARAM2),
-                                                                                                          .RESOLUTION_Z(REPRESENTATION_PARAM3)
+          .RESOLUTION_X(REPRESENTATION_PARAM1),
+          .RESOLUTION_Y(REPRESENTATION_PARAM2),
+          .RESOLUTION_Z(REPRESENTATION_PARAM3)
       ) representation (
-                                                                                                          .i_SYSTEM_clk(i_SYSTEM_clk),
-                                                                                                          .i_SYSTEM_rst(i_SYSTEM_rst),
-                                                                                                          .i_SIU_pointID(i_SIU_pointID),
-                                                                                                          .i_SIU_angleH(i_SIU_angleH),
-                                                                                                          .i_SIU_angleV(i_SIU_angleV),
-                                                                                                          .i_SIU_distR0(i_SIU_distR0),
-                                                                                                          .i_SIU_distR1(i_SIU_distR1),
-                                                                                                          .i_SIU_reflR0(i_SIU_reflR0),
-                                                                                                          .i_SIU_reflR1(i_SIU_reflR1),
-                                                                                                          .i_SIU_label(i_SIU_label),
-                                                                                                          .o_MemMU_CR_size(o_MemMU_P_size),
-                                                                                                          .o_MemMU_CR_payload(o_MemMU_P_writePayload),
-                                                                                                          .o_MemMU_CR_address(representationAddress)
+          .i_SYSTEM_clk(i_SYSTEM_clk),
+          .i_SYSTEM_rst(i_SYSTEM_rst),
+          .i_SIU_pointID(i_SIU_pointID),
+          .i_SIU_angleH(i_SIU_angleH),
+          .i_SIU_angleV(i_SIU_angleV),
+          .i_SIU_distR0(i_SIU_distR0),
+          .i_SIU_distR1(i_SIU_distR1),
+          .i_SIU_reflR0(i_SIU_reflR0),
+          .i_SIU_reflR1(i_SIU_reflR1),
+          .i_SIU_label(i_SIU_label),
+          .o_MemMU_CR_size(o_MemMU_P_size),
+          .o_MemMU_CR_payload(o_MemMU_P_writePayload),
+          .o_MemMU_CR_address(representationAddress)
       );
     end
   endgenerate

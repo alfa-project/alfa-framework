@@ -32,28 +32,28 @@
 */
 module MemMU_sphericalRepresentationAddress #(
 
-                                                                                                    /* Parameters integer: Representation
+    /* Parameters integer: Representation
 
         FOV - Representation Field of View. 
         NUMBER_OF_ADDR_BITS - Number of address bits for storing the representation's angle.
     */
-                                                                                                    parameter NUMBER_OF_ADDR_BITS = 14,
-                                                                                                    parameter FOV = 360
+    parameter NUMBER_OF_ADDR_BITS = 14,
+    parameter FOV = 360
 ) (
 
-                                                                                                    /* Input: Input ports
+    /* Input: Input ports
 
         <SIU::angleH> or <SIU::angleV> - Sensor angle.
     */
-                                                                                                    input [15:0] i_SIU_angle,
+    input [15:0] i_SIU_angle,
 
-                                                                                                    /* Output: Output ports
+    /* Output: Output ports
 
         correction - 4 bits output. Outputs the correction value between the address and actually the measured angle.
         address - [NUMBER_OF_ADDR_BITS-1:0] bits output. Outputs the representation address (Sequential).
     */
-                                                                                                    output [3:0] o_MemMU_SR_A_correction,
-                                                                                                    output [NUMBER_OF_ADDR_BITS-1:0] o_MemMU_SR_A_address
+    output [3:0] o_MemMU_SR_A_correction,
+    output [NUMBER_OF_ADDR_BITS-1:0] o_MemMU_SR_A_address
 );
 
   /* Localparams integer: Representation

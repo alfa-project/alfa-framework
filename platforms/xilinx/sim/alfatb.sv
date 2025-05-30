@@ -45,8 +45,8 @@ module ALFA_tb ();
   bit tb_clk;
 
   design_1_wrapper DUT (
-                                                                                                      .i_SYSTEM_clk_0(tb_clk),
-                                                                                                      .i_SYSTEM_rst_0(tb_reset)
+      .i_SYSTEM_clk_0(tb_clk),
+      .i_SYSTEM_rst_0(tb_reset)
   );
 
   initial begin
@@ -109,13 +109,7 @@ module ALFA_tb ();
     $finish;
   end
 
-  longint
-                                                                                                      data,
-                                                                                                      i,
-                                                                                                      x,
-                                                                                                      y,
-                                                                                                      z,
-                                                                                                      label;
+  longint data, i, x, y, z, label;
   longint inside_i = 0;
   int     fd1;
 
@@ -126,28 +120,16 @@ module ALFA_tb ();
     xil_axi_ulong                                               addr_offset;
 
     slv_agent.mem_model.set_memory_fill_policy(
-                                                                                                        XIL_AXI_MEMORY_FILL_FIXED);        // Determines what policy to use when memory model encounters an empty entry
+        XIL_AXI_MEMORY_FILL_FIXED);        // Determines what policy to use when memory model encounters an empty entry
     slv_agent.mem_model.set_default_memory_value(
-                                                                                                        32'hFFFFFFFF);        // Determines what policy to use when memory model encounters an empty entry
+        32'hFFFFFFFF);  // Determines what policy to use when memory model encounters an empty entry
 
-    write_strb = ($pow(
-                                                                                                        2,
-                                                                                                        (design_1_axi_vip_0_0_VIP_DATA_WIDTH/8)
-    ) - 1);  // All strobe bits asserted
-    fd1 = $fopen(
-                                                                                                        "/home/ricardororiz/ALFA_Workspace/dev/alfa-unit/sim/mem_generator/mem_cart.txt",
-                                                                                                        "r"
-    );
+    write_strb = ($pow(2, (design_1_axi_vip_0_0_VIP_DATA_WIDTH / 8)) -
+                  1);  // All strobe bits asserted
+    fd1 = $fopen("/home/ricardororiz/ALFA_Workspace/dev/alfa-unit/sim/mem_generator/mem_cart.txt",
+                 "r");
 
-    for (
-                                                                                                        mem_wr_addr = start_addr
-                                                                                                        ,
-                                                                                                        i = 0 ;
-                                                                                                        mem_wr_addr < stop_addr;
-                                                                                                        mem_wr_addr += 8
-                                                                                                        ,
-                                                                                                        i++
-    ) begin
+    for (mem_wr_addr = start_addr, i = 0; mem_wr_addr < stop_addr; mem_wr_addr += 8, i++) begin
       //WRITE_DATA_FAIL: assert(std::randomize(write_data)); 
       //write_data = data read from the file with the input data
       $fscanf(fd1, "%d\n", data);
@@ -175,15 +157,7 @@ module ALFA_tb ();
     bit           [design_1_axi_vip_0_0_VIP_DATA_WIDTH-1:0] read_data;
     xil_axi_ulong                                           addr_offset;
 
-    for (
-                                                                                                        mem_rd_addr = start_addr
-                                                                                                        ,
-                                                                                                        i = 0 ;
-                                                                                                        mem_rd_addr < stop_addr;
-                                                                                                        mem_rd_addr += 8
-                                                                                                        ,
-                                                                                                        i++
-    ) begin
+    for (mem_rd_addr = start_addr, i = 0; mem_rd_addr < stop_addr; mem_rd_addr += 8, i++) begin
       read_data = slv_agent.mem_model.backdoor_memory_read(mem_rd_addr);
       x = (read_data & 64'h0000_0000_0000_FFFF);
       y = ((read_data & 64'h0000_0000_FFFF_0000) >> 16);
