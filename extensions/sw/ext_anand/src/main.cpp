@@ -152,8 +152,6 @@ void post_processing(AlfaNode *node) {
   // outside_points = 0;
 #ifdef EXT_HARDWARE
   node->load_pointcloud(LOAD_STORE_CARTESIAN, node->get_output_pointcloud());
-  ground_points = node->get_debug_point(0);
-  outside_points = node->get_debug_point(1);
 #endif
 
   AlfaGroundSegmentationMetrics metrics = evaluate_ground_segmentation_method(node, GROUND_LABELS);
@@ -215,8 +213,7 @@ int main(int argc, char **argv) {
   conf.metrics_publishing_type = METRICS;
   conf.custom_field_conversion_type = CUSTOM_FIELD_LABEL;
 
-  std::vector<AlfaExtensionParameter> parameters;
-  parameters.resize(4);  // Adjust the size of the parameters vector
+  std::vector<AlfaExtensionParameter> parameters(4);  // Initialize with size 4
 
   parameters[0].parameter_name = "zeta";  // threshold
   parameters[0].parameter_value = -1.0;   //[m]
@@ -231,11 +228,6 @@ int main(int argc, char **argv) {
   parameters[3].parameter_value = 0;  // 0: labeled as ground and non-ground
                                       // 1: only ground
                                       // 2: only non-ground
-
-  // AnandMetrics.reset(
-  //     new Metrics<PointType>(2, "Removed points", "Points outside of grid"));
-
-  // rclcpp::on_shutdown(&callback_shutdown);
 
   // Create an instance of AlfaNode and spin it
   rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
