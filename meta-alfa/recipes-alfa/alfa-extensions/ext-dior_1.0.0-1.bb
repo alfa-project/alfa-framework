@@ -1,13 +1,13 @@
 inherit ros_distro_${ROS_DISTRO}
 inherit ros_superflore_generated
 
-DESCRIPTION = "ALFA Distance Filter Extension"
+DESCRIPTION = "ALFA DIOR Extension"
 SECTION = "devel"
 LICENSE = "Apache-2.0"
 FILE_DIR := "${@os.path.dirname(d.getVar('FILE'))}"
 ALFA_FRAMEWORK_PATH = "${FILE_DIR}/../../.."
 ALFA_EXT_PATH = "${ALFA_FRAMEWORK_PATH}/extensions/sw"
-ALFA_EXT_NAME = "ext_distance_filter"
+ALFA_EXT_NAME = "ext_dior"
 LIC_FILES_CHKSUM = "file://${ALFA_EXT_PATH}/${ALFA_EXT_NAME}/package.xml;beginline=8;endline=8;md5=12c26a18c7f493fdc7e8a93b16b7c04f"
 
 ROS_CN = "${ALFA_EXT_NAME}"

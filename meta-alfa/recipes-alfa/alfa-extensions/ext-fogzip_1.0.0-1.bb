@@ -1,17 +1,18 @@
 inherit ros_distro_${ROS_DISTRO}
 inherit ros_superflore_generated
 
-DESCRIPTION = "ALFA Distance Filter Extension"
+DESCRIPTION = "ALFA FOG Extension"
 SECTION = "devel"
 LICENSE = "Apache-2.0"
 FILE_DIR := "${@os.path.dirname(d.getVar('FILE'))}"
 ALFA_FRAMEWORK_PATH = "${FILE_DIR}/../../.."
 ALFA_EXT_PATH = "${ALFA_FRAMEWORK_PATH}/extensions/sw"
-ALFA_EXT_NAME = "ext_distance_filter"
-LIC_FILES_CHKSUM = "file://${ALFA_EXT_PATH}/${ALFA_EXT_NAME}/package.xml;beginline=8;endline=8;md5=12c26a18c7f493fdc7e8a93b16b7c04f"
+ALFA_EXT_NAME = "ext_fogzip_encoder"
 
 ROS_CN = "${ALFA_EXT_NAME}"
-ROS_BPN := "${@d.getVar('ROS_CN').replace('_', '-')}"
+ROS_BPN = "ext-fogzip"
+
+LIC_FILES_CHKSUM = "file://${ALFA_EXT_PATH}/${ALFA_EXT_NAME}/package.xml;beginline=8;endline=8;md5=12c26a18c7f493fdc7e8a93b16b7c04f"
 
 ROS_BUILDTOOL_DEPENDS = " \
 	ament-cmake-native \
@@ -27,6 +28,8 @@ ROS_BUILD_DEPENDS = " \
 	alfa-msg \
 	pcl-conversions \
 	pcl-msgs \
+	alib-octree \
+	alib-compression \
 "
 
 ROS_EXPORT_DEPENDS = " \
@@ -37,6 +40,8 @@ ROS_EXPORT_DEPENDS = " \
 	alfa-msg \
 	pcl-conversions \
 	pcl-msgs \
+	alib-octree \
+	alib-compression \
 "
 
 ROS_EXEC_DEPENDS = " \
@@ -47,6 +52,8 @@ ROS_EXEC_DEPENDS = " \
 	alfa-msg \
 	pcl-conversions \
 	pcl-msgs \
+	alib-octree \
+	alib-compression \
 "
 
 ROS_TEST_DEPENDS = " \

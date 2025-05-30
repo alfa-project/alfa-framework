@@ -65,6 +65,11 @@ SRC_URI = "file://${ALFA_NODE_PATH}/package.xml \
 		   file://${ALFA_NODE_PATH}/include/alfa_defines.hpp \
 		   file://${ALFA_NODE_PATH}/include/alfa_structs.hpp \
 		   file://${ALFA_NODE_PATH}/src/alfa_node.cpp \
+			 file://${ALFA_NODE_PATH}/src/alfa_hw.cpp \
+			 file://${ALFA_NODE_PATH}/src/alfa_metrics.cpp \
+			 file://${ALFA_NODE_PATH}/src/alfa_parameters.cpp \
+			 file://${ALFA_NODE_PATH}/src/alfa_pointclouds.cpp \
+			 file://${ALFA_NODE_PATH}/src/alfa_verbose.cpp \
 		   "
 
 SRCREV = "${AUTOREV}"
