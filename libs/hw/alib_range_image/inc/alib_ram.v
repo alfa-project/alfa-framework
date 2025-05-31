@@ -19,7 +19,7 @@
 module alib_bram #(
   parameter DATA_WIDTH = 8,       // Width of the data
   parameter DEPTH      = 1024     // Depth of the memory
-  ) 
+  )
   (
     input  wire                       clk ,
     input  wire                       rst ,  // RAM reset
@@ -66,7 +66,7 @@ module alib_bram_r_w #(
   (* ram_style = "block" *) reg [DATA_WIDTH-1:0] ram_mem[0:DEPTH-1];
 
   reg [DATA_WIDTH-1:0] ram_data = {DATA_WIDTH{1'b0}};
-  
+
   integer i;
   initial begin
     for(i = 0; i < DEPTH-1; i = i+1) begin

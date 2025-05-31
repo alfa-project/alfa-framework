@@ -1,22 +1,22 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
+// Company:
+// Engineer:
+//
 // Create Date: 08/07/2024 11:48:00 AM
-// Design Name: 
+// Design Name:
 // Module Name: Stage2
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
+// Project Name:
+// Target Devices:
+// Tool Versions:
+// Description:
+//
+// Dependencies:
+//
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -38,7 +38,7 @@ module Stage2 (
 
   reg  [18:0] previous_address;
   wire        validAngle      ;
-  
+
   always @(posedge i_clk) begin
     if(i_rst) begin
       previous_address <= o_wAddress;
@@ -50,7 +50,7 @@ module Stage2 (
   end
 
   assign o_wr_bram = ((previous_address != o_wAddress) && validAngle) ? 1'b1 : 1'b0;
-  
+
   RI_generator RI_generator(
     .clk           (i_clk         ),
     .reset         (i_rst         ),
@@ -64,5 +64,5 @@ module Stage2 (
     .o_y           (y             ),
     .o_range       (r             )
     );
-   
+
 endmodule

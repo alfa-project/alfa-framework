@@ -1,23 +1,23 @@
 
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
+// Company:
+// Engineer:
+//
 // Create Date: 05/08/2024 03:02:16 PM
-// Design Name: 
+// Design Name:
 // Module Name: parameter_LUT
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
+// Project Name:
+// Target Devices:
+// Tool Versions:
+// Description:
+//
+// Dependencies:
+//
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -32,7 +32,7 @@ module parameter_LUT(
   output reg   [7:0] o_Hoffset    ,
   output reg   [7:0] o_Voffset
   );
-    
+
   always @(*) begin
     o_riWidth     <= (i_SensorType == 2'b00) ? 15'd2047 : (i_SensorType == 2'b01) ? 15'd2047 : (i_SensorType == 2'b10) ? 15'd2047 : (i_SensorType == 2'b11) ? 15'd2047 : 15'd0;
     o_riHeight    <= (i_SensorType == 2'b00) ? 8'd127 : (i_SensorType == 2'b01) ? 8'd31 : (i_SensorType == 2'b10) ? 8'd15 : (i_SensorType == 2'b11) ? 8'd255 : 8'd0;

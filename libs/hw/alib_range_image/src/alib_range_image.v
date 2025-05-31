@@ -2,23 +2,23 @@
 
 module FRIC (
   input  wire        i_SYSTEM_clk        ,
-  input  wire        i_SYSTEM_rst        ,	
+  input  wire        i_SYSTEM_rst        ,
   // Extension_Interface
-  output reg   [0:0] EXT_writeValid      ,    
-  input  wire  [0:0] EXT_writeReady      ,    
-  output wire  [0:0] EXT_readReady       ,     
+  output reg   [0:0] EXT_writeValid      ,
+  input  wire  [0:0] EXT_writeReady      ,
+  output wire  [0:0] EXT_readReady       ,
   input  wire  [0:0] EXT_readValid       ,
-  input  wire [18:0] EXT_PCSize          ,    
-  output wire  [0:0] EXT_doneProcessing  , 
-  output reg  [15:0] EXT_writeCustomField,  
-  input  wire [15:0] EXT_readCustomField ,   
-  output reg  [18:0] EXT_writeID         ,         
+  input  wire [18:0] EXT_PCSize          ,
+  output wire  [0:0] EXT_doneProcessing  ,
+  output reg  [15:0] EXT_writeCustomField,
+  input  wire [15:0] EXT_readCustomField ,
+  output reg  [18:0] EXT_writeID         ,
   output wire [18:0] EXT_readID          ,
   input  wire  [0:0] EXT_enable          ,
-  output wire [31:0] EXT_status          ,               
+  output wire [31:0] EXT_status          ,
   // Cartesian Representation
   input  wire [15:0] EXT_pointAngleH     ,
-  input  wire [15:0] EXT_pointAngleV     , 
+  input  wire [15:0] EXT_pointAngleV     ,
   input  wire [15:0] EXT_pointRadius     ,
   // EXT memory
   output wire [31:0] EXT_MEM_writeAddress,
@@ -38,7 +38,7 @@ module FRIC (
   output wire        empty               ,
   output wire        full                ,
   output wire [15:0] o_x                 ,
-  output wire  [7:0] o_y     
+  output wire  [7:0] o_y
   );
 
   wire [15:0] i_r      ;
@@ -57,22 +57,22 @@ module FRIC (
     .i_extEnable        (EXT_enable        ),
     .i_stall            (stall             ),
     .EXT_pointAngleH    (EXT_pointAngleH   ),
-    .EXT_pointAngleV    (EXT_pointAngleV   ), 
-    .EXT_pointRadius    (EXT_pointRadius   ),  
-    .EXT_readReady      (EXT_readReady     ),     
+    .EXT_pointAngleV    (EXT_pointAngleV   ),
+    .EXT_pointRadius    (EXT_pointRadius   ),
+    .EXT_readReady      (EXT_readReady     ),
     .EXT_readValid      (EXT_readValid     ),
-    .EXT_PCSize         (EXT_PCSize        ),            
+    .EXT_PCSize         (EXT_PCSize        ),
     .EXT_readID         (EXT_readID        ),
     .EXT_doneProcessing (EXT_doneProcessing),
     .o_point_h          (o_h               ),
-    .o_point_v          (o_v               ),     
-    .o_point_r          (o_r               ),  
+    .o_point_v          (o_v               ),
+    .o_point_r          (o_r               ),
     .fifo_empty         (empty             ),
     .fifo_full          (full              ),
     .rd_fifo            (rd_fifo           ),
     .o_allpoints        (allpoints         )
     );
-        
+
   Stage2 PocessPoint(
     .i_clk          (i_SYSTEM_clk  ),
     .i_rst          (i_SYSTEM_rst  ),
@@ -88,7 +88,7 @@ module FRIC (
     .y              (o_y           ),
     .r              (i_r           )
     );
-          
+
   WriteMemory PSMem(
     .i_clk                (i_SYSTEM_clk        ),
     .i_rst                (i_SYSTEM_rst        ),
@@ -102,7 +102,7 @@ module FRIC (
     .o_stall              (stall               )
 
     );
-      
+
   alib_bram_r_w WriteBack (
     .clk   (i_SYSTEM_clk),  // Write clock
     .addra (wrAddress   ),  // Write address bus
