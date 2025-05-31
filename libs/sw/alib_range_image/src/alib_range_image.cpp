@@ -79,12 +79,10 @@ uint16_t RangeImage[RI_WIDTH][RI_HEIGHT];
 AlfaPoint OG_RangeImage[RI_WIDTH][RI_HEIGHT];
 double frame_number = 0;
 
-typedef struct SphericalPoint
-{
-    float r;
-    float theta;
-    float phi;
-
+typedef struct SphericalPoint {
+  float r;
+  float theta;
+  float phi;
 } SphericalPoint;
 
 SphericalPoint cartesian_to_spherical(AlfaPoint point);
@@ -102,8 +100,7 @@ void handler(AlfaNode *node) {
   AlfaPoint point;
   while (node->get_point_input_pointcloud(point)) {
     SphericalPoint spherical_point = cartesian_to_spherical(point);
-    if (spherical_point.phi >= MIN_ANGLE && spherical_point.phi <= MAX_ANGLE)
-    {
+    if (spherical_point.phi >= MIN_ANGLE && spherical_point.phi <= MAX_ANGLE) {
       int x = round(0.5 * (1 + (spherical_point.theta / M_PI)) * (RI_WIDTH - 1));
       int y = round(((MAX_ANGLE - spherical_point.phi) / (MAX_ANGLE - MIN_ANGLE)) * (RI_HEIGHT - 1));
       uint16_t quantized = spherical_point.r * 100;
@@ -123,8 +120,7 @@ void post_processing(AlfaNode *node) {
 #ifdef EXT_HARDWARE
   uint64_t *buffer = new uint64_t [size];
   node->read_ext_memory(1, sizeof(uint64_t) * size , buffer);
-  for (int index = 0; index < size; index++)
-  {
+  for (int index = 0; index < size; index++) {
     uint16_t range = (buffer[index] >> 48) & 0xFFFF; // Extract bits 48-63
     uint32_t address = buffer[index] & 0xFFFFFFFF;
     uint16_t x = address % RI_WIDTH;
@@ -133,12 +129,9 @@ void post_processing(AlfaNode *node) {
   }
 
   #ifdef PUBLISH_RI
-    for (int i = 0; i < RI_WIDTH; i++)
-    {
-      for (int j = 0; j < RI_HEIGHT; j++)
-      {
-        if (RangeImage[i][j] != 0)
-        {
+    for (int i = 0; i < RI_WIDTH; i++) {
+      for (int j = 0; j < RI_HEIGHT; j++) {
+        if (RangeImage[i][j] != 0) {
           AlfaPoint point;
 
           float theta = (2 * i - RI_WIDTH + 1) * M_PI / (RI_WIDTH - 1);
@@ -196,15 +189,14 @@ int main(int argc, char **argv) {
   conf.number_of_debug_points = 1;
   conf.metrics_publishing_type = ALL_METRICS;
   conf.custom_field_conversion_type = CUSTOM_FIELD_INTENSITY;
-  
+
   parameters[0].parameter_value = SENSOR;
   parameters[0].parameter_name = "sensor";
   parameters[1].parameter_value = SPEED;
   parameters[1].parameter_name = "speed";
 
   // Create an instance of AlfaNode and spin it
-  rclcpp::spin(
-      std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
+  rclcpp::spin(std::make_shared<AlfaNode>(conf, parameters, &handler, &post_processing));
 
   // Shutdown ROS 2
   rclcpp::shutdown();
@@ -212,8 +204,7 @@ int main(int argc, char **argv) {
 }
 
 
-SphericalPoint cartesian_to_spherical(AlfaPoint point)
-{
+SphericalPoint cartesian_to_spherical(AlfaPoint point) {
     SphericalPoint spherical_point;
 
     spherical_point.r = sqrt(pow(point.x, 2) + pow(point.y, 2) + pow(point.z, 2));
@@ -223,8 +214,7 @@ SphericalPoint cartesian_to_spherical(AlfaPoint point)
     return spherical_point;
 }
 
-double calculateMSE(AlfaPoint og_point, AlfaPoint re_point)
-{
+double calculateMSE(AlfaPoint og_point, AlfaPoint re_point) {
     double dx = og_point.x - re_point.x;
     double dy = og_point.y - re_point.y;
     double dz = og_point.z - re_point.z;
