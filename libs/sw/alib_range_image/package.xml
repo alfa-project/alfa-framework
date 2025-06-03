@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>ext_fric_64_speed</name>
+  <name>alib_range_image</name>
   <version>0.0.0</version>
-  <description>ALFA FRIC Extension</description>
+  <description>ALFA Range Image Library</description>
   <maintainer email="alfa@alfa.org">Ricardo</maintainer>
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>rclcpp</depend>
   <depend>alfa_node</depend>
-  
+
   <depend>sensor_msgs</depend>
   <depend>alfa_msg</depend>
   <depend>pcl_conversions</depend>
