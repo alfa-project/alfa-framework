@@ -2,7 +2,7 @@
 set -e
 
 CURRENT_YEAR=$(date +%Y)
-FILE_TYPES=("*.c" "*.cpp" "*.h" "*.v" "*.sv")
+FILE_TYPES=("*.c" "*.cpp" "*.h" "*.v" "*.sv" "*.hpp")
 
 echo "Fixing license years to $CURRENT_YEAR..."
 

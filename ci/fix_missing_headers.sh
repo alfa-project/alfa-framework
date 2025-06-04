@@ -5,7 +5,7 @@ CURRENT_YEAR=$(date +%Y)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HEADER_FILE="$SCRIPT_DIR/.licenseheader"
 LICENSE_TEXT=$(sed "s/XXXX/$CURRENT_YEAR/g" "$HEADER_FILE")
-FILE_TYPES=("*.c" "*.cpp" "*.h" "*.v" "*.sv")
+FILE_TYPES=("*.c" "*.cpp" "*.h" "*.v" "*.sv" "*.hpp")
 
 add_header_if_missing() {
     local file="$1"
