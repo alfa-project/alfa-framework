@@ -38,12 +38,12 @@ jobs:
           sudo apt install -y ros-humble-pcl-msgs
           rosdep update
           rosdep install \
-            --from-paths extensions/sw libs/sw node monitor \
+            --from-paths extensions/sw libs/sw node monitor msgs \
             --ignore-src -r -y
 
       - name: Build packages with colcon
         run: |
           source /opt/ros/humble/setup.bash
           colcon build \
-            --base-paths extensions/sw libs/sw node monitor \
+            --base-paths extensions/sw libs/sw node monitor msgs \
             --event-handlers console_direct+ 
