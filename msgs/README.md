@@ -31,7 +31,7 @@ A container for multiple metrics reported by a node.
 Heartbeat message sent by each ALFA node to advertise its presence and capabilities.
 
 - `string node_name` — Name of the node
-- `string node_type` — Role or type of the node (e.g., Extension, Sensor, Manager)
+- `string node_type` — Role or type of the node (e.g., Extension, Sensor)
 - `string config_service_name` — Name of the configuration service the node exposes
 - `int8 current_status` — Node status code (custom-defined per system)
 - `string config_tag` — Identifier for the current configuration set
@@ -52,4 +52,4 @@ Used to configure or reconfigure an ALFA node at runtime.
 - `string config_tag`  
 - `ConfigMessage[] default_configurations`
 
-**Response:** *(no fields defined — service acts as a trigger)*
+**Response:** return_status (Success or failure code)
