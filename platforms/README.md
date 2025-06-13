@@ -23,7 +23,6 @@ This directory contains all platform-specific assets required to deploy ALFA. It
 
 The `setup_vivado_project.sh` script automates the creation of a Vivado project, launching Vivado with the correct board configuration. The script will setup all the symbolic links to the ALFA source core, create a folder structure (vivado_projects/<project_name>), and initialize the Vivado project with the basic components.
 
-### Usage
 Inside the `platforms/xilinx` directory, run the following command to set up your Vivado project:
 ```bash
 ./setup_vivado_project.sh <project_name> <board_name> <optional_vivado_path>
@@ -34,3 +33,8 @@ where:
 - `project_name` (optional): Name of the Vivado project (default: ALFA)
 - `board_name` (optional): Supported board (default: zcu104)
 - `optional_vivado_path` (optional): Path to Vivado installation (used if not installed in /opt/Xilinx/Vivado)
+
+## Notes
+
+- The setup script assumes the standard folder structure for hardware libraries and extensions. Changing this structure may require modifications to the script and therefore is not recommended.
+- Vivado must be installed and accessible either in the default system path or provided explicitly as a parameter.
