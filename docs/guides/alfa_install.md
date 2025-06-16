@@ -1,4 +1,4 @@
-# ALFA installation guide
+# ALFA Installation Guide
 
 Currently supported installations: </p>
 
@@ -7,6 +7,34 @@ Currently supported installations: </p>
 - To install ALFA on an Embedded platform:
   - [x] Xilinx Zynq UltraScale+ MPSoC ZCU104 (Petaliunx and Vivado) ([**Setup guide**](docs/guides/zcu104_install.md))
 
+## Table of Contents
+
+- [ALFA Installation Guide](#alfa-installation-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Desktop Ubuntu 22.04.1 LTS with ROS 2 Humble Hawksbill](#desktop-ubuntu-22041-lts-with-ros-2-humble-hawksbill)
+    - [1. ROS2 Installation Humble Hawksbill](#1-ros2-installation-humble-hawksbill)
+    - [2. Point Cloud Library (PCL)](#2-point-cloud-library-pcl)
+    - [3. ALFA framework](#3-alfa-framework)
+    - [4. Create a ROS Workspace](#4-create-a-ros-workspace)
+    - [5. Compile ALFA extensions](#5-compile-alfa-extensions)
+  - [Xilinx Zynq UltraScale+ MPSoC ZCU104](#xilinx-zynq-ultrascale-mpsoc-zcu104)
+    - [1. Tools Installation and setup](#1-tools-installation-and-setup)
+    - [2. Create a project from the ALFA hardware xsa file](#2-create-a-project-from-the-alfa-hardware-xsa-file)
+    - [3. Add meta-layers for ROS2 Humble and configure them in PetaLinux](#3-add-meta-layers-for-ros2-humble-and-configure-them-in-petalinux)
+    - [4. Extend the minimal image to include ROS2](#4-extend-the-minimal-image-to-include-ros2)
+    - [5. Add ALFA components or other custom applications](#5-add-alfa-components-or-other-custom-applications)
+    - [6. Build the image](#6-build-the-image)
+    - [7. Generate boot components and SDcard image](#7-generate-boot-components-and-sdcard-image)
+    - [8. Install more embedded software extensions](#8-install-more-embedded-software-extensions)
+      - [Update the ros-petalinux.bb receipt](#update-the-ros-petalinuxbb-receipt)
+      - [Update the image](#update-the-image)
+      - [Updated the card image with the wic command and copy it to the SD card](#updated-the-card-image-with-the-wic-command-and-copy-it-to-the-sd-card)
+    - [9. Check the created embedded ALFA extensions with the Xilinx Zynq UltraScale+ MPSoC ZCU104 platform](#9-check-the-created-embedded-alfa-extensions-with-the-xilinx-zynq-ultrascale-mpsoc-zcu104-platform)
+    - [10.  Install embedded hardware extensions](#10--install-embedded-hardware-extensions)
+      - [a. Create an ALFA project, add the extension and generate the bitstream](#a-create-an-alfa-project-add-the-extension-and-generate-the-bitstream)
+      - [b. Enable ALFA hardware extensions in the ALFA-Node](#b-enable-alfa-hardware-extensions-in-the-alfa-node)
+      - [c. Package and create new ALFA hardware extensions](#c-package-and-create-new-alfa-hardware-extensions)
+  
 ## Desktop Ubuntu 22.04.1 LTS with ROS 2 Humble Hawksbill
 
 ALFA is built on top of the [Robot Operating System (ROS)](https://www.ros.org/) architecture to read sensor's data, communicate with other modules, and to perform point cloud processing. Such processing often resorts to [Point Cloud Library (PCL)](https://pointclouds.org/) software modules.
@@ -586,7 +614,7 @@ petalinux-package --wic
 sudo dd if=images/linux/petalinux-sdimage.wic of=/dev/sda conv=fsync bs=8M
 ```
 
-### 9. Check the created embedded [ALFA extensions](https://github.com/alfa-project/alfa-extensions/) with the Xilinx Zynq UltraScale+ MPSoC ZCU104 platform
+### 9. Check the created embedded [ALFA extensions](/extensions/README.md) with the Xilinx Zynq UltraScale+ MPSoC ZCU104 platform
 
 The default username is "alfa". Pick a password at your choice.
 
@@ -629,17 +657,14 @@ ros2 topic list
 
 ### 10.  Install embedded hardware extensions
 
-Available Soon!
-
-<!----
 To use hardware extensions with the ZCU104 board, you need to [install Xilinx's Vivado](https://www.xilinx.com/support/download.html). At the time of this writing ALFA has been tested with Vivado Design Suite - HLx Editions - 2022.2. We recommend you to get familiarized with this tool suite before developing hardware Extensions. Useful documentation can be found here: [Vivado Design Suit User Guide UG910](https://docs.xilinx.com/r/en-US/ug910-vivado-getting-started).
 
-### Create an ALFA project, add the extension and generate the bitstream
+#### a. Create an ALFA project, add the extension and generate the bitstream
 
-ALFA projects can be created using the TCL script that setups all components and the required configurations. To run this script, go to Xilinx/scripts/ folder, make the script *setup_vivado_project* executable if is not already and run it with the name of the project that you want and the board as argument (only zcu104 is supported at the moment):
+ALFA projects can be created using the TCL script that setups all components and the required configurations. To run this script, go to xilinx/ folder, make the script *setup_vivado_project* executable if is not already and run it with the name of the project that you want and the board as argument (only zcu104 is supported at the moment):
 
 ```sh
-cd PATH_TO_ALFA_PLATFORMS/Xilinx/scripts
+cd PATH_TO_ALFA_FRAMEWORK/platforms/xilinx
 ```
 
 ```sh
@@ -650,13 +675,13 @@ chmod +x setup_vivado_project
 ./setup_vivado_project <project_name> <board>
 ```
 
-The script will open the Vivado GUI and create a new project with the name provided as argument (the project will be created in the folder *PATH_TO_ALFA_FRAMEWORK/alfa-platforms/vivado_projects/<project_name>*). Then, it will add the ALFA unit and board SoC to the design. Add the extension to the block design and connect all the remaining unconnected interfaces.
+The script will open the Vivado GUI and create a new project with the name provided as argument (the project will be created in the folder *PATH_TO_ALFA_FRAMEWORK/platforms/vivado_projects/<project_name>*). Then, it will add the ALFA unit and board SoC to the design. Add the extension to the block design and connect all the remaining unconnected interfaces.
 
 **Note**: only the native extensions will appear automatically in the IP catalog. Your extensions IP must be included in this project IP catalog to make them available in block design.
 
 Please adjust the number of Debug Points and User Define interfaces required for your extension. Finally, create a wrapper for the design and proceed to generate the bitstream.
 
-### Enable ALFA hardware extensions in the ALFA-Node
+#### b. Enable ALFA hardware extensions in the ALFA-Node
 
 The ALFA-Node has the capability to run hardware extensions when the extensions are compiled with EXT_HARDWARE compilation flag defined. This flag is defined in the CMakeLists.txt of the extensions and can be toggled on and off by commenting the line with a "#":
 
@@ -664,7 +689,7 @@ The ALFA-Node has the capability to run hardware extensions when the extensions 
 20. add_compile_definitions(EXT_HARDWARE)
 ```
 
-**Note:** This flag alters the node behavior to accommodate the hardware extensions. Therefore, developers when developing their extensions must define the extension behavior when this flag is defined. Check the dummy extension src files for an example of how to do this.
+**Note:** This flag alters the node behavior to accommodate the hardware extensions. Therefore, developers when developing their extensions must define the extension behavior when this flag is defined. Check the Dummy and Distance Filter extensions src files for an example of how to do this.
 
 Update, if not already, the ros-petalinux.bb receipt inside folder "/project-spec/meta-user/recipes-image/images" with the desired ALFA extensions under 'IMAGE_INSTALL:append':
 
@@ -696,64 +721,59 @@ And finally, copy the image to the SD Card (check the SD Card device name before
 sudo dd if=images/linux/petalinux-sdimage.wic of=/dev/sda conv=fsync bs=8M
 ```
 
-#### 4. Package and create new ALFA hardware extensions
+#### c. Package and create new ALFA hardware extensions
 
 In order to create and maintain the best environment for your extensions, we advise the usage of the package IP tool provided by Vivado. By doing it so, the step to include your extension in the ALFA environment will be the same as the native extensions.
 
-The following steps describe how to package ALFA hardware extensions, using dummy extension as an example. Those are meant to be done in Xilinx's Vivado, with a project already created for your board and with the extension source files already in your computer. Start including the ALFA hardware components to the IP catalog:
+The following steps describe how to package ALFA hardware extensions, using dummy extension as an example. Those are meant to be done in Xilinx's Vivado, with a project
+created using the ALFA project creation script (see [here](https://github.com/alfa-project/alfa-framework/tree/main/platforms) for more information).
+
+To package the dummy extension, first, make sure that the ALFA hardware components (ALFA-Unit and interfaces) are included in the IP catalog. If not, follow the steps below to include them.
+    
+ If not Start including the ALFA hardware components to the IP catalog:
 
 1. Enter into the menu Window ⇾ IP Catalog.
 
-    ![ipcat](figures/menu_ipcat.png)
-
 2. Right click on Vivado Repository ⇾ Add Repository...
 
-    ![addrep](figures/add_rep.png)
-
-3. Select the path to the alfa-unit repository (PATH_TO_ALFA_FRAMEWORK_REP/alfa-framework/alfa-unit). If the right path is selected, a pop-up will show that 1 IP and 5 interfaces were added to the project.
-
-    ![addrep](figures/add_unit_rep.png)
+3. Select the path to the platform directory (PATH_TO_ALFA_FRAMEWORK_REP/platforms/xilinx). If the right path is selected, a pop-up will show that 1 IP and 5 interfaces were added to the project.
 
 4. The ALFA-Unit IP should appear on Block Design's IP list.
-
-    ![addrep](figures/alfa_unit_rep.png)
 
 Then, package the extension with your hardware files and the ALFA interfaces:
 
 1. Go to the **Tools** menu and select the **Create and Package New IP...**
 
-    ![createip](figures/tools_createip.png)
+    ![createip](../figures/tools_createip.png)
 
 2. After pressing **Next** in the first menu, select the option "Package a specified directory" in the Package Options section. Then press **Next**.
 
-3. Select the dummy extension directory (directory containing all the hardware files ⇾ PATH_TO_ALFA_FRAMEWORK/alfa-extensions/hw/ext_dummy/) and press **Next**.
+3. Select the dummy extension directory (directory containing all the hardware files ⇾ PATH_TO_ALFA_FRAMEWORK/extensions/hw/ext_dummy/) and press **Next**.
 
-4. Then, change the *Project name* field to "dummy_extension" and let the Project location be the default path for your Vivado projects.
+4. Then, change the *Project name* field to "my_dummy_extension" and let the Project location be the default path for your Vivado projects.
 
 5. Finishing the process by clicking *Finish*. A new Vivado window will pop-up with your dummy extension package on it.
 
 6. In order to take full advantage of Vivado Block Design features, we need to identify the ALFA interfaces present in the dummy. Select the menu *Port and Interfaces* of the Package IP and select the menu *Auto infer interface*:
 
-    ![auto infer](figures/auto_infer.png)
+    ![auto infer](../figures/auto_infer.png)
 
-7. Select User⇾Cartesian_representation_rtl and press *OK*. (**Note**: if none of ALFA interfaces are shown in the menu, the ALFA interfaces are not present in the IP catalog. For more information, check the [ALFA-Unit Integration section](https://github.com/alfa-project/alfa-unit#integration))
+7. Select User⇾Cartesian_representation_rtl and press *OK*. (**Note**: if none of ALFA interfaces are shown in the menu, the ALFA interfaces are not present in the IP catalog. In this case, you need to follow the steps above to add the ALFA hardware components to the IP catalog. The interfaces are located :```platforms/xilinx/int/```.
 
-    ![cartesian](figures/cartesian_represent.png)
+    ![cartesian](../figures/cartesian_represent.png)
 
 8. Repeat the process for the User⇾Extension_Interface_rtl.
 
 9. The *Ports and interfaces* menu should look like this:
 
-    ![ports](figures/ports_inter.png)
+    ![ports](../figures/ports_inter.png)
 
 10. Associate the clock signal for both interfaces by right-clicking on top of them and selecting associate clock. Then select the *i_SYSTEM_clk* checkbox and press *OK*.
   
-    ![associate clock](figures/associate_clock.png)  
+    ![associate clock](../figures/associate_clock.png)  
 
 11. Select the *Review and Package* submenu and press the *Package IP* button to finalize the process of packaging the ALFA extension:
 
-    ![package](figures/package_ip.png)
+    ![package](../figures/package_ip.png)
 
 To use the generated IP, you can follow the [steps above](#create-an-alfa-project-add-the-extension-and-generate-the-bitstream) to include the extension in the ALFA project and generate the bitstream. Then, **Jump to [ALFA extensions](https://github.com/alfa-project/alfa-extensions) to see how to run and interact with dummy node after booting your board.**
-
----->
